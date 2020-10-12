@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
-
+import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -25,7 +25,7 @@ SECRET_KEY = 's)$w04((9scmf10vz2@-qy-nwjs@&@v+87*5sx%h4b2e!%$zs$'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*",]
 
 
 # Application definition
@@ -78,7 +78,7 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'XINguan',
+        'NAME': 'jianyue',
         'USER':'root',
         'PASSWORD':"Xg2018",
         'HOST':'121.196.213.151',
@@ -124,3 +124,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+# 指定静态资源所在的目录
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static')
+]
+# 设置收集静态资源的路径(部署时使用)
+STATIC_ROOT = os.path.join(BASE_DIR, 'collect_static/')

@@ -10,9 +10,11 @@ class lifadian(models.Model):#理发店
 	dizhi = models.CharField(max_length=30)
 
 class lifashi(models.Model):#理发师
-	lifadian = models.ForeignKey(lifadian,on_delete=models.CASCADE)
+	lifadian = models.ForeignKey(lifadian,on_delete=models.CASCADE,null=True)
 	xingming = models.CharField(max_length=30)
-	lianxidianhua = models.CharField(max_length=300)
+	yonghuming = models.CharField(max_length=30)
+	mima = models.CharField(max_length=30)
+	lianxidianhua = models.CharField(max_length=30,unique=True)
 	xingbie = models.CharField(max_length=1,choices=(('1','男'),('0','女')))
 
 class wuzi(models.Model):#物资
@@ -28,12 +30,12 @@ class lifashizhuang(models.Model):#理发师状态
 	xiayikongxian = models.DateTimeField()
 
 
-class yonghu(models.Model):
+class yonghu(models.Model): #用户
 	yonghuming = models.CharField(max_length=30)
 	mima = models.CharField(max_length=30)
 	xingming =models.CharField(max_length=30)
 	xingbie = models.CharField(max_length=1,choices=(('1','男'),('0','女')))
-	lianxifangshi = models.CharField(max_length=30)
+	lianxidianhua = models.CharField(max_length=30,unique=True)
 
 class dingdan(models.Model):
 	lifadian = models.ForeignKey(lifadian,on_delete=models.CASCADE)
@@ -49,6 +51,7 @@ class yuyuedingdan(dingdan):
 class jiesuandingdan(dingdan):
 	jieshushijian = models.DateTimeField()
 	shijifeiyong = models.FloatField()
+	shifouzhifu = models.BooleanField(default=0)
 
 class pingjia(models.Model):
 	yonghu = models.ForeignKey(yonghu,on_delete=models.CASCADE)
