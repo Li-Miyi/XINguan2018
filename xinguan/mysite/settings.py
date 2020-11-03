@@ -111,13 +111,21 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
+<<<<<<< HEAD
 TIME_ZONE = 'Asia/Shanghai'
+=======
+TIME_ZONE = 'UTC'
+>>>>>>> 30db17da3434f47dc14955491f0991283dadec82
 
 USE_I18N = True
 
 USE_L10N = True
 
+<<<<<<< HEAD
 USE_TZ = False
+=======
+USE_TZ = True
+>>>>>>> 30db17da3434f47dc14955491f0991283dadec82
 
 
 # Static files (CSS, JavaScript, Images)
@@ -133,7 +141,11 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'collect_static/')
 STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder"
+<<<<<<< HEAD
 )
 
 MEDIA_ROOT = os.path.join(BASE_DIR,'media').replace("\\",'/')
 MEDIA_URL = '/media/'
+=======
+)
+>>>>>>> 30db17da3434f47dc14955491f0991283dadec82

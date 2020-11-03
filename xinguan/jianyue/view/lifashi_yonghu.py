@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 from django.shortcuts import render, redirect, reverse
+=======
+from django.shortcuts import render, redirect,reverse
+>>>>>>> 30db17da3434f47dc14955491f0991283dadec82
 
 # Create your views here.
 from django.http import Http404
@@ -6,6 +10,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
 import jianyue
+<<<<<<< HEAD
 from ..models import yonghu, lifashi, lifadian, fuwu, jiesuandingdan, pingjia
 from django.db.utils import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
@@ -14,13 +19,25 @@ from django.shortcuts import render, get_object_or_404
 """用户与理发师"""
 
 
+=======
+from ..models import yonghu,lifashi,lifadian
+from django.db.utils import IntegrityError
+from django.shortcuts import render,get_object_or_404
+
+"""用户与理发师"""
+>>>>>>> 30db17da3434f47dc14955491f0991283dadec82
 def zhuce(request):
     if request.method == "POST":
         data_getter = request.POST
     elif request.method == "GET":
         data_getter = request.GET
     else:
+<<<<<<< HEAD
         return JsonResponse({"success": 0, "msg": "注册失败"})
+=======
+        return JsonResponse({"success":0,"msg":"注册失败"})
+
+>>>>>>> 30db17da3434f47dc14955491f0991283dadec82
 
     xingming = data_getter.get('xingming')
     mima = data_getter.get('mima')
@@ -30,6 +47,7 @@ def zhuce(request):
     yonghuming = data_getter.get('yonghuming')
     try:
         if shenfen == 'lifashi':
+<<<<<<< HEAD
             lifashi.objects.create(xingming=xingming, yonghuming=yonghuming, mima=mima, lianxidianhua=lianxifangshi,
                                    xingbie=xingbie)
         elif shenfen == 'yonghu':
@@ -44,6 +62,21 @@ def zhuce(request):
 
 def denglu(request):
     if request.method == "POST":
+=======
+            lifashi.objects.create(xingming=xingming,yonghuming=yonghuming,  mima=mima, lianxidianhua=lianxifangshi,
+                                  xingbie=xingbie)
+        elif shenfen == 'yonghu':
+            yonghu.objects.create( xingming=xingming, yonghuming=yonghuming,mima=mima, lianxidianhua=lianxifangshi,
+                                  xingbie=xingbie)
+        else:
+            return JsonResponse({"success":0,"msg":"身份错误"})
+        return JsonResponse({"status":1,"msg":"注册成功"})
+    except IntegrityError:
+        return JsonResponse({"success":0,"msg":"手机号码已注册："+lianxifangshi})
+
+def denglu(request):
+    if request.method =="POST":
+>>>>>>> 30db17da3434f47dc14955491f0991283dadec82
         datagetter = request.POST
     else:
         datagetter = request.GET
@@ -55,6 +88,7 @@ def denglu(request):
     elif shenfen == "yonghu":
         the_shenfen = yonghu
     else:
+<<<<<<< HEAD
         return JsonResponse({'status': 3, 'msg': "身份错误"})
     try:
         this = the_shenfen.objects.get(lianxidianhua=lianxifangshi)
@@ -66,6 +100,19 @@ def denglu(request):
         return JsonResponse({'status': 1, 'msg': "密码错误"})
     else:
         return JsonResponse({'status': 2, 'msg': '登录成功'})
+=======
+        return JsonResponse({'status':3,'msg':"身份错误"})
+    try:
+        this = the_shenfen.objects.get(lianxidianhua=lianxifangshi)
+    except yonghu.DoesNotExist:
+        return JsonResponse({'status':0,'msg':"此用户不存在"})
+    except lifashi.DoesNotExist:
+        return JsonResponse({'status':0,'msg':"此用户不存在"})
+    if this.mima != mima:
+        return JsonResponse({'status':1,'msg':"密码错误"})
+    else:
+        return JsonResponse({'status':2,'msg':'登录成功'})
+>>>>>>> 30db17da3434f47dc14955491f0991283dadec82
 
 
 def xiugai(request):
@@ -74,11 +121,16 @@ def xiugai(request):
     elif request.method == "GET":
         data_getter = request.GET
     else:
+<<<<<<< HEAD
         return JsonResponse({"success": 0, "msg": "访问方法错误"})
+=======
+        return JsonResponse({"success":0,"msg":"访问方法错误"})
+>>>>>>> 30db17da3434f47dc14955491f0991283dadec82
     ziduan = data_getter.get("ziduan")
     lianxifangshi = data_getter.get("lianxifangshi")
     neirong = data_getter.get("neirong")
     the_yonghu = yonghu.objects.filter(lianxidianhua=lianxifangshi)
+<<<<<<< HEAD
     data = {ziduan: neirong}
     try:
         the_yonghu.update(**data)
@@ -163,3 +215,13 @@ def lifashi_detail(request):
             lifashi_pingjia_detail = {'id': i_pingjia.id, "pingfen": i_pingjia.pingfen, "pingjia": i_pingjia.pingjia}
             lifashi_pingjia.append(lifashi_pingjia_detail)
     return JsonResponse({"id": i_lifashi.id, "name": i_lifashi.xingming, 'phone': i_lifashi.lianxidianhua, "fuwu":lifa_fuwu, "lifadian":lifashi_lifadian, "pingjia":lifashi_pingjia})
+=======
+    data = {ziduan:neirong}
+    try:
+        the_yonghu.update(**data)
+    except TypeError:
+        return JsonResponse({"status":0,"msg":"字段错误"})
+    except IntegrityError:
+        return JsonResponse({"status": 2, "msg": "字段内容已被注册"})
+    return JsonResponse({"status":1,"msg":"修改成功"})
+>>>>>>> 30db17da3434f47dc14955491f0991283dadec82

@@ -113,7 +113,13 @@ function xiugai() {
     $.ajaxSettings.async = false;
     var ziduan = window.ziduan
     var neirong = $("#xiugaineirong").val()
+<<<<<<< HEAD
 
+=======
+    alert(ziduan)
+    alert(neirong)
+    alert(isChinaName(neirong))
+>>>>>>> 30db17da3434f47dc14955491f0991283dadec82
     if (ziduan == "shenfenzheng"){
         if (!isCardNo(neirong)){
             alert("格式错误")
@@ -155,6 +161,12 @@ function xiugai() {
               else  if(status != "success"){
                   alert("修改失败")
               }
+<<<<<<< HEAD
+=======
+
+
+
+>>>>>>> 30db17da3434f47dc14955491f0991283dadec82
       });
     $.ajaxSettings.async = true
     return false
