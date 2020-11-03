@@ -40,7 +40,7 @@ class yonghu(models.Model):  # 用户
 
 
 class tupian(models.Model):
-    lifadian = models.ForeignKey(lifadian, on_delete=models.CASCADE)
+    tupianlaiyuan_id = models.CharField(max_length=700)
     src = models.ImageField(upload_to='img/')
     tupianleixing = models.CharField(max_length=1, choices=(('0', '理发店'), ('1', '理发师'),('2','发型')))
 """服务与理发师理发店对应"""

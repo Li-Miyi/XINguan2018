@@ -6,7 +6,7 @@ from django.http import JsonResponse
 from django.utils import timezone
 
 import jianyue
-from ..models import yonghu, lifashi, lifadian, wuzi as wz, jiesuandingdan, pingjia, yuyuedingdan, fuwu,jishiqitadizhi,dingdan
+from ..models import yonghu, lifashi, lifadian, wuzi as wz, jiesuandingdan, pingjia, yuyuedingdan, fuwu,jishiqitadizhi,tupian
 from django.db.utils import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render, get_object_or_404
@@ -222,6 +222,7 @@ def anpai(request, dianzhulianxi):
         lifashis = lifashi.objects.filter(lifadian__dianzhulianxi=dianzhulianxi)
         result = []
         for i in lifashis:
+            kongxian = True
             info = {"id": i.id, "xingming": i.xingming}
             try:
                 the_latest_dingdan = yuyuedingdan.objects.filter(lifashi=i, yuyuekaishi__lt=timezone.now()).latest(
@@ -233,20 +234,22 @@ def anpai(request, dianzhulianxi):
                 if deadline > timezone.now() > the_latest_dingdan.yuyuekaishi:
                     info["zhuangtai"] = "有客"
                     info["shijian"] = deadline
-                else:
-                    info["zhuangtai"] = "空闲"
-                    info["shijian"] = ""
-            except ObjectDoesNotExist:
-                try:
-                    the_earliest_dingdan = \
-                        yuyuedingdan.objects.filter(lifashi=i, yuyuekaishi__gt=timezone.now()).order_by('yuyuekaishi')[
-                            0]
-                    info["zhuangtai"] = "空闲"
+                    kongxian = False
+            except:
+                pass
+            if kongxian:
+                info["zhuangtai"] = "空闲"
+                info["shijian"] = ""
+            try:
+                the_earliest_dingdan = \
+                    yuyuedingdan.objects.filter(lifashi=i, yuyuekaishi__gt=timezone.now()).order_by('yuyuekaishi')[
+                        0]
+                if kongxian:
                     info["shijian"] = the_earliest_dingdan.yuyuekaishi
-                except IndexError:
-                    info["zhuangtai"] = "空闲"
-                    info["shijian"] = ""
+            except IndexError:
+                pass
             result.append(info)
+            print(info)
         return render(request, "jianyue/lifadian/geren/lifashi/anpai.html",
                       context={"data": result, "dianzhulianxi": dianzhulianxi})
 
@@ -267,11 +270,13 @@ def dizhi(request, dianzhulianxi, zhuangtai):
         data.append(info)
     return render(request,template_name=template,context={"data":data,'dianzhulianxi':dianzhulianxi})
 
+
 def dizhi_chexiao(request,dianzhulianxi):
     lifashi_id = request.GET.get('lifashi_id')
 
     jishiqitadizhi.objects.filter(lifashi_id=lifashi_id,lifadian__dianzhulianxi=dianzhulianxi).delete()
     return JsonResponse({"status":"1","msg":"撤销成功"})
+
 
 def dizhi_fankui(request,dianzhulianxi):
     lifashi_id = request.GET.get('lifashi_id')
@@ -286,11 +291,11 @@ def dizhi_fankui(request,dianzhulianxi):
 
 
 def xiangce(request,dianzhulianxi):
+    lifadian_id = lifadian.objects.get(dianzhulianxi=dianzhulianxi).id
     if request.method == "POST":
-        lifadian = request.POST.get("lifadian")
         src = request.FILES.get("src")
-        lifadianTupian.objects.create(lifadian=lifadian,src=src)
-        return render(request, 'app01/index.html', context={"user": user})
+        the = tupian.objects.create(tupianlaiyuan_id=lifadian_id,src=src,tupianleixing='0')
+        return render(request, 'jianyue/lifadian/geren/xiangce/index.html', context={"data": the,"dianzhulianxi":dianzhulianxi})
     else:
-        the_tupians = lifadianTupian.objects.all()
-        return render(request, 'app01/add.html', context={"af": af})
+        the_tupians = tupian.objects.filter(tupianlaiyuan_id=lifadian_id,tupianleixing='0')
+        return render(request, 'jianyue/lifadian/geren/xiangce/index.html', context={"data": the_tupians,"dianzhulianxi":dianzhulianxi})

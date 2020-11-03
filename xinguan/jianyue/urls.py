@@ -16,7 +16,7 @@ urlpatterns = [
     path(r'lifadian/denglu/',view.lifadian.denglu,name = "lifadian_degnluyanzheng"),
     path(r'lifadian/xiugai/',view.lifadian.xiugai,name="lifadian_xiugai"),
     #理发店图片
-    path('lifadian/xiangce/', view.lifadian.xiangce, name='lifadian_tupianzengjia'),
+    path('lifadian/<int:dianzhulianxi>/xiangce/', view.lifadian.xiangce, name='lifadian_xiangce'),
     #理发店个人界面
     path(r'lifadian/<int:dianzhulianxi>/',view.lifadian.geren,name="lifadian_geren"),
     #物资

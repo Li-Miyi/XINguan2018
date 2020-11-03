@@ -124,88 +124,17 @@
             </div>
             <div class="col-xs-10">
                 <br/><br/>
-                        <!-- Modal begin-->
-                        <!--添加-->
-                <div class="modal fade" id="edit" tabindex="-1" role="dialog" aria-labelledby="edit">
-                            <form onsubmit="return xiugai()" target="_blank">
-                                {% csrf_token %}
-                                <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h4 class="modal-title" id="myModalLabel1">修改</h4>
-                                        </div>
-                                        <div class="modal-body">
-                                            <ul>
-                                                <li>
-                                                <li>
-                                                    <label><span>修改为</span></label>
-                                                    <input id="xiugaineirong" type="text" placeholder="修改内容"/>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">取消</button>
-                                            <button type="submit" class="btn btn-primary btn-sm">保存</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                        <!--Modal end-->
-                <table class="table table-bordered table-striped text-center bg-info">
-                    <thead >
-                    <tr class="info">
-                        <th class="text-center">字段名</th>
-                        <th class="text-center">内容</th>
-                        <th class="text-center">操作</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td>店主名</td>
-                        <td>{{ context.dianzhuming }}</td>
-                        <td>
-                            <a href="#" id="dianzhuming" class="xiugai btn btn-primary btn-sm" data-toggle="modal" data-target="#edit">编辑</a>
-                        </td>
-
-                    </tr>
-                    <tr>
-                        <td>身份证</td>
-                        <td>{{ context.shenfenzheng }}</td>
-                        <td>
-                            <a href="#" id="shenfenzheng" class="xiugai btn btn-primary btn-sm" data-toggle="modal" data-target="#edit" data-whatever="编辑">编辑</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>店主电话</td>
-                        <td>{{ context.dianzhulianxi }}</td>
-                        <td>
-                            <a href="#" id="dianzhulianxi" class="xiugai btn btn-primary btn-sm" data-toggle="modal" data-target="#edit" data-whatever="编辑">编辑</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>店名</td>
-                        <td>{{ context.dianming }}</td>
-                        <td>
-                            <a href="#" id="dianming" class="xiugai btn btn-primary btn-sm" data-toggle="modal" data-target="#edit" data-whatever="编辑">编辑</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>地址</td>
-                        <td>{{ context.dizhi }}</td>
-                        <td>
-                            <a href="#" id="dizhi" class="xiugai btn btn-primary btn-sm" data-toggle="modal" data-target="#edit" data-whatever="编辑">编辑</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>密码</td>
-                        <td></td>
-                        <td>
-                            <a href="#" id="mima" class="xiugai btn btn-primary btn-sm" data-toggle="modal" data-target="#edit" data-whatever="编辑">编辑</a>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
+                <form method="post" enctype="multipart/form-data" action="{% url 'jianyue:lifadian_xiangce' dianzhulianxi%}">
+                    {%csrf_token %}
+                    <input name="img" type="file">
+                    <input type="submit" value="OK"/>
+                </form>
+                {% if imgs %}
+                  {% for img in imgs %}
+                  <<<<<<< .mine
+                  <img src="/media/{{ img.img_src }}" alt="{{ img.img_title }}">
+                  {% endfor %}
+                  {% endif %}
             </div>
             <!--右侧内容结束-->
         </div>

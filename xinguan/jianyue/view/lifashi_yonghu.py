@@ -6,7 +6,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
 import jianyue
-from ..models import yonghu, lifashi, lifadian, fuwu, jiesuandingdan, pingjia
+from ..models import yonghu, lifashi, lifadian, fuwu, jiesuandingdan, pingjia,dingdan
 from django.db.utils import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render, get_object_or_404
@@ -139,7 +139,6 @@ def lifashi_detail(request):
     else:
         datagetter = request.GET
     lifashi_id = int(datagetter.get('lifashi_id')[0])
-
     lifa_fuwu = []
     lifa_fuwu_detail = {}
     lifashi_lifadian = []

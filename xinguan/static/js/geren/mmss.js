@@ -89,10 +89,8 @@ $(document).ready(function(){
 $('#anpai').on('show.bs.modal', function (event) {
     var button = $(event.relatedTarget) // Button that triggered the modal
     var lifashi_id = button.data('lifashi_id') // Extract info from data-* attributes
-
     $("#baocun").click(function () {
         str =decodeURIComponent($("#anpai_form").serialize())
-    alert(str)
     data =  getObj(str)
         $.post(".",
             {
@@ -108,6 +106,7 @@ $('#anpai').on('show.bs.modal', function (event) {
             function (data,status) {
                 alert(data["msg"])
                 if (data.status==1){
+                    $(":contains('取消')").click()
                     parent.location.reload()
                 }
             }
