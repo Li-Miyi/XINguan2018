@@ -27,11 +27,23 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="cb4d10d4-666a-4627-9e3d-f7902544253d" name="Default Changelist" comment="数据库">
+<<<<<<< HEAD
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/jianyue/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/jianyue/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/jianyue/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/jianyue/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/jianyue/view/lifadian.py" beforeDir="false" afterPath="$PROJECT_DIR$/jianyue/view/lifadian.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/mysite/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/mysite/settings.py" afterDir="false" />
+=======
+      <change afterPath="$PROJECT_DIR$/jianyue/view/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jianyue/view/lifadian.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jianyue/view/lifashi_yonghu.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jianyue/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/jianyue/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jianyue/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/jianyue/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jianyue/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/jianyue/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/js/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/jianyue/lifadian/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/jianyue/lifadian/index.html" afterDir="false" />
+>>>>>>> 30db17da3434f47dc14955491f0991283dadec82
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,8 +56,13 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+<<<<<<< HEAD
         <option value="Python Script" />
         <option value="HTML File" />
+=======
+        <option value="HTML File" />
+        <option value="Python Script" />
+>>>>>>> 30db17da3434f47dc14955491f0991283dadec82
       </list>
     </option>
   </component>
@@ -81,6 +98,7 @@
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_package_manager_path" value="npm" />
+<<<<<<< HEAD
     <property name="settings.editor.selected.configurable" value="reference.idesettings.debugger.python" />
   </component>
   <component name="PyDebuggerOptionsProvider">
@@ -94,14 +112,31 @@
       <recent name="F:\大三下学期\信管项目\XINguan2018\xinguan\static\js\geren" />
       <recent name="F:\大三下学期\信管项目\XINguan2018\xinguan\static" />
     </key>
+=======
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+  </component>
+  <component name="RecentsManager">
+>>>>>>> 30db17da3434f47dc14955491f0991283dadec82
     <key name="CopyFile.RECENT_KEYS">
       <recent name="F:\大三下学期\信管项目\XINguan2018\xinguan\templates" />
       <recent name="F:\大三下学期\信管项目\XINguan2018\xinguan\jianyue\migrations" />
       <recent name="F:\大三下学期\信管项目\XINguan2018\xinguan\jianyue" />
       <recent name="F:\大三下学期\信管项目\XINguan2018\mysite\jianyue" />
     </key>
+<<<<<<< HEAD
   </component>
   <component name="RunManager" selected="Python.DecisionTree">
+=======
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="F:\大三下学期\信管项目\XINguan2018\xinguan\templates\jianyue\lifadian\geren\wuzi" />
+      <recent name="F:\大三下学期\信管项目\XINguan2018\xinguan\jianyue" />
+      <recent name="F:\大三下学期\信管项目\XINguan2018\xinguan\static\js\geren" />
+      <recent name="F:\大三下学期\信管项目\XINguan2018\xinguan\static" />
+      <recent name="F:\大三下学期\信管项目\XINguan2018\xinguan\static\image" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Django Server.xinguan">
+>>>>>>> 30db17da3434f47dc14955491f0991283dadec82
     <configuration default="true" type="DjangoTestsConfigurationType">
       <module name="xinguan" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -122,6 +157,7 @@
       <option name="OPTIONS" value="" />
       <method v="2" />
     </configuration>
+<<<<<<< HEAD
     <configuration name="DecisionTree" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="xinguan" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -166,6 +202,8 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+=======
+>>>>>>> 30db17da3434f47dc14955491f0991283dadec82
     <configuration name="debug" type="PythonConfigurationType" factoryName="Python">
       <module name="xinguan" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -188,6 +226,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+<<<<<<< HEAD
     <configuration name="fuck" type="PythonConfigurationType" factoryName="Python">
       <module name="xinguan" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -210,6 +249,8 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+=======
+>>>>>>> 30db17da3434f47dc14955491f0991283dadec82
     <configuration name="manage" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="mysite" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -328,6 +369,7 @@
     <list>
       <item itemvalue="Django Server.mysite" />
       <item itemvalue="Django Server.xinguan" />
+<<<<<<< HEAD
       <item itemvalue="Python.Unnamed" />
       <item itemvalue="Python.debug" />
       <item itemvalue="Python.fuck" />
@@ -338,6 +380,14 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python.DecisionTree" />
+=======
+      <item itemvalue="Python.debug" />
+      <item itemvalue="Python.manage" />
+      <item itemvalue="Python.urls" />
+    </list>
+    <recent_temporary>
+      <list>
+>>>>>>> 30db17da3434f47dc14955491f0991283dadec82
         <item itemvalue="Python.manage" />
         <item itemvalue="Python.urls" />
       </list>
@@ -402,6 +452,7 @@
       <workItem from="1603693603252" duration="28131000" />
       <workItem from="1603728336841" duration="134000" />
       <workItem from="1603731524987" duration="4830000" />
+<<<<<<< HEAD
       <workItem from="1603756694978" duration="14364000" />
       <workItem from="1603862504001" duration="43000" />
       <workItem from="1603872909756" duration="1263000" />
@@ -420,6 +471,9 @@
       <workItem from="1604262187929" duration="115000" />
       <workItem from="1604355931048" duration="3665000" />
       <workItem from="1604382073324" duration="1183000" />
+=======
+      <workItem from="1603756694978" duration="5271000" />
+>>>>>>> 30db17da3434f47dc14955491f0991283dadec82
     </task>
     <task id="LOCAL-00001" summary="数据库">
       <created>1601145725247</created>
@@ -525,10 +579,17 @@
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="271" y="107" key="#Deployment/0.0.1536.824@0.0.1536.824" timestamp="1601145674393" />
+<<<<<<< HEAD
     <state x="48" y="146" width="1005" height="601" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1604261418004">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="48" y="146" width="1005" height="601" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1536.824@0.0.1536.824" timestamp="1604261418004" />
+=======
+    <state x="129" y="131" width="1005" height="690" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1603178053342">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="129" y="131" width="1005" height="690" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1536.824@0.0.1536.824" timestamp="1603178053342" />
+>>>>>>> 30db17da3434f47dc14955491f0991283dadec82
     <state x="192" y="304" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1603040663352">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
@@ -545,6 +606,7 @@
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="57" y="101" key="DiffContextDialog/0.0.1536.824@0.0.1536.824" timestamp="1601145643708" />
+<<<<<<< HEAD
     <state x="482" y="32" width="288" height="594" key="EnvironmentVariablesDialog" timestamp="1604261395627">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
@@ -605,6 +667,64 @@
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="0" y="56" key="SettingsEditor/0.0.1536.824@0.0.1536.824" timestamp="1604262288017" />
+=======
+    <state x="572" y="155" width="438" height="501" key="FileChooserDialogImpl" timestamp="1603725444643">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="572" y="155" width="438" height="501" key="FileChooserDialogImpl/0.0.1536.824@0.0.1536.824" timestamp="1603725444643" />
+    <state width="1493" height="211" key="GridCell.Tab.0.bottom" timestamp="1603762039902">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="211" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1603762039902" />
+    <state width="1493" height="211" key="GridCell.Tab.0.center" timestamp="1603762039902">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="211" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1603762039902" />
+    <state width="1493" height="211" key="GridCell.Tab.0.left" timestamp="1603762039901">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="211" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1603762039901" />
+    <state width="1493" height="211" key="GridCell.Tab.0.right" timestamp="1603762039902">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="211" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1603762039902" />
+    <state width="1159" height="123" key="GridCell.Tab.1.bottom" timestamp="1603583042203">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1159" height="123" key="GridCell.Tab.1.bottom/0.0.1536.824@0.0.1536.824" timestamp="1603583042203" />
+    <state width="1159" height="123" key="GridCell.Tab.1.center" timestamp="1603583042203">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1159" height="123" key="GridCell.Tab.1.center/0.0.1536.824@0.0.1536.824" timestamp="1603583042203" />
+    <state width="1159" height="123" key="GridCell.Tab.1.left" timestamp="1603583042202">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1159" height="123" key="GridCell.Tab.1.left/0.0.1536.824@0.0.1536.824" timestamp="1603583042202" />
+    <state width="1159" height="123" key="GridCell.Tab.1.right" timestamp="1603583042203">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1159" height="123" key="GridCell.Tab.1.right/0.0.1536.824@0.0.1536.824" timestamp="1603583042203" />
+    <state width="743" height="357" key="GridCell.Tab.2.bottom" timestamp="1602750964237">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="743" height="357" key="GridCell.Tab.2.bottom/0.0.1536.824@0.0.1536.824" timestamp="1602750964237" />
+    <state width="743" height="357" key="GridCell.Tab.2.center" timestamp="1602750964237">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="743" height="357" key="GridCell.Tab.2.center/0.0.1536.824@0.0.1536.824" timestamp="1602750964237" />
+    <state width="743" height="357" key="GridCell.Tab.2.left" timestamp="1602750964237">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="743" height="357" key="GridCell.Tab.2.left/0.0.1536.824@0.0.1536.824" timestamp="1602750964237" />
+    <state width="743" height="357" key="GridCell.Tab.2.right" timestamp="1602750964237">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="743" height="357" key="GridCell.Tab.2.right/0.0.1536.824@0.0.1536.824" timestamp="1602750964237" />
+    <state x="300" y="113" key="SettingsEditor" timestamp="1602573209095">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="300" y="113" key="SettingsEditor/0.0.1536.824@0.0.1536.824" timestamp="1602573209095" />
+>>>>>>> 30db17da3434f47dc14955491f0991283dadec82
     <state x="614" y="319" key="VCS.ChangelistChooser" timestamp="1602489670969">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
@@ -621,10 +741,13 @@
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="563" y="325" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1536.824@0.0.1536.824" timestamp="1601145995917" />
+<<<<<<< HEAD
     <state x="425" y="109" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1604089496914">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="425" y="109" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.0.1536.824@0.0.1536.824" timestamp="1604089496914" />
+=======
+>>>>>>> 30db17da3434f47dc14955491f0991283dadec82
     <state x="431" y="145" width="672" height="678" key="search.everywhere.popup" timestamp="1603735928548">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
@@ -633,23 +756,36 @@
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
+<<<<<<< HEAD
         <line-breakpoint type="javascript">
+=======
+        <line-breakpoint enabled="true" type="javascript">
+>>>>>>> 30db17da3434f47dc14955491f0991283dadec82
           <url>file://$PROJECT_DIR$/static/js/index.js</url>
           <line>54</line>
           <option name="timeStamp" value="21" />
         </line-breakpoint>
+<<<<<<< HEAD
         <line-breakpoint type="javascript">
+=======
+        <line-breakpoint enabled="true" type="javascript">
+>>>>>>> 30db17da3434f47dc14955491f0991283dadec82
           <url>file://$PROJECT_DIR$/static/js/index.js</url>
           <line>41</line>
           <option name="timeStamp" value="22" />
         </line-breakpoint>
+<<<<<<< HEAD
         <line-breakpoint suspend="THREAD" type="python-line">
+=======
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+>>>>>>> 30db17da3434f47dc14955491f0991283dadec82
           <url>file://$PROJECT_DIR$/jianyue/views.py</url>
           <line>20</line>
           <option name="timeStamp" value="24" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/jianyue/view/lifadian.py</url>
+<<<<<<< HEAD
           <line>163</line>
           <option name="timeStamp" value="38" />
         </line-breakpoint>
@@ -668,6 +804,22 @@
     <SUITE FILE_PATH="coverage/xinguan$DecisionTree.coverage" NAME="DecisionTree Coverage Results" MODIFIED="1604261748570" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../../../../python_work/机器学习课/决策树" />
     <SUITE FILE_PATH="coverage/xinguan$urls.coverage" NAME="urls Coverage Results" MODIFIED="1602570588838" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/jianyue" />
     <SUITE FILE_PATH="coverage/xinguan$debug.coverage" NAME="debug Coverage Results" MODIFIED="1604089124007" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+=======
+          <line>86</line>
+          <option name="timeStamp" value="29" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/jianyue/view/lifadian.py</url>
+          <line>43</line>
+          <option name="timeStamp" value="33" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/xinguan$urls.coverage" NAME="urls Coverage Results" MODIFIED="1602570588838" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/jianyue" />
+    <SUITE FILE_PATH="coverage/xinguan$debug.coverage" NAME="debug Coverage Results" MODIFIED="1602727693361" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+>>>>>>> 30db17da3434f47dc14955491f0991283dadec82
     <SUITE FILE_PATH="coverage/xinguan$manage.coverage" NAME="manage Coverage Results" MODIFIED="1602570913612" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
