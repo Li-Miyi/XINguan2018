@@ -9,14 +9,14 @@ urlpatterns = [
     path(r'denglu/',view.lifashi_yonghu.denglu,name="YonghuLifashidenglu"),
     path(r"xiugai/",view.lifashi_yonghu.xiugai,name="YonghuLifashixiugai"),
     path(r'liebiao/',view.lifashi_yonghu.liebiao,name="YonghuLifashiliebiao"),
-    path(r'lifashidetail/',view.lifashi_yonghu.lifashi_detail,name="YonghuLifashidetail"),
+    path(r'lifashidetail/', view.lifashi_yonghu.lifashi_detail, name="YonghuLifashidetail"),
     #理发店管理操作
     path(r'lifadian/',view.lifadian.shouye,name = "lifadian_shouye"),
     path(r'lifadian/zhuce/',view.lifadian.zhuce,name = "lifadian_zhuceyanzheng"),
     path(r'lifadian/denglu/',view.lifadian.denglu,name = "lifadian_degnluyanzheng"),
     path(r'lifadian/xiugai/',view.lifadian.xiugai,name="lifadian_xiugai"),
     #理发店图片
-    path('lifadian/xiangze/', view.lifadian.xiangce, name='lifadian_tupianzengjia'),
+    path('lifadian/xiangce/', view.lifadian.xiangce, name='lifadian_tupianzengjia'),
     #理发店个人界面
     path(r'lifadian/<int:dianzhulianxi>/',view.lifadian.geren,name="lifadian_geren"),
     #物资
