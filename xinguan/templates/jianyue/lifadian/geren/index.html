@@ -109,6 +109,21 @@
                             </ul>
                         </div>
                     </div>
+                    <div class="panel panel-default menu-first">
+                        <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseFour"
+                           aria-expanded="false" aria-controls="collapseThree">
+                            <i class="icon-book icon-large"></i> 相册
+                        </a>
+
+                        <div id="collapseFour" class="panel-collapse collapse">
+                            <ul class="nav nav-list menu-second">
+                                <li><a href="{% url 'jianyue:lifadian_xiangce' context.dianzhulianxi%}"><i class="icon-user"></i>相册</a></li>
+                                <li><a href="{% url 'jianyue:lifadian_xiangce' context.dianzhulianxi %}"><i class="icon-edit"></i>添加图片</a></li>
+                                <li><a href="#"><i class="icon-trash"></i> 子选项3</a></li>
+                                <li><a href="#"><i class="icon-list"></i> 子选项4</a></li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
             <!--左侧导航结束-->
@@ -124,17 +139,88 @@
             </div>
             <div class="col-xs-10">
                 <br/><br/>
-                <form method="post" enctype="multipart/form-data" action="{% url 'jianyue:lifadian_xiangce' dianzhulianxi%}">
-                    {%csrf_token %}
-                    <input name="img" type="file">
-                    <input type="submit" value="OK"/>
-                </form>
-                {% if imgs %}
-                  {% for img in imgs %}
-                  <<<<<<< .mine
-                  <img src="/media/{{ img.img_src }}" alt="{{ img.img_title }}">
-                  {% endfor %}
-                  {% endif %}
+                        <!-- Modal begin-->
+                        <!--添加-->
+                <div class="modal fade" id="edit" tabindex="-1" role="dialog" aria-labelledby="edit">
+                            <form onsubmit="return xiugai()" target="_blank">
+                                {% csrf_token %}
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title" id="myModalLabel1">修改</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <ul>
+                                                <li>
+                                                <li>
+                                                    <label><span>修改为</span></label>
+                                                    <input id="xiugaineirong" type="text" placeholder="修改内容"/>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">取消</button>
+                                            <button type="submit" class="btn btn-primary btn-sm">保存</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <!--Modal end-->
+                <table class="table table-bordered table-striped text-center bg-info">
+                    <thead >
+                    <tr class="info">
+                        <th class="text-center">字段名</th>
+                        <th class="text-center">内容</th>
+                        <th class="text-center">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>店主名</td>
+                        <td>{{ context.dianzhuming }}</td>
+                        <td>
+                            <a href="#" id="dianzhuming" class="xiugai btn btn-primary btn-sm" data-toggle="modal" data-target="#edit">编辑</a>
+                        </td>
+
+                    </tr>
+                    <tr>
+                        <td>身份证</td>
+                        <td>{{ context.shenfenzheng }}</td>
+                        <td>
+                            <a href="#" id="shenfenzheng" class="xiugai btn btn-primary btn-sm" data-toggle="modal" data-target="#edit" data-whatever="编辑">编辑</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>店主电话</td>
+                        <td>{{ context.dianzhulianxi }}</td>
+                        <td>
+                            <a href="#" id="dianzhulianxi" class="xiugai btn btn-primary btn-sm" data-toggle="modal" data-target="#edit" data-whatever="编辑">编辑</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>店名</td>
+                        <td>{{ context.dianming }}</td>
+                        <td>
+                            <a href="#" id="dianming" class="xiugai btn btn-primary btn-sm" data-toggle="modal" data-target="#edit" data-whatever="编辑">编辑</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>地址</td>
+                        <td>{{ context.dizhi }}</td>
+                        <td>
+                            <a href="#" id="dizhi" class="xiugai btn btn-primary btn-sm" data-toggle="modal" data-target="#edit" data-whatever="编辑">编辑</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>密码</td>
+                        <td></td>
+                        <td>
+                            <a href="#" id="mima" class="xiugai btn btn-primary btn-sm" data-toggle="modal" data-target="#edit" data-whatever="编辑">编辑</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
             <!--右侧内容结束-->
         </div>

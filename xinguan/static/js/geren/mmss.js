@@ -83,6 +83,24 @@ $(document).ready(function(){
             }
        )
     })
+
+    $(".tupianshanchu").click(function() {
+        the = $(this)
+            file_name = the.prev("figure").find("img").attr("src").replace("/media/","")
+            $.post(".",
+            {
+                "filename":file_name,
+                "shanchu":'1',
+                "csrfmiddlewaretoken":$('[name="csrfmiddlewaretoken"]').val(),
+            },
+            function (data,status) {
+                if(data["status"] == "2"){
+                    the.hide()
+                    the.prev().hide()
+                }
+            }
+       )
+    })
 });
 
 
@@ -112,8 +130,8 @@ $('#anpai').on('show.bs.modal', function (event) {
             }
        )
     })
-
     })
+
 function getObj(str) {
 			let arr = str.split('&');
 			let obj = {};

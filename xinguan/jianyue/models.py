@@ -38,10 +38,14 @@ class yonghu(models.Model):  # 用户
     xingbie = models.CharField(max_length=1, choices=(('1', '男'), ('0', '女')))
     lianxidianhua = models.CharField(max_length=30, unique=True)
 
+def upload_to(instance,filename):
+    tupianlianyuan_id = instance.tupianlaiyuan_id
+    tupianleixing = ["lifadian","lifashi","faxing"][int(instance.tupianleixing)]
+    return '/'.join([tupianleixing,str(tupianlianyuan_id),filename])
 
 class tupian(models.Model):
     tupianlaiyuan_id = models.CharField(max_length=700)
-    src = models.ImageField(upload_to='img/')
+    src = models.ImageField(upload_to=upload_to)
     tupianleixing = models.CharField(max_length=1, choices=(('0', '理发店'), ('1', '理发师'),('2','发型')))
 """服务与理发师理发店对应"""
 
@@ -58,6 +62,7 @@ class fuwu(models.Model):
 
 class faxing(models.Model):  # 发型
     lifashi = models.ForeignKey(lifashi, on_delete=models.CASCADE)
+    faxingming = models.CharField(max_length=30)
     leixing = models.CharField(max_length=1, choices=(('1', '短发'), ('2', '烫发'), ('3', '长发'), ('4', '染发')))
     beizhu = models.CharField(max_length=700)
 
@@ -94,3 +99,4 @@ class jishiqitadizhi(models.Model):  # 理发师与地址的即时关系
     zhuangtai = models.CharField(max_length=1, choices=(('1', '已批准'), ('0','未批准')))
     class Meta:
         unique_together = ('lifadian', 'lifashi')
+

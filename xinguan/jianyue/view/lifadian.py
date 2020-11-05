@@ -4,12 +4,15 @@ from django.shortcuts import render, redirect, reverse
 from django.http import Http404
 from django.http import JsonResponse
 from django.utils import timezone
-
+import os
 import jianyue
-from ..models import yonghu, lifashi, lifadian, wuzi as wz, jiesuandingdan, pingjia, yuyuedingdan, fuwu,jishiqitadizhi,tupian
+from mysite.settings import MEDIA_ROOT
+from ..models import yonghu, lifashi, lifadian, wuzi as wz, jiesuandingdan, pingjia, yuyuedingdan, fuwu, jishiqitadizhi, \
+    tupian
 from django.db.utils import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render, get_object_or_404
+import re
 import re
 
 """理发店"""
@@ -255,7 +258,7 @@ def anpai(request, dianzhulianxi):
 
 
 def dizhi(request, dianzhulianxi, zhuangtai):
-    data =[]
+    data = []
     if zhuangtai == "yipizhun":
         zhuangtai_ = '1'
         template = "jianyue/lifadian/geren/dizhi/index.html"
@@ -264,38 +267,50 @@ def dizhi(request, dianzhulianxi, zhuangtai):
         template = "jianyue/lifadian/geren/dizhi/weipizhun.html"
     else:
         return Http404("请不要乱输入网址")
-    for i_dizhi  in jishiqitadizhi.objects.filter(lifadian__dianzhulianxi=dianzhulianxi,zhuangtai=zhuangtai_):
+    for i_dizhi in jishiqitadizhi.objects.filter(lifadian__dianzhulianxi=dianzhulianxi, zhuangtai=zhuangtai_):
         the_lifashi = i_dizhi.lifashi
-        info = {'id':the_lifashi.id,'xingming':the_lifashi.xingming,"lifadian":the_lifashi.lifadian.id,"shenqingshijian":i_dizhi.shenqingshijian}
+        info = {'id': the_lifashi.id, 'xingming': the_lifashi.xingming, "lifadian": the_lifashi.lifadian.id,
+                "shenqingshijian": i_dizhi.shenqingshijian}
         data.append(info)
-    return render(request,template_name=template,context={"data":data,'dianzhulianxi':dianzhulianxi})
+    return render(request, template_name=template, context={"data": data, 'dianzhulianxi': dianzhulianxi})
 
 
-def dizhi_chexiao(request,dianzhulianxi):
+def dizhi_chexiao(request, dianzhulianxi):
     lifashi_id = request.GET.get('lifashi_id')
 
-    jishiqitadizhi.objects.filter(lifashi_id=lifashi_id,lifadian__dianzhulianxi=dianzhulianxi).delete()
-    return JsonResponse({"status":"1","msg":"撤销成功"})
+    jishiqitadizhi.objects.filter(lifashi_id=lifashi_id, lifadian__dianzhulianxi=dianzhulianxi).delete()
+    return JsonResponse({"status": "1", "msg": "撤销成功"})
 
 
-def dizhi_fankui(request,dianzhulianxi):
+def dizhi_fankui(request, dianzhulianxi):
     lifashi_id = request.GET.get('lifashi_id')
     fankui = request.GET.get('fankui')
-    if fankui== "jieshou":
-        jishiqitadizhi.objects.filter(lifashi_id=lifashi_id, lifadian__dianzhulianxi=dianzhulianxi).update(zhuangtai="1")
-    elif fankui =="jujue":
+    if fankui == "jieshou":
+        jishiqitadizhi.objects.filter(lifashi_id=lifashi_id, lifadian__dianzhulianxi=dianzhulianxi).update(
+            zhuangtai="1")
+    elif fankui == "jujue":
         jishiqitadizhi.objects.filter(lifashi_id=lifashi_id, lifadian__dianzhulianxi=dianzhulianxi).delete()
     else:
         return JsonResponse({'status': 0, "msg": "操作失败"})
-    return JsonResponse({'status':1,"msg":"操作成功"})
+    return JsonResponse({'status': 1, "msg": "操作成功"})
 
 
-def xiangce(request,dianzhulianxi):
+def xiangce(request, dianzhulianxi):
     lifadian_id = lifadian.objects.get(dianzhulianxi=dianzhulianxi).id
+
     if request.method == "POST":
-        src = request.FILES.get("src")
-        the = tupian.objects.create(tupianlaiyuan_id=lifadian_id,src=src,tupianleixing='0')
-        return render(request, 'jianyue/lifadian/geren/xiangce/index.html', context={"data": the,"dianzhulianxi":dianzhulianxi})
+        shanchu = request.POST.get("shanchu")
+        if shanchu == '1':
+            file_name = request.POST.get("filename")
+            tupian.objects.get(tupianlaiyuan_id=lifadian_id ,src=file_name, tupianleixing='0').delete()
+            file_full_path = os.path.join(MEDIA_ROOT, file_name)
+            os.remove(file_full_path)
+            return JsonResponse({"status":"2","msg":"删除成功"})
+        else:
+            src = request.FILES.get("src")
+            the_tupian = tupian.objects.create(tupianlaiyuan_id=lifadian_id, src=src,tupianleixing='0')
+            return JsonResponse({"status":"1","msg":the_tupian.src.name})
     else:
-        the_tupians = tupian.objects.filter(tupianlaiyuan_id=lifadian_id,tupianleixing='0')
-        return render(request, 'jianyue/lifadian/geren/xiangce/index.html', context={"data": the_tupians,"dianzhulianxi":dianzhulianxi})
+        the_tupians = tupian.objects.filter(tupianlaiyuan_id=lifadian_id, tupianleixing='0')
+        return render(request, 'jianyue/lifadian/geren/xiangce/index.html',
+                      context={"imgs": the_tupians, "dianzhulianxi": dianzhulianxi})
