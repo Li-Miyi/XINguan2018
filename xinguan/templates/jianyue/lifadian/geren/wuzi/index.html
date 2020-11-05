@@ -8,6 +8,7 @@
     <title>剪约理发店管理系统</title>
     <link href="/static/css/bootstrap.css" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/mmss.css"/>
+    <link rel="stylesheet" href="/static/css/backgroud.css"/>
     <link rel="stylesheet" href="/static/css/font-awesome.min.css"/>
     <!--[if lt IE 9]>
     <script src="/static/js/geren/html5shiv.min.js"></script>
@@ -16,6 +17,7 @@
 
 </head>
 <body>
+<canvas id="canvas"  style= "position:absolute;z-index:-2;">Canvas not supported.</canvas>
 <header>
     <div class="container-fluid navbar-fixed-top bg-primary">
         <ul class="nav navbar-nav  left">
@@ -100,6 +102,21 @@
                             <ul class="nav nav-list menu-second">
                                 <li><a href="{% url 'jianyue:dizhi' dianzhulianxi 'yipizhun' %}"><i class="icon-user"></i>已批准</a></li>
                                 <li><a href="{% url 'jianyue:dizhi' dianzhulianxi 'weipizhun' %}"><i class="icon-edit"></i>待批准</a></li>
+                                <li><a href="#"><i class="icon-trash"></i> 子选项3</a></li>
+                                <li><a href="#"><i class="icon-list"></i> 子选项4</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="panel panel-default menu-first">
+                        <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseFour"
+                           aria-expanded="false" aria-controls="collapseThree">
+                            <i class="icon-book icon-large"></i> 相册
+                        </a>
+
+                        <div id="collapseFour" class="panel-collapse collapse">
+                            <ul class="nav nav-list menu-second">
+                                <li><a href="{% url 'jianyue:lifadian_xiangce' dianzhulianxi%}"><i class="icon-user"></i>相册</a></li>
+                                <li><a href="{% url 'jianyue:lifadian_xiangce' dianzhulianxi %}"><i class="icon-edit"></i>添加图片</a></li>
                                 <li><a href="#"><i class="icon-trash"></i> 子选项3</a></li>
                                 <li><a href="#"><i class="icon-list"></i> 子选项4</a></li>
                             </ul>
@@ -199,6 +216,7 @@
 
 <script src="/static/js/geren/jquery-1.11.3.js"></script>
 <script src="/static/js/geren/mmss.js"></script>
+<script src="/static/js/geren/script.js"></script>
 <script src="/static/js/geren/bootstrap.js"></script>
 <script>
 

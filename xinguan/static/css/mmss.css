@@ -3,13 +3,12 @@
     margin: 0;
     padding: 0;
 }
-body{
-    background-image:url("../image/bg-login.jpg");
-    background-repeat: repeat-y;
-    background-size: 100%;
-}
 .text-white {
     color: #fff;
+}
+h1.biaoti{
+    color: rgba(47, 179, 212, 0.6);
+    text-align: left;
 }
 .center {
     margin: 0 auto;
@@ -225,4 +224,7 @@ transition: all 0.5s;
 margin-top: 50px;
 font-weight: 400;
   color: #f5f1f1;
+}
+.shodowback{
+    box-shadow: 1px 10px 30px -10px rgba(0,0,0,0.5);
 }
