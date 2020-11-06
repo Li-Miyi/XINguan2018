@@ -28,7 +28,7 @@
 
     var ctx = canvas.getContext('2d');
     var X = canvas.width = window.innerWidth;
-    var Y = canvas.height = window.innerHeight;
+    var Y = canvas.height = document.body.offsetHeight>window.innerHeight?document.body.offsetHeight:window.innerHeight;
     var shapes = [];
     var rad = Math.PI * 2 / 36;
     var style = {
@@ -270,7 +270,7 @@
     
     function onResize() {
       X = canvas.width = window.innerWidth;
-      Y = canvas.height = window.innerHeight;
+      Y = canvas.height = document.body.offsetHeight>window.innerHeight?document.body.offsetHeight:window.innerHeight;
     }
 
     window.addEventListener('resize', function() {

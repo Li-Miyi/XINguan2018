@@ -6,10 +6,7 @@
 .text-white {
     color: #fff;
 }
-h1.biaoti{
-    color: rgba(47, 179, 212, 0.6);
-    text-align: left;
-}
+
 .center {
     margin: 0 auto;
 }
@@ -209,7 +206,6 @@ transition: all 0.5s;
 }
 
 #wuzizengjia  input {
-
     text-align: left;
       padding: 15px 5px;
     margin-left: 20px;
@@ -218,13 +214,14 @@ transition: all 0.5s;
     border: none;
         color: #757575;
 }
-
-
-#wuzizengjia  h2 {
-margin-top: 50px;
-font-weight: 400;
-  color: #f5f1f1;
+.biaoti{
+    color: rgb(107, 140, 252);
+    text-align: left;
+    FONT-FAMILY: YouYuan, 幼圆, 'Microsoft Yahei', '微软雅黑', Arial, sans-serif;
+    font-weight: 900;
 }
-.shodowback{
+
+.shadowbackground{
     box-shadow: 1px 10px 30px -10px rgba(0,0,0,0.5);
+    transition: all 0.5s;
 }

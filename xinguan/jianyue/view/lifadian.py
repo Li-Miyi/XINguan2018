@@ -175,7 +175,6 @@ def jixiao(request, dianzhulianxi):
         pingfen = 0
         pingfen_count = 0
         for j in list(dingdans.all()):
-            print(j)
             xiaofei += j.shijifeiyong
             try:
                 the_pingjia = pingjia.objects.get(dingdan=j)
@@ -186,7 +185,6 @@ def jixiao(request, dianzhulianxi):
         data['id'] = i.id
         data['xiaofei'] = xiaofei
         data['zongheping'] = pingfen / pingfen_count if pingfen_count != 0 else 0
-        print(data)
         result.append(data)
     return render(request, "jianyue/lifadian/geren/lifashi/jixiao.html",
                   context={'data': result, 'dianzhulianxi': dianzhulianxi})
@@ -252,7 +250,6 @@ def anpai(request, dianzhulianxi):
             except IndexError:
                 pass
             result.append(info)
-            print(info)
         return render(request, "jianyue/lifadian/geren/lifashi/anpai.html",
                       context={"data": result, "dianzhulianxi": dianzhulianxi})
 

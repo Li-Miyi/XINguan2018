@@ -143,21 +143,16 @@
             <!--右侧内容开始-->
             <div class="col-xs-10">
                 <br/>
-                <ol class="breadcrumb">
-                    <li class="active"><span class="glyphicon glyphicon-home"></span>&nbsp;后台首页</li>
-                </ol>
-                <!----------------------------------------------------------    ------------------------------------------->
-            </div>
-            <div class="col-xs-10">
-                <br/><br/>
+                    <h1 class="biaoti">图片管理</h1>
+                <br/>
 
-                <form enctype="multipart/form-data" class="shodowback site-header container" style="background-color: rgba(0,0,0,0.5)">
+                <form enctype="multipart/form-data" class="shadowbackground site-header container">
                     {% csrf_token %}
-                    <h3>可将图片拖拽到下框中上传</h3>
+                    <h3 class="biaoti">可将图片拖拽到下框中上传</h3>
                     <div id="drop_area"></div>
                 </form>
-                <section class="shodowback site-header container" style="background-color: rgba(1,1,1,0.5)">
-                    <h1>相册</h1>
+                <section class="shadowbackground site-header container">
+                    <h1 class="biaoti">相册</h1>
                     <div class="ma5-gallery" style="width: 1200px">
                         {% if imgs %}
                         {% for img in imgs %}
@@ -201,10 +196,10 @@
                 processData: false,
                 success: function (res) {
                     if (res["status"] == "1") {
-                        $("div.ma5-gallery").append("<figure class=\"gallery-item ma5-lightbox\">\n" +
+                        $("div.ma5-gallery").append("<figure class=\"gallery-item ma5-lightbox gallery-item\">\n" +
                             "                            <img src=/media/" + res.msg + ">\n" +
                             "                        </figure>" +
-                            "<a  class=\"btn btn-primary btn-sm tupianshanchu\" style=\"position: relative;left: -46px;\">删除</a>")
+                            "<a  class=\"btn btn-primary btn-sm tupianshanchu\" style=\"position: relative;left: -46px;\">删除</a>")[0].reload()
                     }
         }
     })

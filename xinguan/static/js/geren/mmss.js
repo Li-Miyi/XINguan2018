@@ -84,7 +84,7 @@ $(document).ready(function(){
        )
     })
 
-    $(".tupianshanchu").click(function() {
+    $("body").on("click",".tupianshanchu", function() {
         the = $(this)
             file_name = the.prev("figure").find("img").attr("src").replace("/media/","")
             $.post(".",
