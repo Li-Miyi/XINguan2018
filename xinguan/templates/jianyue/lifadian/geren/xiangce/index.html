@@ -174,7 +174,7 @@
 </footer>
 <script src="/static/js/geren/jquery-1.11.3.js"></script>
 <script src="/static/js/geren/bootstrap.js"></script>
-<script src="/static/js/geren/ma5gallery.js"></script>
+<script id="back" src="/static/js/geren/ma5gallery.js"></script>
 <script src="/static/js/geren/functions.js"></script>
 <script src="/static/js/geren/upload.js"></script>
 <script src="/static/js/geren/mmss.js"></script>
@@ -199,7 +199,7 @@
                         $("div.ma5-gallery").append("<figure class=\"gallery-item ma5-lightbox gallery-item\">\n" +
                             "                            <img src=/media/" + res.msg + ">\n" +
                             "                        </figure>" +
-                            "<a  class=\"btn btn-primary btn-sm tupianshanchu\" style=\"position: relative;left: -46px;\">删除</a>")[0].reload()
+                            "<a  class=\"btn btn-primary btn-sm tupianshanchu\" style=\"position: relative;left: -46px;\">删除</a>");
                     }
         }
     })

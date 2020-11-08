@@ -106,7 +106,9 @@ def liebiao(request):
                 i_lifashi_count += 1
                 i_lifashi_total_jiage += i_jiesuan.shijifeiyong
                 try:
-                    i_lifashi_total_pingfen += pingjia.objects.get(dingdan=i_jiesuan).pingfen
+                    for i_pingjia in pingjia.objects.filter(dingdan=i_jiesuan):
+                        i_lifashi_total_pingfen += i_pingjia.pingfen
+
                 except ObjectDoesNotExist:
                     i_lifashi_total_pingfen += 5
             try:

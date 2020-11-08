@@ -77,8 +77,8 @@ class dingdan(models.Model):
 
 class yuyuedingdan(dingdan):
     yuyuekaishi = models.DateTimeField()
-    yuyuexiaohao = models.TimeField()
-    gujifeiyong = models.FloatField()
+    yuyuexiaohao = models.TimeField(null=True)
+    yijieshou = models.BooleanField()
 
 
 class jiesuandingdan(dingdan):
@@ -101,3 +101,11 @@ class jishiqitadizhi(models.Model):  # 理发师与地址的即时关系
     class Meta:
         unique_together = ('lifadian', 'lifashi')
 
+class shoucang(models.Model):
+    beishoucang_id = models.CharField(max_length=700)
+    yonghu = models.ForeignKey(yonghu,on_delete=models.CASCADE)
+    tupianleixing = models.CharField(max_length=1, choices=(('0', '理发店'), ('1', '理发师'),('2','服务')))
+
+
+    class Meta:
+        unique_together = ('beishoucang_id', 'yonghu','tupianleixing')

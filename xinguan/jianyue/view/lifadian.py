@@ -177,8 +177,9 @@ def jixiao(request, dianzhulianxi):
         for j in list(dingdans.all()):
             xiaofei += j.shijifeiyong
             try:
-                the_pingjia = pingjia.objects.get(dingdan=j)
-                pingfen += the_pingjia.pingfen
+                the_pingjias = pingjia.objects.filter(dingdan=j)
+                for i_pingjia in the_pingjias:
+                    pingfen += i_pingjia.pingfen
             except ObjectDoesNotExist:
                 pingfen += 5
             pingfen_count += 1
