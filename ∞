@@ -1,0 +1,6 @@
+<a  class="btn btn-primary btn-sm" id="tupianshanchu" style="    position: absolute;   \n' +
+        '    top: 10%;   \n' +
+        '    left: 50%;   \n' +
+        '    width: 100px;' +
+        '    height: 30px;' +
+        '      margin:-15px 0 0 -50px;">删除</a>
