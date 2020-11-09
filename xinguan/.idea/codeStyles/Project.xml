@@ -1,6 +1,7 @@
 <component name="ProjectCodeStyleConfiguration">
   <code_scheme name="Project" version="173">
     <Python>
+      <option name="SPACE_BEFORE_BACKSLASH" value="false" />
       <option name="HANG_CLOSING_BRACKETS" value="true" />
     </Python>
     <codeStyleSettings language="HTML">
