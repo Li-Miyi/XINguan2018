@@ -106,6 +106,9 @@ class shoucang(models.Model):
     yonghu = models.ForeignKey(yonghu,on_delete=models.CASCADE)
     tupianleixing = models.CharField(max_length=1, choices=(('0', '理发店'), ('1', '理发师'),('2','服务')))
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> cd77e1b... create
     class Meta:
         unique_together = ('beishoucang_id', 'yonghu','tupianleixing')

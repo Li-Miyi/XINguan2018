@@ -15,7 +15,13 @@ urlpatterns = [
     path(r"yonghuDetail/", view.lifashi_yonghu.yonghuDetail, name="YonghuDetail"),
     path(r'getYuyueOrder/', view.lifashi_yonghu.getYuyueOrder, name="YonghuYuyueOrder"),
     path(r"FuwuList/", view.lifashi_yonghu.FuwuList, name="YonghuLifaFuwuList"),
+<<<<<<< HEAD
     # 服务列表页
+=======
+     # 用户查看不同订单
+    path(r"YonghuDingdan/<int:zhuangtai_id>", view.lifashi_yonghu.getYonghuDingdan, name="YonghuDingdan"), 
+    #服务列表页
+>>>>>>> cd77e1b... create
     path(r"fuwuliebiao/", view.lifashi_yonghu.fuwuliebiao, name="fuwuliebiao"),
     #用户收藏
     path(r'shoucang/add/<int:shoucangleixing>', view.lifashi_yonghu.yonghu_shoucang_add, name='YonghuAddShoucang'),
@@ -31,7 +37,12 @@ urlpatterns = [
     path(r'lifadian/zhuce/', view.lifadian.zhuce, name="lifadian_zhuceyanzheng"),
     path(r'lifadian/denglu/', view.lifadian.denglu, name="lifadian_degnluyanzheng"),
     path(r'lifadian/xiugai/', view.lifadian.xiugai, name="lifadian_xiugai"),
+<<<<<<< HEAD
     # 小程序理发师端
+=======
+    path(r'thelifashiDetail/', view.lifashi_yonghu.lifashiDetail, name= "LifashiDetail"), 
+    #小程序理发师端
+>>>>>>> cd77e1b... create
     path(r"getOKDingdan/", view.lifashi_yonghu.getOKDingdan, name="LifashigetOKDingdan"),
     path(r"getLifadianName/", view.lifashi_yonghu.getLifadianName, name="LifashiZhuce"),
     # 理发店图片

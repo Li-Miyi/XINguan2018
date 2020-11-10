@@ -31,7 +31,10 @@ ALLOWED_HOSTS = ["*",]
 # Application definition
 
 INSTALLED_APPS = [
+<<<<<<< HEAD
     'corsheaders',
+=======
+>>>>>>> cd77e1b... create
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -43,16 +46,24 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+<<<<<<< HEAD
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     # 'django.middleware.csrf.CsrfViewMiddleware',
+=======
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+>>>>>>> cd77e1b... create
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+<<<<<<< HEAD
 
 ROOT_URLCONF = 'mysite.urls'
 
@@ -83,6 +94,10 @@ CORS_ALLOW_HEADERS = (
     'x-requested-with',
 )
 
+=======
+ROOT_URLCONF = 'mysite.urls'
+
+>>>>>>> cd77e1b... create
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',

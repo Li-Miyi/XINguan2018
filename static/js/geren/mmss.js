@@ -96,7 +96,11 @@ $(document).ready(function(){
             function (data,status) {
                 if(data["status"] == "2"){
                     the.hide()
+<<<<<<< HEAD
                     the.prev().hide()
+=======
+                    the.prev().remove()
+>>>>>>> cd77e1b... create
                 }
             }
        )
@@ -118,7 +122,11 @@ $('#anpai').on('show.bs.modal', function (event) {
                 yuyueriqi:data.yuyueriqi,
                 yuyueshijian:data.yuyueshijian,
                 yuyuexiaohao:data.yuyuexiaohao,
+<<<<<<< HEAD
                 gujifeiyong:data.gujifeiyong,
+=======
+
+>>>>>>> cd77e1b... create
                 "csrfmiddlewaretoken":$('[name="csrfmiddlewaretoken"]').val(),
             },
             function (data,status) {
@@ -126,6 +134,10 @@ $('#anpai').on('show.bs.modal', function (event) {
                 if (data.status==1){
                     $(":contains('取消')").click()
                     parent.location.reload()
+<<<<<<< HEAD
+=======
+
+>>>>>>> cd77e1b... create
                 }
             }
        )

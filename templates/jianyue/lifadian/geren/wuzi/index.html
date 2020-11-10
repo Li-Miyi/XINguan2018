@@ -216,6 +216,10 @@
         var button = $(event.relatedTarget) // Button that triggered the modal
         var wuziming = button.data('wuziming') // Extract info from data-* attributes
         var wuzileixing = button.data('wuzileixing')
+<<<<<<< HEAD
+=======
+        already = 0
+>>>>>>> cd77e1b... create
         // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
         // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
         $("#baocun").click(function () {
@@ -227,9 +231,15 @@
                     xiaohaoliang:xiaohaoliang
                 },
                 function (data,status) {
+<<<<<<< HEAD
 
                     alert(data["msg"])
                     if (data.status==2){
+=======
+                    if (data.status==2 && already == 0){
+                        already = 1
+                        alert(data["msg"])
+>>>>>>> cd77e1b... create
                     }
                     else if (data.status==3) {
                         button.parents("tr").hide()
