@@ -118,7 +118,7 @@ $('#anpai').on('show.bs.modal', function (event) {
                 yuyueriqi:data.yuyueriqi,
                 yuyueshijian:data.yuyueshijian,
                 yuyuexiaohao:data.yuyuexiaohao,
-                gujifeiyong:data.gujifeiyong,
+
                 "csrfmiddlewaretoken":$('[name="csrfmiddlewaretoken"]').val(),
             },
             function (data,status) {

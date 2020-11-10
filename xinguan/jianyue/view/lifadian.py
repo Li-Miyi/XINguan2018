@@ -200,7 +200,6 @@ def anpai(request, dianzhulianxi):
         yuyueriqi = datagetter.get("yuyueriqi")
         yuyueshijian = datagetter.get("yuyueshijian")
         yuyuexiaohao = datagetter.get("yuyuexiaohao")
-        gujifeiyong = datagetter.get("gujifeiyong")
         yuyuekaishi = yuyueriqi + ' ' + yuyueshijian
         try:
             theyonghu = yonghu.objects.get(id=yonghu_id)
@@ -216,7 +215,7 @@ def anpai(request, dianzhulianxi):
             yuyuedingdan.objects.create(lifashi_id=lifashi_id,
                                         lifadian=lifadian.objects.get(dianzhulianxi=dianzhulianxi), yonghu=theyonghu,
                                         fuwuxiang_id=fuwu_id, yuyuekaishi=yuyuekaishi,
-                                        yuyuexiaohao=yuyuexiaohao, gujifeiyong=gujifeiyong)
+                                        yuyuexiaohao=yuyuexiaohao)
             return JsonResponse({"status": "1", "msg": "订单安排成功"})
         except IntegrityError:
             return JsonResponse({"status": "-2", "msg": "订单不可以重复安排"})
