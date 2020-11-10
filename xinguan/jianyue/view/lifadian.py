@@ -92,16 +92,8 @@ def xiugai(request):
 def geren(request, dianzhulianxi):
     denglu = request.get_signed_cookie(key="denglu", default=0, salt="xinguan")
     this = lifadian.objects.get(dianzhulianxi=dianzhulianxi)
-    context = {
-        "shenfenzheng": this.shenfenzheng,
-        "dianzhuming": this.dianzhuming,
-        "dianzhulianxi": this.dianzhulianxi,
-        "dianming": this.dianzhuming,
-        "dizhi": this.dizhi,
-        "mima": this.mima
-    }
     if int(denglu) == dianzhulianxi:
-        response = render(request, "jianyue/lifadian/geren/index.html", {"context": context})
+        response = render(request, "jianyue/lifadian/geren/index.html", {"context": this})
         return response
     else:
         response = redirect("jianyue:lifadian_shouye")
@@ -215,7 +207,7 @@ def anpai(request, dianzhulianxi):
             yuyuedingdan.objects.create(lifashi_id=lifashi_id,
                                         lifadian=lifadian.objects.get(dianzhulianxi=dianzhulianxi), yonghu=theyonghu,
                                         fuwuxiang_id=fuwu_id, yuyuekaishi=yuyuekaishi,
-                                        yuyuexiaohao=yuyuexiaohao)
+                                        yuyuexiaohao=yuyuexiaohao,yijieshou=0)
             return JsonResponse({"status": "1", "msg": "订单安排成功"})
         except IntegrityError:
             return JsonResponse({"status": "-2", "msg": "订单不可以重复安排"})

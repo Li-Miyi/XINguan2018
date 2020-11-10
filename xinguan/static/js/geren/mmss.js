@@ -96,7 +96,7 @@ $(document).ready(function(){
             function (data,status) {
                 if(data["status"] == "2"){
                     the.hide()
-                    the.prev().hide()
+                    the.prev().remove()
                 }
             }
        )
@@ -126,6 +126,7 @@ $('#anpai').on('show.bs.modal', function (event) {
                 if (data.status==1){
                     $(":contains('取消')").click()
                     parent.location.reload()
+
                 }
             }
        )
