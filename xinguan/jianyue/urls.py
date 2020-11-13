@@ -15,6 +15,9 @@ urlpatterns = [
     path(r"yonghuDetail/", view.lifashi_yonghu.yonghuDetail, name="YonghuDetail"),
     path(r'getYuyueOrder/', view.lifashi_yonghu.getYuyueOrder, name="YonghuYuyueOrder"),
     path(r"FuwuList/", view.lifashi_yonghu.FuwuList, name="YonghuLifaFuwuList"),
+    path(r"jishidizhi/add", view.lifashi_yonghu.jishiqitadizhi, name="YonghuLifaJishidizhiAdd"),
+    #理发师
+    path(r"lifashi/yuyue_shijian", view.lifashi_yonghu.yuyue_shijian, name="LifashiYuyueShijianList"),
     # 服务列表页
     path(r"fuwuliebiao/", view.lifashi_yonghu.fuwuliebiao, name="fuwuliebiao"),
     #用户收藏
@@ -46,6 +49,8 @@ urlpatterns = [
     # 理发师
     path(r"lifadian/<int:dianzhulianxi>/lifashi/", view.lifadian.jixiao, name="lifashi_jixiao"),
     path(r"lifadian/<int:dianzhulianxi>/lifashi/anpai/", view.lifadian.anpai, name="lifashi_anpai"),
+    path(r"lifadian/<int:dianzhulianxi>/lifashi/yuyuedingdan/", view.lifadian.dingdan_getter, name="lifashi_yuyue"),
+    path(r"lifadian/<int:dianzhulianxi>/lifashi/fuwu/", view.lifadian.fuwu_getter, name="lifashi_fuwu"),
     # 地址借用
     path(r"lifadian/<int:dianzhulianxi>/dizhi/<slug:zhuangtai>", view.lifadian.dizhi, name="dizhi"),
     path(r"lifadian/<int:dianzhulianxi>/dizhi/chexiao/", view.lifadian.dizhi_chexiao, name="dizhi_chexiao"),

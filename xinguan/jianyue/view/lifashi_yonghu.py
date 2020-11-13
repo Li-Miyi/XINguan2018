@@ -1,16 +1,13 @@
-from django.shortcuts import render, redirect, reverse
+
 
 # Create your views here.
-from django.http import Http404
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-
-import jianyue
+from django.utils import timezone
 from ..models import yonghu, lifashi, lifadian, fuwu, jiesuandingdan, pingjia, dingdan, jishiqitadizhi, faxing, tupian,\
     yuyuedingdan, shoucang
 from django.db.utils import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
-from django.shortcuts import render, get_object_or_404
+
 
 """用户与理发师"""
 
@@ -461,6 +458,7 @@ def getYuyueOrder(request):
     the_yonghu = yonghu.objects.get(yonghudianhua=yonghudianhua)
     yuyuedingdan.objects.create(yuyuekaishi=yuyuekaishi, lifadian_id=lifadian_id, yonghu=the_yonghu,
                                 lifashi_id=lifashi_id, fuwuxiang_id=fuwu_id, yijieshou=0)
+    return JsonResponse({"status":"1","data":"添加成功"})
 
 
 # 用户收藏 0-理发店 1-理发师 2-服务——用户端
@@ -523,3 +521,33 @@ def yonghu_shoucang_show(request, shoucangleixing):
             return JsonResponse(shoucang_list, safe=False)
     except ObjectDoesNotExist:
         return JsonResponse({"status": "0", "msg": "失败"})
+
+
+def yuyue_shijian(request):
+    id = request.GET.get("yuyuedingdan_id")
+    the = yuyuedingdan.objects.get(id)
+    begin = the.yuyuekaishi
+    deadline = the.yuyuekaishi + timezone.timedelta(
+        hours=the.yuyuexiaohao.hour,
+        minutes=the.yuyuexiaohao.minute,
+        seconds=the.yuyuexiaohao.second)
+    after = yuyuedingdan.objects.filter(lifadian__lifashi=the.lifashi,yuyuekaishi__gt=begin,yuyuekaishi__lt=deadline,yijieshou=1)
+    before = []
+    for i in yuyuedingdan.objects.filter(lifadian__lifashi=the.lifashi,yijieshou=1):
+
+        i_deadline = i.yuyuekaishi + timezone.timedelta(
+            hours=i.yuyuexiaohao.hour,
+            minutes=i.yuyuexiaohao.minute,
+            seconds=i.yuyuexiaohao.second)
+        if begin <= i_deadline <= deadline:
+            before.append(i)
+
+    data =  list(set(list(after))  & set(before) )
+    return JsonResponse({"status":"1","msg":data})
+
+
+def jishidizhi_add(response):
+    lifashi_id = response.POST.get("lifashi_id")
+    lifadian_id = response.POST.get("lifadian_id")
+    jishiqitadizhi.objects.create(lifashi_id=lifashi_id,lifadian_id=lifadian_id,shenqingshijian=timezone.now(),zhuangtai='0')
+    return JsonResponse({"status":1,"msg":"申请成功"})

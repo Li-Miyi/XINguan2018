@@ -101,6 +101,14 @@ $(document).ready(function(){
             }
        )
     })
+    $("#search").click(function(){
+        var txt=$("input[type=text]").val();
+        col = $("select").val();
+        $('tbody tr').hide()
+        $('tbody tr ').each(function(){
+                   $(this).children('td:eq('+col+'):contains("'+txt+'")').parent().show()
+        })
+    })
 });
 
 

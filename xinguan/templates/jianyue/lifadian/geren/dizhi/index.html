@@ -83,10 +83,10 @@
                         </a>
                         <div id="collapseTwo" class="panel-collapse collapse">
                             <ul class="nav nav-list menu-second">
-                                <li><a href="{% url 'jianyue:lifashi_jixiao' dianzhulianxi %}"><i class="icon-user"></i>绩效统计</a></li>
-                                <li><a href="{% url 'jianyue:lifashi_anpai' dianzhulianxi %}"><i class="icon-edit"></i>人员安排</a></li>
-                                <li><a href="#"><i class="icon-trash"></i> 子选项3</a></li>
-                                <li><a href="#"><i class="icon-list"></i> 子选项4</a></li>
+                                <li><a href="{% url 'jianyue:lifashi_jixiao' dianzhulianxi%}"><i class="icon-user"></i>绩效统计</a></li>
+                                <li><a href="{% url 'jianyue:lifashi_anpai' dianzhulianxi%}"><i class="icon-edit"></i>人员安排</a></li>
+                                <li><a href="{% url 'jianyue:lifashi_yuyue' dianzhulianxi%}"><i class="icon-list"></i>预约订单</a></li>
+                                <li><a href="{% url 'jianyue:lifashi_fuwu' dianzhulianxi%}"><i class="icon-list"></i>服务列表</a></li>
                             </ul>
                         </div>
                     </div>
@@ -110,7 +110,6 @@
                            aria-expanded="false" aria-controls="collapseThree">
                             <i class="icon-book icon-large"></i> 相册
                         </a>
-
                         <div id="collapseFour" class="panel-collapse collapse">
                             <ul class="nav nav-list menu-second">
                                 <li><a href="{% url 'jianyue:lifadian_xiangce' dianzhulianxi%}"><i class="icon-user"></i>相册</a></li>
@@ -131,8 +130,14 @@
                     <span class="input-group-addon" id="basic-addon2"><span class="glyphicon glyphicon-search"></span></span>
                     <input type="text" class="form-control" placeholder="输入关键字搜索" aria-describedby="basic-addon2">
                 </div>
-                <a href="#" class=" btn btn-primary "><span class="glyphicon glyphicon-search"></span></a>
-                <a href="#" class=" btn btn-primary "><span class="glyphicon glyphicon-download"></span></a>
+                <select class="form-control line left">
+                    <option value="0">理发师id</option>
+                    <option value="1">理发师姓名</option>
+                    <option value="2">理发师入驻理发店</option>
+                    <option value="3">申请时间</option>
+                    <option value="4">操作</option>
+                </select>
+                <a href="#" id="search" class=" btn btn-primary "><span class="glyphicon glyphicon-search"></span></a>
                 <br/><h1 class="biaoti">借用撤销</h1><br/>
                 <table class="table table-bordered table-striped text-center bg-info shadowbackground">
                     <thead >

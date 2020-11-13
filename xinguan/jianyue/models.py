@@ -7,8 +7,15 @@ class lifadian(models.Model):  # 理发店
     dianzhuming = models.CharField(max_length=30)
     dianzhulianxi = models.CharField(max_length=20, unique=True)
     dianming = models.CharField(max_length=30)
-    dizhi = models.CharField(max_length=30)
     mima = models.CharField(max_length=30)
+
+
+class dizhi(models.Model):
+    lifadian = models.ForeignKey(lifadian,on_delete=models.CASCADE)
+    name = models.CharField(max_length=50)
+    lng = models.FloatField()
+    lat = models.FloatField()
+    comprehension = models.IntegerField()
 
 
 class lifashi(models.Model):  # 理发师

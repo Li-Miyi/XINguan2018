@@ -5,17 +5,23 @@ from django.http import Http404
 from django.http import JsonResponse
 from django.utils import timezone
 import os
-import jianyue
 from mysite.settings import MEDIA_ROOT
 from ..models import yonghu, lifashi, lifadian, wuzi as wz, jiesuandingdan, pingjia, yuyuedingdan, fuwu, jishiqitadizhi, \
-    tupian
+    tupian,dizhi as dz
 from django.db.utils import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
-from django.shortcuts import render, get_object_or_404
-import re
-import re
+from django.shortcuts import render
+import requests
+import json
+
 
 """理发店"""
+
+def ger_address_info(address):
+    req = requests.get("http://api.map.baidu.com/geocoding/v3/?address={}"
+                       "&output=json&ak=ZtiExca5mcvFwBEfTL3B8eVg7ATjZb2f&callback=showLocation".format(address))
+    dic = json.loads(req.text.replace("showLocation&&showLocation(", "").replace("(", "").replace(")", ""))
+    return {"name":address,"lng":dic["result"]["location"]["lng"],"lat":dic["result"]["location"]["lat"],"comprehension":dic["result"]["comprehension"]}
 
 
 def shouye(request):  # 理发师首页
@@ -37,8 +43,9 @@ def zhuce(request):  # 注册验证
         dizhi = data_getter.get("dizhi")
         mima = data_getter.get("mima")
         try:
-            lifadian.objects.create(dianzhuming=dianzhuming, shenfenzheng=shenfenzheng, dianzhulianxi=dianzhulianxi,
+            this = lifadian.objects.create(dianzhuming=dianzhuming, shenfenzheng=shenfenzheng, dianzhulianxi=dianzhulianxi,
                                     dianming=dianming, dizhi=dizhi, mima=mima)
+            dizhi.objects.create(lifadian=this,**ger_address_info(dizhi))
             request.session['dianzhulianxi'] = dianzhulianxi
             response = JsonResponse({"status": 1, "msg": "注册成功"})
             response.set_signed_cookie("denglu", dianzhulianxi, "xinguan")
@@ -58,7 +65,6 @@ def denglu(request):
     mima = datagetter.get("mima")
     try:
         this = lifadian.objects.get(dianzhulianxi=dianzhulianxi)
-
     except lifadian.DoesNotExist:
         return JsonResponse({'status': 0, 'msg': "此用户不存在"})
     if this.mima != mima:
@@ -75,16 +81,19 @@ def xiugai(request):
     ziduan = request.POST.get("ziduan")
     neirong = request.POST.get("neirong")
 
-    the_lifadian = lifadian.objects.filter(dianzhulianxi=dianzhulianxi)
+    the_lifadian = lifadian.objects.get(dianzhulianxi=dianzhulianxi)
     data = {ziduan: neirong}
     try:
-        the_lifadian.update(**data)
+        if ziduan == "dizhi":
+            dz.objects.update_or_create(lifadian=the_lifadian,**ger_address_info(data[ziduan]))
+        else:
+            the_lifadian.update(**data)
     except TypeError:
         return JsonResponse({"status": 0, "msg": "字段错误"})
     except IntegrityError:
         return JsonResponse({"status": 2, "msg": "字段内容已被注册"})
-    except:
-        return JsonResponse({"status": -1, "msg": "修改失败"})
+    # except:
+    #     return JsonResponse({"status": -1, "msg": "修改失败"})
     return JsonResponse({"status": 1, "msg": "修改成功"})
 
 
@@ -92,8 +101,12 @@ def xiugai(request):
 def geren(request, dianzhulianxi):
     denglu = request.get_signed_cookie(key="denglu", default=0, salt="xinguan")
     this = lifadian.objects.get(dianzhulianxi=dianzhulianxi)
+    try:
+        dizhi = dz.objects.get(lifadian__dianzhulianxi=dianzhulianxi).name
+    except:
+        dizhi =""
     if int(denglu) == dianzhulianxi:
-        response = render(request, "jianyue/lifadian/geren/index.html", {"context": this})
+        response = render(request, "jianyue/lifadian/geren/index.html", {"context": this,"dizhi":dizhi})
         return response
     else:
         response = redirect("jianyue:lifadian_shouye")
@@ -303,3 +316,14 @@ def xiangce(request, dianzhulianxi):
         the_tupians = tupian.objects.filter(tupianlaiyuan_id=lifadian_id, tupianleixing='0')
         return render(request, 'jianyue/lifadian/geren/xiangce/index.html',
                       context={"imgs": the_tupians, "dianzhulianxi": dianzhulianxi})
+
+
+def dingdan_getter(request,dianzhulianxi):
+    data = yuyuedingdan.objects.filter(lifadian__dianzhulianxi=dianzhulianxi,yijieshou = 1)
+    print(data[0].fuwuxiang.jiage)
+    return render(request,"jianyue/lifadian/geren/lifashi/yuyuedingdan.html",context={"data":data,"dianzhulianxi":dianzhulianxi})
+
+
+def fuwu_getter(request,dianzhulianxi):
+    data = fuwu.objects.filter(lifashi__lifadian__dianzhulianxi=dianzhulianxi)
+    return render(request,"jianyue/lifadian/geren/lifashi/fuwu.html",context={"data":data,"dianzhulianxi":dianzhulianxi})
