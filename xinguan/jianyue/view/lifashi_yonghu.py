@@ -407,6 +407,7 @@ def yonghu_shoucang_show(request, shoucangleixing):
     except ObjectDoesNotExist:
         return JsonResponse({"status": "0", "msg": "失败"})
 
+#用户获取不同的订单
 
 def yuyue_shijian(request):
     id = request.GET.get("yuyuedingdan_id")
@@ -430,7 +431,7 @@ def yuyue_shijian(request):
     data =  list(set(list(after))  & set(before) )
     return JsonResponse({"status":"1","msg":data})
 
-
+#
 def jishidizhi_add(response):
     lifashi_id = response.POST.get("lifashi_id")
     lifadian_id = response.POST.get("lifadian_id")
