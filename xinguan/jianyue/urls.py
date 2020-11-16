@@ -15,6 +15,8 @@ urlpatterns = [
     path(r"yonghuDetail/", view.lifashi_yonghu.yonghuDetail, name="YonghuDetail"),
     path(r'getYuyueOrder/', view.lifashi_yonghu.getYuyueOrder, name="YonghuYuyueOrder"),
     path(r"jishidizhi/add", view.lifashi_yonghu.jishiqitadizhi, name="YonghuLifaJishidizhiAdd"),
+    # 用户查看不同订单
+    path(r"YonghuDingdan/<int:zhuangtai_id>", view.lifashi_yonghu.getYonghuDingdan, name="YonghuDingdan"),
     #理发师
     path(r"lifashi/yuyue_shijian", view.lifashi_yonghu.yuyue_shijian, name="LifashiYuyueShijianList"),
     # 服务列表页
