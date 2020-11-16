@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1,minimal-ui, user-scalable=no">
+    <link rel="icon" href="/static/image/logo.png"/>
+    <title>剪约理发店管理系统</title>
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/css/screen.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="/static/css/mmss.css"/>
+    <link href="/static/css/ma5gallery.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="/static/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="/static/css/backgroud.css">
+    <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+    <link rel='stylesheet prefetch' href='https://fonts.googleapis.com/icon?family=Material+Icons'>
+    <!--[if lt IE 9]>
+    <script src="/static/js/geren/html5shiv.min.js"></script>
+    <script src="/static/js/geren/respond.min.js"></script>
+    <![endif]-->
+    <style>
+
+    </style>
+</head>
+<body>
+<canvas id="canvas"  style= "position:absolute;z-index:-2;">Canvas not supported.</canvas>
+<header>
+    <div class="container-fluid navbar-fixed-top bg-primary">
+        <ul class="nav navbar-nav  left">
+            <li class="text-white h4">
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-leaf"></span>&nbsp;&nbsp;<b>剪约理发店管理系统</b>
+            </li>
+        </ul>
+        <ul class="nav navbar-nav nav-pills right ">
+            <li class="bg-warning ">
+                <a href="#"><span class="glyphicon glyphicon-tasks"></span><span class="badge">1</span></a>
+            </li>
+            <li class="bg-success">
+                <a href="#"><span class="glyphicon glyphicon-envelope"></span><span class="badge">2</span></a>
+            </li>
+            <li class="bg-danger">
+                <a href="#"><span class="glyphicon glyphicon-bell"></span></a>
+            </li>
+            <li class="bg-info dropdown">
+                <a class="dropdown-toggle" href="#" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-user"></span>&nbsp;<span>{{ dianzhulianxi }}</span><span
+                        class="caret"></span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li class="text-center"><a href="#"><span class="text-primary">账号设置</span></a></li>
+                    <li class="text-center"><a href="#"><span class="text-primary">消息设置</span></a></li>
+                    <li class="text-center"><a href="#"><span class="text-primary">帮助中心</span></a></li>
+                    <li class="divider"><a href="#"></a></li>
+                    <li class="text-center"><a href="{% url "jianyue:lifadian_shouye" %}"><span
+                            class="text-primary">退出</span></a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</header>
+
+<section>
+    <div class="container-fluid">
+        <div class="row ">
+            <!--左侧导航开始-->
+            <div class="col-xs-2 bg-blue">
+                <br/>
+                <div class="panel-group sidebar-menu" id="accordion" aria-multiselectable="true">
+                    <div class="panel panel-default menu-first menu-first-active">
+                        <a data-parent="#accordion" href="{% url 'jianyue:lifadian_geren' dianzhulianxi %}">
+                            <i class="icon-home icon-large"></i> 主页
+                        </a>
+                    </div>
+                    <div class="panel panel-default menu-first">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true"
+                           aria-controls="collapseOne">
+                            <i class="icon-user-md icon-large"></i> 物资管理
+                        </a>
+
+                        <div id="collapseOne" class="panel-collapse collapse ">
+                            <ul class="nav nav-list menu-second">
+                                <li><a href="{% url 'jianyue:lifadian_wuzi' dianzhulianxi %}"><i class="icon-user"></i>
+                                    物资表格</a></li>
+                                <li><a href="{% url 'jianyue:lifadian_wuzizengjia' dianzhulianxi %}"><i
+                                        class="icon-edit"></i> 物资增添</a></li>
+                                <li><a href="#"><i class="icon-trash"></i> p3</a></li>
+                                <li><a href="#"><i class="icon-list"></i> 子选项4</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="panel panel-default menu-first">
+                        <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"
+                           aria-expanded="false" aria-controls="collapseTwo">
+                            <i class="icon-book icon-large"></i> 理发师管理
+                        </a>
+                        <div id="collapseTwo" class="panel-collapse collapse">
+                           <ul class="nav nav-list menu-second">
+                                <li><a href="{% url 'jianyue:lifashi_jixiao' dianzhulianxi%}"><i class="icon-user"></i>绩效统计</a></li>
+                                <li><a href="{% url 'jianyue:lifashi_anpai' dianzhulianxi%}"><i class="icon-edit"></i>人员安排</a></li>
+                                <li><a href="{% url 'jianyue:lifashi_yuyue' dianzhulianxi%}"><i class="icon-trash"></i>预约订单</a></li>
+                                <li><a href="{% url 'jianyue:lifashi_fuwu' dianzhulianxi%}"><i class="icon-list"></i>服务列表</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="panel panel-default menu-first">
+                        <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseThree"
+                           aria-expanded="false" aria-controls="collapseThree">
+                            <i class="icon-book icon-large"></i> 地址借用管理
+                        </a>
+
+                        <div id="collapseThree" class="panel-collapse collapse">
+                            <ul class="nav nav-list menu-second">
+                                <li><a href="{% url 'jianyue:dizhi' dianzhulianxi 'yipizhun' %}"><i
+                                        class="icon-user"></i>已批准</a></li>
+                                <li><a href="{% url 'jianyue:dizhi' dianzhulianxi 'weipizhun' %}"><i
+                                        class="icon-edit"></i>待批准</a></li>
+                                <li><a href="#"><i class="icon-trash"></i> 子选项3</a></li>
+                                <li><a href="#"><i class="icon-list"></i> 子选项4</a></li>
+                            </ul>
+                        </div>
+                    <div class="panel panel-default menu-first">
+                        <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseFour"
+                           aria-expanded="false" aria-controls="collapseThree">
+                            <i class="icon-book icon-large"></i> 相册
+                        </a>
+
+                        <div id="collapseFour" class="panel-collapse collapse">
+                            <ul class="nav nav-list menu-second">
+                                <li><a href="{% url 'jianyue:lifadian_xiangce' dianzhulianxi%}"><i class="icon-user"></i>相册</a></li>
+                                <li><a href="{% url 'jianyue:lifadian_xiangce' dianzhulianxi %}"><i class="icon-edit"></i>添加图片</a></li>
+                                <li><a href="#"><i class="icon-trash"></i> 子选项3</a></li>
+                                <li><a href="#"><i class="icon-list"></i> 子选项4</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+            <!--左侧导航结束-->
+            <!----------------------------------------------------------------------------------------------------->
+            <!--右侧内容开始-->
+            <div class="col-xs-10">
+                <br/>
+                    <h1 class="biaoti">图片管理</h1>
+                <br/>
+
+                <form enctype="multipart/form-data" class="shadowbackground site-header container">
+                    {% csrf_token %}
+                    <h3 class="biaoti">可将图片拖拽到下框中上传</h3>
+                    <div id="drop_area"></div>
+                </form>
+                <section class="shadowbackground site-header container">
+                    <h1 class="biaoti">相册</h1>
+                    <div class="ma5-gallery" style="width: 1200px">
+                        {% if imgs %}
+                        {% for img in imgs %}
+                        <figure class="gallery-item gallery-item ma5-lightbox">
+                            <img src="/media/{{ img.src }}">
+                        </figure>
+                        <a  class="btn btn-primary btn-sm tupianshanchu" style="position: relative;left: -46px;">删除</a>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+                </section>
+            </div>
+            <!--右侧内容结束-->
+        </div>
+    </div>
+</section>
+<footer class="bg-primary navbar-fixed-bottom">
+    <p class="text-center text-white">四川大学2018级信息管理与信息系统</p>
+</footer>
+<script src="/static/js/geren/jquery-1.11.3.js"></script>
+<script src="/static/js/geren/bootstrap.js"></script>
+<script id="back" src="/static/js/geren/ma5gallery.js"></script>
+<script src="/static/js/geren/functions.js"></script>
+<script src="/static/js/geren/upload.js"></script>
+<script src="/static/js/geren/mmss.js"></script>
+<script  src="/static/js/geren/script.js"></script>
+<script type="text/javascript">
+    var dragImgUpload = new DragImgUpload("#drop_area", {
+        callback: function (files) {
+            //回调函数，可以传递给后台等等
+            var file = files[ 0 ];
+            var formdata = new FormData();
+            formdata.append('src',file);
+            formdata.append('csrfmiddlewaretoken',$('[name=csrfmiddlewaretoken]').val());
+            console.log(file.name);
+            $.ajax({
+                url: ".", /*接口域名地址*/
+                type: 'post',
+                data: formdata,
+                contentType: false,
+                processData: false,
+                success: function (res) {
+                    if (res["status"] == "1") {
+                        $("div.ma5-gallery").append("<figure class=\"gallery-item ma5-lightbox gallery-item\">\n" +
+                            "                            <img src=/media/" + res.msg + ">\n" +
+                            "                        </figure>" +
+                            "<a  class=\"btn btn-primary btn-sm tupianshanchu\" style=\"position: relative;left: -46px;\">删除</a>");
+                    }
+        }
+    })
+        }
+    })
+</script>
+</body>
+</html>

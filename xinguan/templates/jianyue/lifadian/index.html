@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html >
+<head>
+<meta charset="UTF-8">
+<title>Sign Up Login</title>
+<link rel="stylesheet" href="/static/css/style.css">
+</head>
+
+<body>
+
+<link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+<link rel='stylesheet prefetch' href='https://fonts.googleapis.com/icon?family=Material+Icons'>
+<script src="http://libs.baidu.com/jquery/2.0.0/jquery.js"></script>
+
+
+<div class="cotn_principal">
+  <div class="cont_centrar">
+    <div class="cont_login">
+      <div class="cont_info_log_sign_up">
+        <div class="col_md_login">
+          <div class="cont_ba_opcitiy">
+            <h2>LOGIN</h2>
+            <p>已有账号</p>
+            <button class="btn_login" onClick="cambiar_login()">登录</button>
+          </div>
+        </div>
+        <div class="col_md_sign_up">
+          <div class="cont_ba_opcitiy">
+            <h2>SIGN UP</h2>
+            <p>没有账号</p>
+            <button class="btn_sign_up" onClick="cambiar_sign_up()">注册</button>
+          </div>
+        </div>
+      </div>
+      <div class="cont_back_info">
+        <div class="cont_img_back_grey"> <img src="/static/image/po.jpg" alt="" /> </div>
+      </div>
+      <div class="cont_forms" >
+        <div class="cont_img_back_"> <img src="/static/image/po.jpg" alt="" /> </div>
+          <form id="denglu"  target="_self" action="/jianyue/lifadian/denglu/" onsubmit="return denglucheck()">
+        <div class="cont_form_login"> <a href="#" onClick="ocultar_login_sign_up()" ><i class="material-icons">&#xE5C4;</i></a>
+         {% csrf_token %}
+            <h2>LOGIN</h2>
+          <input type="text" placeholder="手机号码" name="dianzhulianxi"/>
+          <input type="password" placeholder="请输入密码" name="mima"/>
+          <button class="btn_login" onClick="cambiar_login()" id="denglu_sub">登录</button>
+        </div>
+          </form>
+
+         <form id="zhuce" target="_self" onsubmit="return zhucecheck()" action="{% url 'jianyue:lifadian_zhuceyanzheng' %}">
+             <div class="cont_form_sign_up"> <a href="#" onClick="ocultar_login_sign_up()"><i class="material-icons">&#xE5C4;</i></a>
+          {% csrf_token %}
+                 <h2>SIGN UP</h2>
+                 <input type="text" placeholder="店主姓名"  name="dianzhuming" required="required" pattern="[\u4e00-\u9fa5]{2,4}"  oninvalid="setCustomValidity('真实姓名必须是中文，且长度不小于2，不大于4')" oninput="setCustomValidity('')"/>
+                 <input class="shenfen" type="text" placeholder="身份证" name="shenfenzheng" required="required" pattern="^[1-9]\d{5}[1-9]\d{3}((0[1-9])|(1[0-2]))((0[1-9])|([1-2]\d)|(3[0-1]))((\d{4})|(\d{3}[Xx]))$" oninvalid="setCustomValidity('请输入正确的身份证号码')" maxlength="18" oninput="setCustomValidity('')"/>
+                 <input type="password" id="mima" placeholder="密码" name="mima" required="required" pattern="^[a-zA-Z0-9]\w{5,19}$" oninvalid="setCustomValidity('6~20字母数字或下划线')" oninput="setCustomValidity('')"/>
+                 <input type="password" id="mima2" placeholder="重复密码" name="mima2" />
+                 <input class="dianhua" type="text" placeholder="店主联系电话" name="dianzhulianxi" pattern="^(0|86|17951)?1[0-9]{10}" oninvalid="setCustomValidity('请输入11位手机号码')" oninput="setCustomValidity('')"/>
+                 <input type="text" placeholder="店名" name="dianming"/>
+                 <input type="text" placeholder="地址" name="dizhi">
+                 <input type="submit" id="zhucesub" value="SUBMIT" class="btn_sign_up" onClick="cambiar_sign_up()" style="text-align: center">
+             </div>
+         </form>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="/static/js/index.js"></script>
+</body>
+</html>

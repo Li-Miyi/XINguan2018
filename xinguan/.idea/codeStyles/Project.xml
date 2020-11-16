@@ -1,0 +1,14 @@
+<component name="ProjectCodeStyleConfiguration">
+  <code_scheme name="Project" version="173">
+    <Python>
+      <option name="SPACE_BEFORE_BACKSLASH" value="false" />
+      <option name="HANG_CLOSING_BRACKETS" value="true" />
+    </Python>
+    <codeStyleSettings language="HTML">
+      <option name="WRAP_ON_TYPING" value="0" />
+    </codeStyleSettings>
+    <codeStyleSettings language="JavaScript">
+      <option name="PARENTHESES_EXPRESSION_RPAREN_WRAP" value="true" />
+    </codeStyleSettings>
+  </code_scheme>
+</component>
