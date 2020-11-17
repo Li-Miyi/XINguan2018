@@ -14,8 +14,9 @@ urlpatterns = [
     path(r"faxingDetail/", view.lifashi_yonghu.faxingDetail, name="YonghuFaxingDetail"),
     path(r"yonghuDetail/", view.lifashi_yonghu.yonghuDetail, name="YonghuDetail"),
     path(r'getYuyueOrder/', view.lifashi_yonghu.getYuyueOrder, name="YonghuYuyueOrder"),
-    path(r"FuwuList/", view.lifashi_yonghu.FuwuList, name="YonghuLifaFuwuList"),
     path(r"jishidizhi/add", view.lifashi_yonghu.jishiqitadizhi, name="YonghuLifaJishidizhiAdd"),
+    # 用户查看不同订单
+    path(r"YonghuDingdan/<int:zhuangtai_id>", view.lifashi_yonghu.getYonghuDingdan, name="YonghuDingdan"),
     #理发师
     path(r"lifashi/yuyue/count/", view.lifashi_yonghu.count_yuyue, name="LifashiYuyueCount"),
     # 服务列表页
@@ -36,6 +37,8 @@ urlpatterns = [
     # 小程序理发师端
     path(r"getOKDingdan/", view.lifashi_yonghu.getOKDingdan, name="LifashigetOKDingdan"),
     path(r"getLifadianName/", view.lifashi_yonghu.getLifadianName, name="LifashiZhuce"),
+    path(r"getLifadian/<int:zhuangtaiid>/", view.lifashi_yonghu.getLifadian, name="LifashiGetLifadian"),
+    path(r"thelifashiDetail/", view.lifashi_yonghu.lifashiDetail, name="LifashiDetail"),
     # 理发店图片
     path('lifadian/<int:dianzhulianxi>/xiangce/', view.lifadian.xiangce, name='lifadian_xiangce'),
     # 理发店个人界面
