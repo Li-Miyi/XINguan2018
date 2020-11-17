@@ -7,6 +7,7 @@ from ..models import yonghu, lifashi, lifadian, fuwu, jiesuandingdan, pingjia, d
     yuyuedingdan, shoucang
 from django.db.utils import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
+from django.views.decorators.csrf import csrf_exempt
 
 
 """用户与理发师"""
@@ -353,6 +354,17 @@ def getYuyueOrder(request):
                                 lifashi_id=lifashi_id, fuwuxiang_id=fuwu_id, yijieshou=0)
     return JsonResponse({"status":"1","data":"添加成功"})
 
+@csrf_exempt
+#用户取消预约
+def CancelOrder(request):
+    yuyue_id = request.POST.get("dingdan_id")
+    try:
+        dingdan.objects.get(id=yuyue_id).delete()
+        return JsonResponse({"status":0, "msg": "删除成功"})
+    except:
+        return JsonResponse({"status":1, "msg": "删除失败"})
+
+
 
 # 用户收藏 0-理发店 1-理发师 2-服务——用户端
 def yonghu_shoucang_add(request, shoucangleixing):
@@ -422,6 +434,7 @@ def getYonghuDingdan(request, zhuangtai_id):
     else:
         datagetter = request.GET
     the_yonghu = yonghu.objects.get(id=datagetter.get('yonghu_id'))
+    zhuangtai = ["未支付", "已支付", "预约"]
     yonghu_id = the_yonghu.id
     dingdanList = []
     print(yonghu_id)
@@ -431,7 +444,7 @@ def getYonghuDingdan(request, zhuangtai_id):
                 if i_jiesuan.shifouzhifu == zhuangtai_id:
                     try:
                         i_fuwu = fuwu.objects.get(id=i_dingdan.fuwuxiang_id)
-                        dingdan_detail = {"dingdan_id": i_dingdan.id, "fuwu_name": i_fuwu.fuwumingcheng,
+                        dingdan_detail = {"dingdan_id": i_dingdan.id, "fuwu_name": i_fuwu.fuwumingcheng, "zhuangtai": zhuangtai[zhuangtai_id],
                                           "price": i_fuwu.jiage, "jiesuanshijian": i_jiesuan.jieshushijian}
                         dingdanList.append(dingdan_detail)
                     except:
@@ -440,7 +453,7 @@ def getYonghuDingdan(request, zhuangtai_id):
                 for i_yuyue in yuyuedingdan.objects.filter(dingdan_ptr_id=i_dingdan.id):
                     print(i_dingdan.id)
                     i_fuwu = fuwu.objects.get(id=i_dingdan.fuwuxiang_id)
-                    dingdan_detail = {"yueyu_id": i_dingdan.id, "yuyue_start": i_yuyue.yuyuekaishi,
+                    dingdan_detail = {"yueyu_id": i_dingdan.id, "yuyue_start": i_yuyue.yuyuekaishi,"zhuangtai": zhuangtai[zhuangtai_id],
                                       "yuyue_xiaohao": i_yuyue.yuyuexiaohao, "fuwu_name": i_fuwu.fuwumingcheng,"price": i_fuwu.jiage}
                     dingdanList.append(dingdan_detail)
     return JsonResponse(dingdanList, safe=False)
@@ -479,7 +492,7 @@ def getLifadian(request, zhuangtaiid):
     for i_dizhi in jishiqitadizhi.objects.filter(lifashi_id=i_lifahi_id):
         if int(i_dizhi.zhuangtai) == zhuangtaiid :
             the_lifadian = lifadian.objects.get(id=i_dizhi.lifadian_id)
-            the_detail = {"dianzhuming": the_lifadian.dianzhuming, "phone":the_lifadian.dianzhulianxi,
+            the_detail = {"dianzhuming": the_lifadian.dianzhuming, "phone":the_lifadian.dianzhulianxi, "lifadian_id": the_lifadian.id,
                               "name":the_lifadian.dianming, "time":i_dizhi.shenqingshijian,"zhuangtai":i_dizhi.zhuangtai}
             lifadianList.append(the_detail)
     return JsonResponse(lifadianList, safe=False)
