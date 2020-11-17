@@ -523,7 +523,7 @@ def yonghu_shoucang_show(request, shoucangleixing):
         return JsonResponse({"status": "0", "msg": "失败"})
 
 
-def yuyue_shijian(request):
+def count_yuyue(request):
     id = request.GET.get("yuyuedingdan_id")
     the = yuyuedingdan.objects.get(id)
     begin = the.yuyuekaishi
@@ -542,8 +542,8 @@ def yuyue_shijian(request):
         if begin <= i_deadline <= deadline:
             before.append(i)
 
-    data =  list(set(list(after))  & set(before) )
-    return JsonResponse({"status":"1","msg":data})
+    num =  len(list(set(list(after))  & set(before) ))
+    return JsonResponse({"status":"1","msg":num})
 
 
 def jishidizhi_add(response):
