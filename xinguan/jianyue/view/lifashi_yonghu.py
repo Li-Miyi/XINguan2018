@@ -42,7 +42,7 @@ def zhuce(request):
                                   xingbie=xingbie)
         return JsonResponse({"status": 1, "msg": "注册成功"})
     except IntegrityError:
-        return JsonResponse({"success": 0, "msg": "手机号码已注册：" + lianxifangshi})
+        return JsonResponse({"success": 0, "msg": "手机号码已注册"})
 
 
 def denglu(request):
@@ -267,7 +267,6 @@ def yonghuDetail(request):
     lianxifangshi = datagetter.get("lianxifangshi")
     i_yonghu = yonghu.objects.get(lianxidianhua=lianxifangshi)
     yonghu_id = i_yonghu.id
-    print(yonghu_id)
     for i_image in tupian.objects.filter(tupianlaiyuan_id=yonghu_id):
         print(i_image.tupianleixing)
         try:
@@ -458,7 +457,7 @@ def getYonghuDingdan(request, zhuangtai_id):
                     dingdanList.append(dingdan_detail)
     return JsonResponse(dingdanList, safe=False)
 
-def yuyue_shijian(request):
+def count_yuyue(request):
     id = request.GET.get("yuyuedingdan_id")
     the = yuyuedingdan.objects.get(id)
     begin = the.yuyuekaishi
@@ -469,16 +468,14 @@ def yuyue_shijian(request):
     after = yuyuedingdan.objects.filter(lifadian__lifashi=the.lifashi,yuyuekaishi__gt=begin,yuyuekaishi__lt=deadline,yijieshou=1)
     before = []
     for i in yuyuedingdan.objects.filter(lifadian__lifashi=the.lifashi,yijieshou=1):
-
         i_deadline = i.yuyuekaishi + timezone.timedelta(
             hours=i.yuyuexiaohao.hour,
             minutes=i.yuyuexiaohao.minute,
             seconds=i.yuyuexiaohao.second)
         if begin <= i_deadline <= deadline:
             before.append(i)
-
-    data =  list(set(list(after))  & set(before) )
-    return JsonResponse({"status":"1","msg":data})
+    num =  len(list(set(list(after))  & set(before) ))
+    return JsonResponse({"status":"1","msg":num})
 
 #理发师获取自己的理发店——理发师端
 def getLifadian(request, zhuangtaiid):

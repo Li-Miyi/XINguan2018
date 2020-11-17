@@ -19,7 +19,7 @@ urlpatterns = [
     # 用户查看不同订单
     path(r"YonghuDingdan/<int:zhuangtai_id>", view.lifashi_yonghu.getYonghuDingdan, name="YonghuDingdan"),
     #理发师
-    path(r"lifashi/yuyue_shijian", view.lifashi_yonghu.yuyue_shijian, name="LifashiYuyueShijianList"),
+    path(r"lifashi/yuyue/count/", view.lifashi_yonghu.count_yuyue, name="LifashiYuyueCount"),
     # 服务列表页
     path(r"fuwuliebiao/", view.lifashi_yonghu.fuwuliebiao, name="fuwuliebiao"),
     #用户收藏
