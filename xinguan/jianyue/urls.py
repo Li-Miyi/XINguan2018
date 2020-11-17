@@ -38,6 +38,8 @@ urlpatterns = [
     # 小程序理发师端
     path(r"getOKDingdan/", view.lifashi_yonghu.getOKDingdan, name="LifashigetOKDingdan"),
     path(r"getLifadianName/", view.lifashi_yonghu.getLifadianName, name="LifashiZhuce"),
+    path(r"getLifadian/<int:zhuangtaiid>/", view.lifashi_yonghu.getLifadian, name="LifashiGetLifadian"),
+    path(r"thelifashiDetail/", view.lifashi_yonghu.lifashiDetail, name="LifashiDetail"),
     # 理发店图片
     path('lifadian/<int:dianzhulianxi>/xiangce/', view.lifadian.xiangce, name='lifadian_xiangce'),
     # 理发店个人界面
