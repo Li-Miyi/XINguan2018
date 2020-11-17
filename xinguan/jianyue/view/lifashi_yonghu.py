@@ -41,7 +41,7 @@ def zhuce(request):
                                   xingbie=xingbie)
         return JsonResponse({"status": 1, "msg": "注册成功"})
     except IntegrityError:
-        return JsonResponse({"success": 0, "msg": "手机号码已注册：" + lianxifangshi})
+        return JsonResponse({"success": 0, "msg": "手机号码已注册"})
 
 
 def denglu(request):
@@ -266,7 +266,6 @@ def yonghuDetail(request):
     lianxifangshi = datagetter.get("lianxifangshi")
     i_yonghu = yonghu.objects.get(lianxidianhua=lianxifangshi)
     yonghu_id = i_yonghu.id
-    print(yonghu_id)
     for i_image in tupian.objects.filter(tupianlaiyuan_id=yonghu_id):
         print(i_image.tupianleixing)
         try:
@@ -456,14 +455,12 @@ def count_yuyue(request):
     after = yuyuedingdan.objects.filter(lifadian__lifashi=the.lifashi,yuyuekaishi__gt=begin,yuyuekaishi__lt=deadline,yijieshou=1)
     before = []
     for i in yuyuedingdan.objects.filter(lifadian__lifashi=the.lifashi,yijieshou=1):
-
         i_deadline = i.yuyuekaishi + timezone.timedelta(
             hours=i.yuyuexiaohao.hour,
             minutes=i.yuyuexiaohao.minute,
             seconds=i.yuyuexiaohao.second)
         if begin <= i_deadline <= deadline:
             before.append(i)
-
     num =  len(list(set(list(after))  & set(before) ))
     return JsonResponse({"status":"1","msg":num})
 
