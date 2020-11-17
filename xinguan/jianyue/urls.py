@@ -14,7 +14,8 @@ urlpatterns = [
     path(r"faxingDetail/", view.lifashi_yonghu.faxingDetail, name="YonghuFaxingDetail"),
     path(r"yonghuDetail/", view.lifashi_yonghu.yonghuDetail, name="YonghuDetail"),
     path(r'getYuyueOrder/', view.lifashi_yonghu.getYuyueOrder, name="YonghuYuyueOrder"),
-    path(r"jishidizhi/add", view.lifashi_yonghu.jishiqitadizhi, name="YonghuLifaJishidizhiAdd"),
+    path(r"jishidizhi/add", view.lifashi_yonghu.jishidizhi_add, name="YonghuLifaJishidizhiAdd"),
+    path(r"jishidizhi/detele", view.lifashi_yonghu.jishidizhi_delete, name="YonghuLifaJishidizhiDelete"),
     path(r"cancelorder/", view.lifashi_yonghu.CancelOrder, name="YonghuCancelOrder"),
     # 用户查看不同订单
     path(r"YonghuDingdan/<int:zhuangtai_id>", view.lifashi_yonghu.getYonghuDingdan, name="YonghuDingdan"),
