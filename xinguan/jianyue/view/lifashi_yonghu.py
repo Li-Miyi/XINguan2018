@@ -4,7 +4,7 @@
 from django.http import JsonResponse
 from django.utils import timezone
 from ..models import yonghu, lifashi, lifadian, fuwu, jiesuandingdan, pingjia, dingdan, jishiqitadizhi, faxing, tupian,\
-    yuyuedingdan, shoucang
+    yuyuedingdan, shoucang,dizhi
 from django.db.utils import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.csrf import csrf_exempt
@@ -208,7 +208,45 @@ def fuwuliebiao(request):  # 服务列表页
     else:
         return JsonResponse(fuwuliebiao, safe=False)
 
-
+#根据服务列表获得服务列表详情
+def fuwuliebiaoxiangqing(request):
+    if request.method == "POST":
+        datagetter = request.POST
+    else:
+        datagetter = request.GET
+    try:
+        fuwu_id=datagetter.get("fuwu_id")
+        fuwuxiangqing=fuwu.objects.get(id=fuwu_id) #获取服务实体
+        fw_leixing=fuwuxiangqing.get_leixing_display() #类型
+        fw_jiage=fuwuxiangqing.jiage #价格
+        fw_mingcheng=fuwuxiangqing.fuwumingcheng #名称
+        dingdan=fuwuxiangqing.dingdan_set.all() #反向查询每一个订单的相关评价
+        pingfen_sum = 0  # 设定最初总分0
+        pingfen_num = 0  # 设定评分数量0
+        for dd in dingdan:
+            pingjia_list = dd.pingjia_set.all()  # 反向查询每一个订单的相关评价
+            for pj in pingjia_list:
+                pingfen_sum = pingfen_sum + pj.pingfen
+                pingfen_num = pingfen_num + 1
+        if pingfen_num == 0 and pingfen_sum == 0:
+            pingfen = '暂无评价'
+        else:
+            pingfen = round(pingfen_sum / pingfen_num, 2)
+        fw_pingfen=pingfen #评分
+        fw_xingming=fuwuxiangqing.lifashi.xingming #理发师姓名
+        fw_xingbie=fuwuxiangqing.lifashi.get_xingbie_display()#理发师性别
+        fw_lianxidianhua=fuwuxiangqing.lifashi.lianxidianhua#理发师电话
+        lifashitupian=tupian.objects.filter(tupianlaiyuan_id=fuwuxiangqing.lifashi.id)[0]
+        fw_lifashi_image=str(lifashitupian.src)
+        fw_dianming=fuwuxiangqing.lifashi.lifadian.dianming#理发店名字
+        fw_dizhi=fuwuxiangqing.lifashi.lifadian.dizhi_set.all()[0].name#理发店地址
+        fw_dianzhulianxi=fuwuxiangqing.lifashi.lifadian.dianzhulianxi#店主联系方式
+        lifadiantupian=tupian.objects.filter(tupianlaiyuan_id=fuwuxiangqing.lifashi.lifadian.id)[0]
+        fw_lifadian_image=str(lifadiantupian.src)
+        result=JsonResponse({"leixing":fw_leixing,"jiage":fw_jiage,"mingcheng":fw_mingcheng,"pingfen":fw_pingfen,"xingming":fw_xingming,"xingbie":fw_xingbie,"lianxidianhua":fw_lianxidianhua,"lifashi_image":fw_lifashi_image,"lifadian_image":fw_lifadian_image,"dianming":fw_dianming,"dizhi":fw_dizhi,"dianzhulianxi":fw_dianzhulianxi})
+    except Exception as e:
+        result=JsonResponse({"status": 0, "msg": "访问失败","cuowu":str(e)})
+    return result
 
 
 # 获取不同类型的发型库-用户端

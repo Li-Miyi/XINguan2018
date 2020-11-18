@@ -23,6 +23,7 @@ urlpatterns = [
     path(r"lifashi/yuyue/count/", view.lifashi_yonghu.count_yuyue, name="LifashiYuyueCount"),
     # 服务列表页
     path(r"fuwuliebiao/", view.lifashi_yonghu.fuwuliebiao, name="fuwuliebiao"),
+    path(r"fuwuliebiaoxiangqing/",view.lifashi_yonghu.fuwuliebiaoxiangqing,name="fuwuliebiaoxiangqing"),
     #用户收藏
     path(r'shoucang/add/<int:shoucangleixing>', view.lifashi_yonghu.yonghu_shoucang_add, name='YonghuAddShoucang'),
     path(r'shoucang/delete/<int:shoucangleixing>', view.lifashi_yonghu.yonghu_shoucang_delete, name='YonghuDeleteShoucang'),
