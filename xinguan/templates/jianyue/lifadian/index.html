@@ -11,8 +11,8 @@
 <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
 <link rel='stylesheet prefetch' href='https://fonts.googleapis.com/icon?family=Material+Icons'>
 <script src="http://libs.baidu.com/jquery/2.0.0/jquery.js"></script>
-
-
+<script  src="/static/js/geren/script.js"></script>
+<canvas id="canvas"  style= "position:absolute;z-index:-1;">Canvas not supported.</canvas>
 <div class="cotn_principal">
   <div class="cont_centrar">
     <div class="cont_login">
@@ -33,11 +33,11 @@
         </div>
       </div>
       <div class="cont_back_info">
-        <div class="cont_img_back_grey"> <img src="/static/image/po.jpg" alt="" /> </div>
+        <div class="cont_img_back_grey"> <img src="/static/image/download.jpg" alt="" /> </div>
       </div>
       <div class="cont_forms" >
-        <div class="cont_img_back_"> <img src="/static/image/po.jpg" alt="" /> </div>
-          <form id="denglu"  target="_self" action="/jianyue/lifadian/denglu/" onsubmit="return denglucheck()">
+        <div class="cont_img_back_"> <img src="/static/image/download.jpg" alt="" /> </div>
+          <form id="denglu"  target="_self" action='{% url "jianyue:lifadian_degnluyanzheng"%}' onsubmit="return denglucheck()">
         <div class="cont_form_login"> <a href="#" onClick="ocultar_login_sign_up()" ><i class="material-icons">&#xE5C4;</i></a>
          {% csrf_token %}
             <h2>LOGIN</h2>
