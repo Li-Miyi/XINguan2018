@@ -44,6 +44,8 @@ urlpatterns = [
     path(r"thelifashiDetail/", view.lifashi_yonghu.lifashiDetail, name="LifashiDetail"),
     path(r"lifashi/fuwu/add", view.lifashi_yonghu.fuwu_add, name="LifashiFuwuAdd"),
     path(r"lifashi/fuwu/delete", view.lifashi_yonghu.fuwu_delete, name="LifashiFuwuDelete"),
+    path(r"lifashi/yuyue/show", view.lifashi_yonghu.yuyue_show, name="LifashiYuyueShow"),
+    path(r"lifashi/yuyue/submit", view.lifashi_yonghu.yuyue_submit, name="LifashiYuyueSubmit"),
     # 理发店图片
     path('lifadian/<int:dianzhulianxi>/xiangce/', view.lifadian.xiangce, name='lifadian_xiangce'),
     # 理发店个人界面

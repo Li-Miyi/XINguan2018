@@ -368,7 +368,7 @@ def getOKDingdan(request):
                         i_fuwu = fuwu.objects.get(id=i_dingdan.fuwuxiang_id)
                         i_yonghu = yonghu.objects.get(id=i_dingdan.yonghu_id)
                         dingdan_detail = {"dingdan_id": i_dingdan.id, "fuwu_name": i_fuwu.fuwumingcheng,"price": i_fuwu.jiage, "jiesuanshijian": i_jiesuan.jieshushijian,
-                                          "yonghu":{"yonghuming":i_yonghu.yonghuming,"name": i_yonghu.xingming, "phone":i_yonghu.lianxidianhua,"sex":i_yonghu.xingbie}}
+                                         }
                         dingdanList.append(dingdan_detail)
                     except:
                         return JsonResponse({"status": 0, "msg": "您还没有已完成的订单"})
@@ -378,7 +378,7 @@ def getOKDingdan(request):
                     i_yonghu = yonghu.objects.get(id=i_dingdan.yonghu_id)
                     dingdan_detail = {"yueyu_id": i_dingdan.id, "is_ok":i_yuyue.yijieshou,"yuyue_start": i_yuyue.yuyuekaishi,
                                       "yuyue_xiaohao": i_yuyue.yuyuexiaohao, "fuwu_name": i_fuwu.fuwumingcheng,"price": i_fuwu.jiage,
-                                      "yonghu":{"yonghuming":i_yonghu.yonghuming,"name": i_yonghu.xingming, "phone":i_yonghu.lianxidianhua,"sex":i_yonghu.xingbie}}
+                                      }
                     dingdanList.append(dingdan_detail)
     return JsonResponse(dingdanList, safe=False)
 
@@ -514,9 +514,12 @@ def getYonghuDingdan(request, zhuangtai_id):
                     dingdanList.append(dingdan_detail)
     return JsonResponse(dingdanList, safe=False)
 
+#理发师——预约订单总数
 def count_yuyue(request):
+    print(request.GET.get("yuyuedingdan_id"))
     id = request.GET.get("yuyuedingdan_id")
-    the = yuyuedingdan.objects.get(id)
+    print(id)
+    the = yuyuedingdan.objects.get(id=id)
     begin = the.yuyuekaishi
     deadline = the.yuyuekaishi + timezone.timedelta(
         hours=the.yuyuexiaohao.hour,
@@ -588,4 +591,39 @@ def fuwu_delete(response):
     i_fuwu = fuwu.objects.get(id=fuwu_id)
     i_fuwu.delete()
     return JsonResponse({"status":1, "msg": "删除成功"})
+
+@csrf_exempt
+# 理发师——预约订单详情
+def yuyue_show(response):
+    yuyue_id = int(response.POST.get('yuyue_id'))
+    i_yuyue = yuyuedingdan.objects.get(id=yuyue_id)
+    i_dingdan = dingdan.objects.get(id=yuyue_id)
+    i_yonghu = yonghu.objects.get(id=i_dingdan.yonghu_id)
+    try:
+        i_tupian = tupian.objects.get(tupianleixing="3", tupianlaiyuan_id=i_yonghu.id)
+        src = i_tupian.src
+    except:
+        src = "../../image/0.png"
+    if i_yuyue.yuyuexiaohao != None:
+        gujishijian = i_yuyue.yuyuexiaohao
+    else:
+        gujishijian ="00:00"
+    i_fuwu = fuwu.objects.get(id=i_dingdan.fuwuxiang_id)
+    i_lifadian = lifadian.objects.get(id=i_dingdan.lifadian_id)
+    return JsonResponse({"yonghuming":i_yonghu.yonghuming, "phone": i_yonghu.lianxidianhua, "touxiang": str(src), "xiaohao":gujishijian , "shifoujieshou": i_yuyue.yijieshou,
+                         "yuyuekaishi": i_yuyue.yuyuekaishi, "fuwu": i_fuwu.fuwumingcheng, "lifadian": i_lifadian.dianming, "fuwu_price": i_fuwu.jiage})
+
+@csrf_exempt
+# 理发师——预约订单提交估计时间
+def yuyue_submit(response):
+    yuyue_id = int(response.POST.get('yuyue_id'))
+    yuyuexiaohao = response.POST.get('yuyuexiaohao')
+    i_yuyue = yuyuedingdan.objects.get(id=yuyue_id)
+    i_yuyue.yuyuexiaohao=yuyuexiaohao
+    i_yuyue.yijieshou = '1'
+    i_yuyue.save()
+    return JsonResponse({"status":1, "msg": "提交成功"})
+
+
+
 
