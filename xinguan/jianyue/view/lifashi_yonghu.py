@@ -148,29 +148,48 @@ def lifashi_detail(request):
         datagetter = request.POST
     else:
         datagetter = request.GET
+    print(datagetter.get('lifashi_id'))
+    fuwuleixing = {"1":"洗吹","2":"烫发","3":"染发","4":"剪发","5":"护理"}
+    faxingleixing = {"1":"短发","2":"烫发","3":"长发","4":"染发"}
     the_lifashi = lifashi.objects.get(id=datagetter.get('lifashi_id'))
     lifashi_id = the_lifashi.id
     lifa_fuwu = []
     lifashi_lifadian = []
+    lifashi_faxing = []
     lifashi_pingjia = []
     try:
         i_lifashi = lifashi.objects.get(id=lifashi_id)
     except lifashi.DoesNotExist:
         return JsonResponse({"status": 0,"msg":"id输入错误"})
     for i_fuwu in fuwu.objects.filter(lifashi=i_lifashi):
-        lifa_fuwu_detail = {"fuwu_id": i_fuwu.id, "type": i_fuwu.leixing, "fuwu_name": i_fuwu.fuwumingcheng,
+        lifa_fuwu_detail = {"fuwu_id": i_fuwu.id, "type": fuwuleixing[i_fuwu.leixing], "fuwu_name": i_fuwu.fuwumingcheng,
                                 "price": i_fuwu.jiage}
         lifa_fuwu.append(lifa_fuwu_detail)
     for i_lifadian in lifadian.objects.filter(lifashi=i_lifashi):
-        lifadian_detail = {"lifadian_id": i_lifadian.id, "lifadian_name": i_lifadian.dianming}
+        try:
+            search_dict = {"tupianleixing": "0", "tupianlaiyuan_id":i_lifadian.id}
+            i_tupian = tupian.objects.filter(**search_dict).first()
+            src = str(i_tupian.src)
+        except:
+            src = "../../image/0.jpg"
+        lifadian_detail = {"lifadian_id": i_lifadian.id, "lifadian_name": i_lifadian.dianming, "tupian":src}
         lifashi_lifadian.append(lifadian_detail)
+    for i_faxing in faxing.objects.filter(lifashi=i_lifashi):
+        try:
+            search_dict = {"tupianleixing": "2", "tupianlaiyuan_id": i_faxing.id}
+            i_tupian = tupian.objects.filter(**search_dict).first()
+            src = str(i_tupian.src)
+        except:
+            src = "../../image/0.jpg"
+        faxing_detail = {"faxing_id":i_faxing.id, "faxingname": i_faxing.faxingming, "leixing": faxingleixing[i_faxing.leixing],"tupian": src}
+        lifashi_faxing.append(faxing_detail)
     for i_dingdan in dingdan.objects.filter(lifashi_id=lifashi_id):
         for i_pingjia in pingjia.objects.filter(dingdan_id=i_dingdan.id):
             lifashi_pingjia_detail = {'id': i_pingjia.id, "pingfen": i_pingjia.pingfen, "pingjia": i_pingjia.pingjia}
             lifashi_pingjia.append(lifashi_pingjia_detail)
     return JsonResponse(
-        {"id": i_lifashi.id, "name": i_lifashi.xingming, 'phone': i_lifashi.lianxidianhua, "fuwu": lifa_fuwu,
-         "lifadian": lifashi_lifadian, "pingjia": lifashi_pingjia})
+        {"id": i_lifashi.id, "name": i_lifashi.xingming, "yonghuming": i_lifashi.yonghuming,'phone': i_lifashi.lianxidianhua, "fuwu": lifa_fuwu,
+         "lifadian": lifashi_lifadian, "faxing":lifashi_faxing,"pingjia": lifashi_pingjia})
 
 # 返回不同的服务类型——用户端
 def fuwuliebiao(request):  # 服务列表页
@@ -494,19 +513,41 @@ def getLifadian(request, zhuangtaiid):
             lifadianList.append(the_detail)
     return JsonResponse(lifadianList, safe=False)
 
+
 #理发师增加其他地址
+@csrf_exempt
 def jishidizhi_add(response):
     lifashi_id = response.POST.get("lifashi_id")
     lifadian_id = response.POST.get("lifadian_id")
     jishiqitadizhi.objects.create(lifashi_id=lifashi_id,lifadian_id=lifadian_id,shenqingshijian=timezone.now(),zhuangtai='0')
     return JsonResponse({"status":1,"msg":"申请成功"})
 
+@csrf_exempt
 # 理发师撤销其他地址
 def jishidizhi_delete(response):
-    lifashi_id = response.POST.get("lifashi_id")
-    lifadian_id = response.POST.get('lifadian_id')
-    for i_dizhi in jishiqitadizhi.objects.filter(lifashi_id= lifashi_id):
+    lifashi_id = int(response.POST.get("lifashi_id"))
+    lifadian_id = int(response.POST.get('lifadian_id'))
+    for i_dizhi in jishiqitadizhi.objects.filter(lifashi_id=lifashi_id):
         if i_dizhi.lifadian_id == lifadian_id:
             i_dizhi.delete()
             break
     return JsonResponse({"status":1, "msg": "删除成功"})
+
+#理发师增加服务
+@csrf_exempt
+def fuwu_add(response):
+    lifashi_id = response.POST.get("lifashi_id")
+    fuwu_name = response.POST.get("fuwu_name")
+    fuwu_leixing = response.POST.get('leixing')
+    jiage = response.POST.get("jiage")
+    fuwu.objects.create(lifashi_id=lifashi_id, fuwumingcheng=fuwu_name, leixing=fuwu_leixing, jiage=jiage)
+    return JsonResponse({"status":1,"msg":"增加成功"})
+
+@csrf_exempt
+# 理发师删除服务
+def fuwu_delete(response):
+    fuwu_id = int(response.POST.get('fuwu_id'))
+    i_fuwu = fuwu.objects.get(id=fuwu_id)
+    i_fuwu.delete()
+    return JsonResponse({"status":1, "msg": "删除成功"})
+
