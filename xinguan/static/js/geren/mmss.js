@@ -109,6 +109,9 @@ $(document).ready(function(){
                    $(this).children('td:eq('+col+'):contains("'+txt+'")').parent().show()
         })
     })
+
+    //data隐藏
+    $("p.data").hide()
 });
 
 
@@ -151,3 +154,4 @@ function getObj(str) {
 			console.log(obj); // {name: "freely", age: "20", city: "beijing", job: "fe"}
 		return obj
 }
+

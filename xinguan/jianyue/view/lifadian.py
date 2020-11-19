@@ -1,3 +1,5 @@
+from django.db.models import Count, Sum
+from django.db.models.functions import ExtractYear, ExtractMonth, ExtractWeek, ExtractWeekDay, ExtractHour
 from django.shortcuts import render, redirect, reverse
 
 # Create your views here.
@@ -115,8 +117,13 @@ def geren(request, dianzhulianxi):
 
 def wuzi(request, dianzhulianxi):
     the_wuzis = wz.objects.filter(lifadian__dianzhulianxi=dianzhulianxi)
+    """                            <td>{{ i.wuziming }}</td>
+                            <td>{{ i.wuzileixing }}</td>
+                            <td>{{ i.jinhuoshijian | date:'Y-n-d'}}</td>
+                            <td>{{ i.shengyuliang }}</td>"""
+    data = [{"wuziming":i.wuziming,"shengyuliang":i.shengyuliang} for i in the_wuzis]
     return render(request, "jianyue/lifadian/geren/wuzi/index.html",
-                  {"dianzhulianxi": dianzhulianxi, "data": the_wuzis})
+                  {"dianzhulianxi": dianzhulianxi, "data": list(the_wuzis),"bar_data":data})
 
 
 def wuzi_zengjia(request, dianzhulianxi):
@@ -171,14 +178,22 @@ def wuzi_xiaohao(request, dianzhulianxi):
 
 def jixiao(request, dianzhulianxi):
     result = []
+    month_result = []
+    month_total_price =[0]*12
+    week_result =[]
+    week_total_price = [0]*7*24
     lifashis = lifashi.objects.filter(lifadian__dianzhulianxi=dianzhulianxi)
     for i in list(lifashis.all()):
+        month_price = 12*[0]
+        week_price = 7*24*[0]
         data = {'xingming': i.xingming}
         lifashi_dianhua = i.lianxidianhua
-        dingdans = jiesuandingdan.objects.filter(lifashi__lianxidianhua=lifashi_dianhua)
+        dingdans = jiesuandingdan.objects.filter(lifashi__lianxidianhua=lifashi_dianhua,shifouzhifu='1')
         xiaofei = 0
         pingfen = 0
         pingfen_count = 0
+        dingdans.values()
+
         for j in list(dingdans.all()):
             xiaofei += j.shijifeiyong
             try:
@@ -192,8 +207,33 @@ def jixiao(request, dianzhulianxi):
         data['xiaofei'] = xiaofei
         data['zongheping'] = pingfen / pingfen_count if pingfen_count != 0 else 0
         result.append(data)
+        cur_time = timezone.now()
+        #获取按月的聚合列表
+        month_dingdan = dingdans.filter(jieshushijian__year=cur_time.year)
+        sum_res = month_dingdan\
+            .annotate(year=ExtractYear('jieshushijian'), month=ExtractMonth('jieshushijian'))\
+            .values('year', 'month').order_by('year', 'month').annotate(price=Sum('shijifeiyong'))
+        for res in sum_res:
+            month_price[res['month']-1]=res['price']
+            month_total_price[res['month']-1]+=res['price']
+        month_result.append({"name":i.xingming,"price":month_price})
+        #获取按星期的聚合列表
+        day_num = cur_time.weekday()
+        # 计算当前日期所在周一
+        monday = cur_time - timezone.timedelta(days=day_num)
+        week_begin = timezone.datetime(year=monday.year,month=monday.month,day=monday.day)
+        # 查询一周内的数据
+        week_dingdan = month_dingdan.filter(jieshushijian__range=( week_begin,cur_time))
+        sum_week_res=week_dingdan.annotate(weekday=ExtractWeekDay("jieshushijian"),hour=ExtractHour("jieshushijian")).\
+            values("weekday","hour").order_by("weekday","hour").annotate(price=Sum('shijifeiyong'))
+        for dingdan in sum_week_res:
+            week_price[dingdan["weekday"]*7+dingdan["hour"]] = dingdan["price"]
+            week_total_price[dingdan["weekday"]*7+dingdan["hour"]] += dingdan['price']
+        week_result.append({"name": i.xingming, "price": week_price})
+    month_result.append({"name":"总量","price":month_total_price})
+    # week_result.append({"name":"总量","price":week_total_price})
     return render(request, "jianyue/lifadian/geren/lifashi/jixiao.html",
-                  context={'data': result, 'dianzhulianxi': dianzhulianxi})
+                  context={'data': result, 'dianzhulianxi': dianzhulianxi, 'month_data': month_result,"week_data": week_result})
 
 
 def anpai(request, dianzhulianxi):
@@ -320,10 +360,11 @@ def xiangce(request, dianzhulianxi):
 
 def dingdan_getter(request,dianzhulianxi):
     data = yuyuedingdan.objects.filter(lifadian__dianzhulianxi=dianzhulianxi,yijieshou = 1)
-    print(data[0].fuwuxiang.jiage)
     return render(request,"jianyue/lifadian/geren/lifashi/yuyuedingdan.html",context={"data":data,"dianzhulianxi":dianzhulianxi})
 
 
 def fuwu_getter(request,dianzhulianxi):
     data = fuwu.objects.filter(lifashi__lifadian__dianzhulianxi=dianzhulianxi)
     return render(request,"jianyue/lifadian/geren/lifashi/fuwu.html",context={"data":data,"dianzhulianxi":dianzhulianxi})
+
+
