@@ -654,6 +654,41 @@ def OKdingdan(response):
                          "is_zhifu": shifouzhifu[i_jiesuan.shifouzhifu], "fuwu": i_fuwu.fuwumingcheng,
                          "lifadian": i_lifadian.dianming, "fuwu_price": i_fuwu.jiage, "is_pingjia": is_pingjia,"pingjia": the_pingjia})
 
+#用户——获取理发店信息
+def getLifadian(request):
+    lifadian_id = request.GET.get('lifadian_id')
+    i_lifadian = lifadian.objects.get(id=lifadian_id)
+    try:
+        i_dizhi = dizhi.objects.get(lifadian_id=lifadian_id)
+        the_dizhi={"lng": i_dizhi.lng, "lat": i_dizhi.lat}
+        dizhi_name = i_dizhi.name
+    except:
+        the_dizhi={}
+        dizhi_name = "暂无地址信息"
+    lifashiList=[]
+    fuwuList = []
+    leixing = ["洗吹","烫发","染发","剪发","护理"]
+    lifadian_tupianList=[]
+    for i_lifashi in lifashi.objects.filter(lifadian_id=lifadian_id):
+        try:
+            lifashi_tupian = tupian.objects.get(tupianleixing="1", tupianlaiyuan_id=i_lifashi.id)
+            src = lifashi_tupian.src
+        except:
+            src="../../image/默认头像.png"
+        the_detail = {"lifashi_id": i_lifashi.id, "name": i_lifashi.yonghuming, "phone": i_lifashi.lianxidianhua,"lifashi_img": str(src)}
+        lifashiList.append(the_detail)
+        for i_fuwu in fuwu.objects.filter(lifashi_id=i_lifashi.id):
+            the_fuwu = {"fuwu_id": i_fuwu.id, "name": i_fuwu.fuwumingcheng, "type": leixing[int(i_fuwu.leixing)]}
+            fuwuList.append(the_fuwu)
+    try:
+        for i_tupian in tupian.objects.filter(tupianleixing="0", tupianlaiyuan_id=i_lifadian.id):
+            the_tupian = {"tupian_id": i_tupian.id, "src": str(i_tupian.src)}
+            lifadian_tupianList.append(the_tupian)
+    except:
+        lifadian_tupianList = []
+    return JsonResponse({"lifadian_name": i_lifadian.dianming, "lifadian_phone":i_lifadian.dianzhulianxi, "dizhi":the_dizhi,
+                         "dizhiming":dizhi_name, "lifadian_img":lifadian_tupianList,"lifashi":lifashiList, "fuwu": fuwuList})
+
 
 
 
