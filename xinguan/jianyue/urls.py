@@ -39,6 +39,7 @@ urlpatterns = [
     path(r'lifadian/xiugai/', view.lifadian.xiugai, name="lifadian_xiugai"),
     # 小程序理发师端
     path(r"getOKDingdan/", view.lifashi_yonghu.getOKDingdan, name="LifashigetOKDingdan"),
+    path(r"lifashi/OKdingdan/show", view.lifashi_yonghu.OKdingdan, name="LifashiOKDingdan"),
     path(r"getLifadianName/", view.lifashi_yonghu.getLifadianName, name="LifashiZhuce"),
     path(r"getLifadian/<int:zhuangtaiid>/", view.lifashi_yonghu.getLifadian, name="LifashiGetLifadian"),
     path(r"thelifashiDetail/", view.lifashi_yonghu.lifashiDetail, name="LifashiDetail"),
