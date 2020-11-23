@@ -53,7 +53,7 @@ def upload_to(instance,filename):
 class tupian(models.Model):
     tupianlaiyuan_id = models.CharField(max_length=700)
     src = models.ImageField(upload_to=upload_to)
-    tupianleixing = models.CharField(max_length=1, choices=(('0', '理发店'), ('1', '理发师'),('2','发型'),('3','用户')))
+    tupianleixing = models.CharField(max_length=1, choices=(('0', '理发店'), ('1', '理发师'),('2','发型'),('3','用户'),('4','资讯')))
 
 """服务与理发师理发店对应"""
 
@@ -111,7 +111,12 @@ class jishiqitadizhi(models.Model):  # 理发师与地址的即时关系
 class shoucang(models.Model):
     beishoucang_id = models.CharField(max_length=700)
     yonghu = models.ForeignKey(yonghu,on_delete=models.CASCADE)
-    tupianleixing = models.CharField(max_length=1, choices=(('0', '理发店'), ('1', '理发师'),('2','服务')))
+    shoucangleixing = models.CharField(max_length=1, choices=(('0', '理发店'), ('1', '理发师'),('2','服务')))
 
     class Meta:
-        unique_together = ('beishoucang_id', 'yonghu','tupianleixing')
+        unique_together = ('beishoucang_id', 'yonghu','shoucangleixing')
+
+class zixun(models.Model):
+    yonghu = models.ForeignKey(yonghu,on_delete=models.CASCADE)
+    neirong = models.CharField(max_length=140)
+    dianzanshu = models.IntegerField(default=0)

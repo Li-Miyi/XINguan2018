@@ -407,7 +407,7 @@ def getYuyueOrder(request):
     fuwu_id = datagetter.get('fuwu_id')
     yuyuekaishi = datagetter.get('select_time')
     lifadian_id = datagetter.get('lifadian_id')
-    the_yonghu = yonghu.objects.get(yonghudianhua=yonghudianhua)
+    the_yonghu = yonghu.objects.get(lianxidianhua=yonghudianhua)
     yuyuedingdan.objects.create(yuyuekaishi=yuyuekaishi, lifadian_id=lifadian_id, yonghu=the_yonghu,
                                 lifashi_id=lifashi_id, fuwuxiang_id=fuwu_id, yijieshou=0)
     return JsonResponse({"status":"1","data":"添加成功"})
@@ -463,27 +463,28 @@ def yonghu_shoucang_show(request, shoucangleixing):
         datagetter = request.GET
     i_yonghu = yonghu.objects.get(id=datagetter.get('yonghu_id'))
     shoucang_list = []
-
-    try:
-        for i_shoucang in shoucang.objects.filter(yonghu=i_yonghu):
-            if int(shoucangleixing) == 0:
-                the_lifadian = lifadian.objects.get(id=i_shoucang.beishoucang_id)
-                shoucang_detail = {"lifadian_id": i_shoucang.beishoucang_id, "c_id": i_shoucang.tupianleixing,
+    for i_shoucang in shoucang.objects.filter(yonghu=i_yonghu):
+        if  shoucangleixing== 0 and int(i_shoucang.tupianleixing) == shoucangleixing :
+            the_lifadian = lifadian.objects.get(id=i_shoucang.beishoucang_id)
+            shoucang_detail = {"lifadian_id": i_shoucang.beishoucang_id, "c_id": i_shoucang.tupianleixing,
                                    "lifadian_name": the_lifadian.dianming, "phone": the_lifadian.dianzhulianxi}
-                shoucang_list.append(shoucang_detail)
-            elif (int(shoucangleixing) == 1):
-                the_lifashi = lifashi.objects.get(id=i_shoucang.beishoucang_id)
-                shoucang_detail = {"lifashi_id": i_shoucang.beishoucang_id, "c_id": i_shoucang.tupianleixing,
+            shoucang_list.append(shoucang_detail)
+        elif shoucangleixing== 1 and int(i_shoucang.tupianleixing) == shoucangleixing:
+            the_lifashi = lifashi.objects.get(id=i_shoucang.beishoucang_id)
+            shoucang_detail = {"lifashi_id": i_shoucang.beishoucang_id, "c_id": i_shoucang.tupianleixing,
                                    "lifashi_name": the_lifashi.yonghuming, "phone": the_lifashi.lianxidianhua}
-                shoucang_list.append(shoucang_detail)
-            else:
-                the_fuwu = fuwu.objects.get(id=i_shoucang.beishoucang_id)
-                shoucang_detail = {"fuwu_id": i_shoucang.beishoucang_id, "c_id": i_shoucang.tupianleixing,
+            shoucang_list.append(shoucang_detail)
+        elif shoucangleixing== 2 and int(i_shoucang.tupianleixing) == shoucangleixing:
+            print(i_shoucang.beishoucang_id)
+            the_fuwu = fuwu.objects.get(id=i_shoucang.beishoucang_id)
+            shoucang_detail = {"fuwu_id": i_shoucang.beishoucang_id, "c_id": i_shoucang.tupianleixing,
                                    "fuwu_name": the_fuwu.fuwumingcheng, "price": the_fuwu.jiage}
-                shoucang_list.append(shoucang_detail)
-            return JsonResponse(shoucang_list, safe=False)
-    except ObjectDoesNotExist:
-        return JsonResponse({"status": "0", "msg": "失败"})
+            shoucang_list.append(shoucang_detail)
+    return JsonResponse(shoucang_list, safe=False)
+
+
+
+
 
 # 得到用户所有订单——用户端(0-未支付， 1-已支付，2 -预约）
 def getYonghuDingdan(request, zhuangtai_id):
@@ -512,7 +513,7 @@ def getYonghuDingdan(request, zhuangtai_id):
                 for i_yuyue in yuyuedingdan.objects.filter(dingdan_ptr_id=i_dingdan.id):
                     print(i_dingdan.id)
                     i_fuwu = fuwu.objects.get(id=i_dingdan.fuwuxiang_id)
-                    dingdan_detail = {"yueyu_id": i_dingdan.id, "yuyue_start": i_yuyue.yuyuekaishi,"zhuangtai": zhuangtai[zhuangtai_id],
+                    dingdan_detail = {"yuyue_id": i_dingdan.id, "yuyue_start": i_yuyue.yuyuekaishi,"zhuangtai": zhuangtai[zhuangtai_id],
                                       "yuyue_xiaohao": i_yuyue.yuyuexiaohao, "fuwu_name": i_fuwu.fuwumingcheng,"price": i_fuwu.jiage}
                     dingdanList.append(dingdan_detail)
     return JsonResponse(dingdanList, safe=False)
@@ -603,19 +604,27 @@ def yuyue_show(response):
     i_yuyue = yuyuedingdan.objects.get(id=yuyue_id)
     i_dingdan = dingdan.objects.get(id=yuyue_id)
     i_yonghu = yonghu.objects.get(id=i_dingdan.yonghu_id)
+    i_lifashi = lifashi.objects.get(id=i_dingdan.lifashi_id)
     try:
         i_tupian = tupian.objects.get(tupianleixing="3", tupianlaiyuan_id=i_yonghu.id)
         src = i_tupian.src
     except:
-        src = "../../image/0.png"
+        src = "../../image/默认头像.png"
+    try:
+        the_tupian = tupian.objects.get(tupianleixing="1", tupianlaiyuan_id=i_lifashi.id)
+        the_src = the_tupian.src
+    except:
+        the_src = "../../image/默认头像.png"
     if i_yuyue.yuyuexiaohao != None:
         gujishijian = i_yuyue.yuyuexiaohao
     else:
         gujishijian ="00:00"
     i_fuwu = fuwu.objects.get(id=i_dingdan.fuwuxiang_id)
     i_lifadian = lifadian.objects.get(id=i_dingdan.lifadian_id)
-    return JsonResponse({"yonghuming":i_yonghu.yonghuming, "phone": i_yonghu.lianxidianhua, "touxiang": str(src), "xiaohao":gujishijian , "shifoujieshou": i_yuyue.yijieshou,
-                         "yuyuekaishi": i_yuyue.yuyuekaishi, "fuwu": i_fuwu.fuwumingcheng, "lifadian": i_lifadian.dianming, "fuwu_price": i_fuwu.jiage})
+    return JsonResponse({"yonghuming":i_yonghu.yonghuming, "phone": i_yonghu.lianxidianhua, "touxiang": str(src), "xiaohao":gujishijian ,
+                         "shifoujieshou": i_yuyue.yijieshou,"yuyuekaishi": i_yuyue.yuyuekaishi,
+                         "lifashi":{"lifashi_id":i_lifashi.id, "lifashi_name": i_lifashi.xingming, "lifashi_phone": i_lifashi.lianxidianhua, "touxiang":str(the_src) },
+                         "fuwu": i_fuwu.fuwumingcheng, "lifadian": i_lifadian.dianming, "fuwu_price": i_fuwu.jiage})
 
 @csrf_exempt
 # 理发师——预约订单提交估计时间
@@ -635,12 +644,18 @@ def OKdingdan(response):
     i_dingdan = dingdan.objects.get(id=dingdan_id)
     i_jiesuan =jiesuandingdan.objects.get(id=i_dingdan.id)
     i_yonghu = yonghu.objects.get(id=i_dingdan.yonghu_id)
+    i_lifashi = lifashi.objects.get(id=i_dingdan.lifashi_id)
     shifouzhifu = ['false', 'true']
     try:
         i_tupian = tupian.objects.get(tupianleixing="3", tupianlaiyuan_id=i_yonghu.id)
         src = i_tupian.src
     except:
         src = "../../image/0.png"
+    try:
+        i_lifashi_tupian = tupian.objects.get(tupianleixing="1", tupianlaiyuan_id=i_lifashi.id)
+        lifashi_src = i_lifashi_tupian.src
+    except:
+        lifashi_src = "../../image/默认头像.png"
     i_fuwu = fuwu.objects.get(id=i_dingdan.fuwuxiang_id)
     i_lifadian = lifadian.objects.get(id=i_dingdan.lifadian_id)
     try:
@@ -652,6 +667,7 @@ def OKdingdan(response):
         the_pingjia = {}
     return JsonResponse({"yonghuming": i_yonghu.yonghuming, "phone": i_yonghu.lianxidianhua, "touxiang": str(src),
                          "jiesuanshijian": i_jiesuan.jieshushijian,
+                         "lifashi":{ "lifashi_id": i_lifashi.id,"lifashi_phone":i_lifashi.lianxidianhua,"lifashi_name": i_lifashi.xingming,"lifashi_touxiang":lifashi_src},
                          "is_zhifu": shifouzhifu[i_jiesuan.shifouzhifu], "fuwu": i_fuwu.fuwumingcheng,
                          "lifadian": i_lifadian.dianming, "fuwu_price": i_fuwu.jiage, "is_pingjia": is_pingjia,"pingjia": the_pingjia})
 
@@ -690,6 +706,15 @@ def getLifadian(request):
     return JsonResponse({"lifadian_name": i_lifadian.dianming, "lifadian_phone":i_lifadian.dianzhulianxi, "dizhi":the_dizhi,
                          "dizhiming":dizhi_name, "lifadian_img":lifadian_tupianList,"lifashi":lifashiList, "fuwu": fuwuList})
 
+
+#用户支付函数
+@csrf_exempt
+def zhifu(response):
+    dingdan_id = response.POST.get('dingdan_id')
+    i_dingdan = jiesuandingdan.objects.get(id=dingdan_id)
+    i_dingdan.shifouzhifu='1'
+    i_dingdan.save()
+    return JsonResponse({"status": "1","msg":"支付成功"})
 
 
 
