@@ -205,6 +205,7 @@ def fuwuliebiao(request):  # 服务列表页
             lifadian_name = fuwu_info.lifashi.lifadian.dianming  # 店名
             jiage = fuwu_info.jiage  # 价格
             fuwumingcheng = fuwu_info.fuwumingcheng  # 服务名称
+            fuwuid=fuwu_info.id #服务在数据库中的id
             dingdan_list = fuwu_info.dingdan_set.all()  # 反向查询所有的相关订单
             pingfen_sum = 0  # 设定最初总分0
             pingfen_num = 0  # 设定评分数量0
@@ -219,7 +220,7 @@ def fuwuliebiao(request):  # 服务列表页
                 pingfen = round(pingfen_sum / pingfen_num, 2)
             fuwuliebiao.append(
                 {"lifadian_name": lifadian_name, "jiage": jiage, "fuwumingcheng": fuwumingcheng, "leixing": leixing,
-                 "pingfen": pingfen})
+                 "pingfen": pingfen,"fuwu_id":fuwuid})
         except Exception as e:
             return JsonResponse({"status": 0, "msg": "访问错误"})
     if len(fuwuliebiao) == 0:
