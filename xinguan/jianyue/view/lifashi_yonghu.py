@@ -218,7 +218,7 @@ def fuwuliebiao(request):  # 服务列表页
             else:
                 pingfen = round(pingfen_sum / pingfen_num, 2)
             fuwuliebiao.append(
-                {"lifadian_name": lifadian_name, "jiage": jiage, "fuwumingcheng": fuwumingcheng, "leixing": leixing,
+                {"fuwu_id": fuwu_info.id ,"lifadian_name": lifadian_name, "jiage": jiage, "fuwumingcheng": fuwumingcheng, "leixing": leixing,
                  "pingfen": pingfen})
         except Exception as e:
             return JsonResponse({"status": 0, "msg": "访问错误"})
@@ -262,7 +262,10 @@ def fuwuliebiaoxiangqing(request):
         fw_dianzhulianxi=fuwuxiangqing.lifashi.lifadian.dianzhulianxi#店主联系方式
         lifadiantupian=tupian.objects.filter(tupianlaiyuan_id=fuwuxiangqing.lifashi.lifadian.id)[0]
         fw_lifadian_image=str(lifadiantupian.src)
-        result=JsonResponse({"leixing":fw_leixing,"jiage":fw_jiage,"mingcheng":fw_mingcheng,"pingfen":fw_pingfen,"xingming":fw_xingming,"xingbie":fw_xingbie,"lianxidianhua":fw_lianxidianhua,"lifashi_image":fw_lifashi_image,"lifadian_image":fw_lifadian_image,"dianming":fw_dianming,"dizhi":fw_dizhi,"dianzhulianxi":fw_dianzhulianxi})
+        result=JsonResponse({"leixing":fw_leixing,"jiage":fw_jiage,"mingcheng":fw_mingcheng,"pingfen":fw_pingfen,
+                             "xingming":fw_xingming,"xingbie":fw_xingbie,"lianxidianhua":fw_lianxidianhua,
+                             "lifashi_image":fw_lifashi_image,"lifadian_image":fw_lifadian_image,"dianming":fw_dianming,
+                             "dizhi":fw_dizhi,"dianzhulianxi":fw_dianzhulianxi})
     except Exception as e:
         result=JsonResponse({"status": 0, "msg": "访问失败","cuowu":str(e)})
     return result
@@ -664,7 +667,7 @@ def OKdingdan(response):
     except:
         is_pingjia = 'false'
         the_pingjia = {}
-    return JsonResponse({"yonghuming": i_yonghu.yonghuming, "phone": i_yonghu.lianxidianhua, "touxiang": str(src),
+    return JsonResponse({"dingdan_id":i_dingdan.id,"yonghuming": i_yonghu.yonghuming, "phone": i_yonghu.lianxidianhua, "touxiang": str(src),
                          "jiesuanshijian": i_jiesuan.jieshushijian,
                          "lifashi":{ "lifashi_id": i_lifashi.id,"lifashi_phone":i_lifashi.lianxidianhua,"lifashi_name": i_lifashi.xingming,"lifashi_touxiang":lifashi_src},
                          "is_zhifu": shifouzhifu[i_jiesuan.shifouzhifu], "fuwu": i_fuwu.fuwumingcheng,
@@ -714,6 +717,33 @@ def zhifu(response):
     i_dingdan.shifouzhifu='1'
     i_dingdan.save()
     return JsonResponse({"status": "1","msg":"支付成功"})
+#
+# #用户添加社区资讯
+# def fabuzixun(response):
+#     yonghu_id = response.POST.get("yonghu_id")
+#     i_yonghu = yonghu.objects.get(id=yonghu_id)
+#     the_neirong = response.POST.get("neirong")
+#
 
 
 
+@csrf_exempt
+#用户评价
+def set_pingjia(request):
+    if request.method == "POST":
+        datagetter = request.POST
+    else:
+        datagetter = request.GET
+    try:
+        dingdan_id = int(datagetter.get("dingdan_id"))
+        i_dingdan = dingdan.objects.get(id=dingdan_id)
+        pingfen = datagetter.get("score1")
+        pingfen=int(pingfen)
+        i_pingjia = datagetter.get("text")
+        yonghu_id=dingdan.objects.get(id=dingdan_id).yonghu_id
+        i_yonghu = yonghu.objects.get(id=yonghu_id)
+        yonghu_id=int(yonghu_id)
+        pingjia.objects.create(dingdan=i_dingdan,yonghu=i_yonghu,pingfen=pingfen,pingjia=i_pingjia)
+        return JsonResponse({ "msg": "评论成功"})
+    except Exception as e:
+        return JsonResponse({"message":str(e)})
