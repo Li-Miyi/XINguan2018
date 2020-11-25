@@ -120,3 +120,4 @@ class zixun(models.Model):
     yonghu = models.ForeignKey(yonghu,on_delete=models.CASCADE)
     neirong = models.CharField(max_length=140)
     dianzanshu = models.IntegerField(default=0)
+    fabushijian = models.DateTimeField(auto_now_add=True)
