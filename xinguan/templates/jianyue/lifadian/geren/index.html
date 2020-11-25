@@ -35,7 +35,7 @@
                     <span class="glyphicon glyphicon-user"></span>&nbsp;<span>{{ context.dianzhulianxi }}</span><span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-right">
-                    <li class="text-center"><a href="{% url "jianyue:lifadian_shouye" %}"><span class="text-primary">退出</span></a></li>
+                    <li class="text-center"><a href="{% url "jianyue:lifadian_dengchu" %}"><span class="text-primary">退出</span></a></li>
                 </ul>
             </li>
         </ul>
@@ -213,8 +213,6 @@
 <script src="/static/js/index.js"></script>
 <script  src="/static/js/geren/script.js"></script>
 <script>
-
-
     $(function () {
         $('dt').click(function () {
             $(this).parent().find('dd').show().end().siblings().find('dd').hide();

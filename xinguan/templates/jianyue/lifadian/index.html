@@ -7,13 +7,14 @@
 </head>
 
 <body>
+    <script  src="/static/js/geren/script.js"></script>
+    <canvas id="canvas"  style= "position:absolute;z-index:-2;">Canvas not supported.</canvas>
+    <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+    <link rel='stylesheet prefetch' href='https://fonts.googleapis.com/icon?family=Material+Icons'>
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.js"></script>
 
-<link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
-<link rel='stylesheet prefetch' href='https://fonts.googleapis.com/icon?family=Material+Icons'>
-<script src="http://libs.baidu.com/jquery/2.0.0/jquery.js"></script>
-<script  src="/static/js/geren/script.js"></script>
-<canvas id="canvas"  style= "position:absolute;z-index:-1;">Canvas not supported.</canvas>
 <div class="cotn_principal">
+
   <div class="cont_centrar">
     <div class="cont_login">
       <div class="cont_info_log_sign_up">
@@ -41,10 +42,10 @@
         <div class="cont_form_login"> <a href="#" onClick="ocultar_login_sign_up()" ><i class="material-icons">&#xE5C4;</i></a>
          {% csrf_token %}
             <h2>LOGIN</h2>
-          <input type="text" placeholder="手机号码" name="dianzhulianxi"/>
-          <input type="password" placeholder="请输入密码" name="mima"/>
-          <button class="btn_login" onClick="cambiar_login()" id="denglu_sub">登录</button>
-        </div>
+              <input type="text" placeholder="手机号码" name="dianzhulianxi"/>
+              <input type="password" placeholder="请输入密码" name="mima"/>
+              <button class="btn_login" onClick="cambiar_login()" id="denglu_sub">登录</button>
+            </div>
           </form>
 
          <form id="zhuce" target="_self" onsubmit="return zhucecheck()" action="{% url 'jianyue:lifadian_zhuceyanzheng' %}">

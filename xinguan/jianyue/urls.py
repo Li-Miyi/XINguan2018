@@ -41,6 +41,7 @@ urlpatterns = [
     path(r'lifadian/zhuce/', view.lifadian.zhuce, name="lifadian_zhuceyanzheng"),
     path(r'lifadian/denglu/', view.lifadian.denglu, name="lifadian_degnluyanzheng"),
     path(r'lifadian/xiugai/', view.lifadian.xiugai, name="lifadian_xiugai"),
+    path(r'lifadian/dengchu/',view.lifadian.dengchu,name="lifadian_dengchu"),
     # 小程序理发师端
     path(r"getOKDingdan/", view.lifashi_yonghu.getOKDingdan, name="LifashigetOKDingdan"),
     path(r"lifashi/OKdingdan/show", view.lifashi_yonghu.OKdingdan, name="LifashiOKDingdan"),
