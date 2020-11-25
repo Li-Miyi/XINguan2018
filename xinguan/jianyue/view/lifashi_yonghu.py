@@ -3,8 +3,8 @@
 # Create your views here.
 from django.http import JsonResponse
 from django.utils import timezone
-from ..models import yonghu, lifashi, lifadian, fuwu, jiesuandingdan, pingjia, dingdan, jishiqitadizhi, faxing, tupian,\
-    yuyuedingdan, shoucang,dizhi
+from ..models import yonghu, lifashi, lifadian, fuwu, jiesuandingdan, pingjia, dingdan, jishiqitadizhi, faxing, tupian, \
+    yuyuedingdan, shoucang, dizhi, zixun
 from django.db.utils import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.csrf import csrf_exempt
@@ -717,15 +717,6 @@ def zhifu(response):
     i_dingdan.shifouzhifu='1'
     i_dingdan.save()
     return JsonResponse({"status": "1","msg":"支付成功"})
-#
-# #用户添加社区资讯
-# def fabuzixun(response):
-#     yonghu_id = response.POST.get("yonghu_id")
-#     i_yonghu = yonghu.objects.get(id=yonghu_id)
-#     the_neirong = response.POST.get("neirong")
-#
-
-
 
 @csrf_exempt
 #用户评价
@@ -747,3 +738,13 @@ def set_pingjia(request):
         return JsonResponse({ "msg": "评论成功"})
     except Exception as e:
         return JsonResponse({"message":str(e)})
+
+@csrf_exempt
+#用户添加社区资讯
+def fabuzixun(response):
+    yonghu_id = response.POST.get("yonghu_id")
+    the_neirong = response.POST.get("neirong")
+    zixun.objects.create(neirong=the_neirong, yonghu_id=yonghu_id)
+    i_zixun = zixun.objects.latest('rating')
+    zixun_id = i_zixun.id
+    return JsonResponse({"staus":"发布成功", "zixun_id": zixun_id})
