@@ -743,12 +743,12 @@ def set_pingjia(request):
 
 @csrf_exempt
 #用户添加社区资讯
-def fabuzixun(request):
-    yonghu_id = request.POST.get("yonghu_id")
-    the_neirong = request.POST.get("neirong")
-    zixun.objects.create(neirong=the_neirong, yonghu_id=yonghu_id)
-    i_zixun = zixun.objects.latest('rating')
+def fabuzixun(response):
+    yonghu_id = response.POST.get("yonghu_id")
+    the_neirong = response.POST.get("neirong")
+    i_zixun = zixun.objects.create(neirong=the_neirong, yonghu_id=yonghu_id)
     zixun_id = i_zixun.id
+    print(zixun_id)
     return JsonResponse({"staus":"发布成功", "zixun_id": zixun_id})
 #统计数据
 def tongji_yuedu(request):
