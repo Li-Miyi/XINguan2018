@@ -1,6 +1,8 @@
 
 
 # Create your views here.
+from django.db.models import Sum
+from django.db.models.functions import ExtractMonth
 from django.http import JsonResponse
 from django.utils import timezone
 from ..models import yonghu, lifashi, lifadian, fuwu, jiesuandingdan, pingjia, dingdan, jishiqitadizhi, faxing, tupian, \
@@ -741,10 +743,35 @@ def set_pingjia(request):
 
 @csrf_exempt
 #用户添加社区资讯
-def fabuzixun(response):
-    yonghu_id = response.POST.get("yonghu_id")
-    the_neirong = response.POST.get("neirong")
+def fabuzixun(request):
+    yonghu_id = request.POST.get("yonghu_id")
+    the_neirong = request.POST.get("neirong")
     zixun.objects.create(neirong=the_neirong, yonghu_id=yonghu_id)
     i_zixun = zixun.objects.latest('rating')
     zixun_id = i_zixun.id
     return JsonResponse({"staus":"发布成功", "zixun_id": zixun_id})
+#统计数据
+def tongji_yuedu(request):
+    yonghu_id = request.GET.get("id")
+    the_dingdan = jiesuandingdan.objects.filter(yonghu_id=yonghu_id,jieshushijian__year=timezone.now().year)
+    sum_month_res = the_dingdan.annotate(month=ExtractMonth("jieshushijian")).\
+        values("month").order_by("month").annotate(price=Sum('shijifeiyong'))
+    data=[0]*12
+    for i in sum_month_res:
+        data[i['month']-1] = i["price"]
+    return JsonResponse({'status':1,"data":data})
+
+def tongji_leixing(request):
+    yonghu_id = request.GET.get("id")
+    the_dingdan = jiesuandingdan.objects.filter(yonghu_id=yonghu_id,jieshushijian__year=timezone.now().year)
+
+    data = {}
+
+    for i in the_dingdan:
+        key = i.fuwuxiang.get_leixing_display()
+        data.setdefault(key,0)
+        data[key] += i.shijifeiyong
+    output= []
+    for k,v in data.items():
+        output.append({"name":k,"value":v})
+    return JsonResponse({'status': 1, "data": output})
