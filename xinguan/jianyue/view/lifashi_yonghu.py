@@ -544,7 +544,7 @@ def count_yuyue(request):
     return JsonResponse({"status":"1","msg":num})
 
 #理发师获取自己的理发店——理发师端
-def getLifadian(request, zhuangtaiid):
+def lifashigetLifadian(request, zhuangtaiid):
     if request.method == "POST":
         datagetter = request.POST
     else:
@@ -748,3 +748,4 @@ def fabuzixun(response):
     zixun_id = i_zixun.id
     print(zixun_id)
     return JsonResponse({"staus":"发布成功", "zixun_id": zixun_id})
+
