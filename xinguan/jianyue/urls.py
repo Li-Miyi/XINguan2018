@@ -32,6 +32,8 @@ urlpatterns = [
     path(r'shoucang/add/<int:shoucangleixing>', view.lifashi_yonghu.yonghu_shoucang_add, name='YonghuAddShoucang'),
     path(r'shoucang/delete/<int:shoucangleixing>', view.lifashi_yonghu.yonghu_shoucang_delete, name='YonghuDeleteShoucang'),
     path(r'shoucang/show/<int:shoucangleixing>', view.lifashi_yonghu.yonghu_shoucang_show,name='YonghuShowShoucang'),
+    #用户社区资讯
+    path(r'zixun/add', view.lifashi_yonghu.fabuzixun, name="YonghuAddZixun"),
     # 对图片的操作
     path(r'tupian/show/<int:tupianleixing>/<int:tupianlaiyuan_id>',views.tupian_show,name="YonghuLifashitupianshow"),
     path(r'tupian/delete/<path:tupianlujing>',views.tupian_delete,name="YonghuLifashitupiandelete"),

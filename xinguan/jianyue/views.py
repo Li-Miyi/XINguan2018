@@ -9,6 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import ObjectDoesNotExist
 import jianyue
 from mysite.settings import MEDIA_ROOT
+from django.views.decorators.csrf import csrf_exempt
 from .models import yonghu,lifashi,lifadian,tupian as tp
 from django.db.utils import IntegrityError
 from django.shortcuts import render,get_object_or_404
@@ -18,11 +19,14 @@ def index(request):   #没用的首页
 def app_index(request):#没用的首页
     return render(request,'jianyue/index.html')
 
+@csrf_exempt
 def tupian_add(request,tupianleixing,tupianlaiyuan_id):
-    src = request.FILES.get("src")
-    the_tupian = tp.objects.create(tupianlaiyuan_id=tupianlaiyuan_id, src=src, tupianleixing=tupianleixing)
-    return JsonResponse({"status":"1","msg":the_tupian.src.name})
+    if request.method == "POST":
+        src = request.FILES.get("src")
+        the_tupian = tp.objects.create(tupianlaiyuan_id=tupianlaiyuan_id, src=src, tupianleixing=tupianleixing)
+        return JsonResponse({"status":"1","msg":the_tupian.src.name})
 
+@csrf_exempt
 def tupian_show(request,tupianlaiyuan_id,tupianleixing):
     the_tupians = tp.objects.filter(tupianlaiyuan_id=tupianlaiyuan_id, tupianleixing=tupianleixing)
     data =[]
@@ -31,6 +35,7 @@ def tupian_show(request,tupianlaiyuan_id,tupianleixing):
         data.append(info)
     return JsonResponse({"status":"1","data":data})
 
+@csrf_exempt
 def tupian_delete(request,tupianlujing):
     try:
         tp.objects.get(src=tupianlujing).delete()
@@ -39,3 +44,4 @@ def tupian_delete(request,tupianlujing):
         return JsonResponse({"status":"1","msg":"删除成功"})
     except ObjectDoesNotExist:
         return JsonResponse({"status":"0","msg":"删除失败"})
+
