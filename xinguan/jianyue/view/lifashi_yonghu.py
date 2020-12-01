@@ -1,10 +1,12 @@
 
 
 # Create your views here.
+from django.db.models import Sum
+from django.db.models.functions import ExtractMonth
 from django.http import JsonResponse
 from django.utils import timezone
-from ..models import yonghu, lifashi, lifadian, fuwu, jiesuandingdan, pingjia, dingdan, jishiqitadizhi, faxing, tupian,\
-    yuyuedingdan, shoucang,dizhi
+from ..models import yonghu, lifashi, lifadian, fuwu, jiesuandingdan, pingjia, dingdan, jishiqitadizhi, faxing, tupian, \
+    yuyuedingdan, shoucang, dizhi, zixun
 from django.db.utils import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.csrf import csrf_exempt
@@ -205,7 +207,6 @@ def fuwuliebiao(request):  # 服务列表页
             lifadian_name = fuwu_info.lifashi.lifadian.dianming  # 店名
             jiage = fuwu_info.jiage  # 价格
             fuwumingcheng = fuwu_info.fuwumingcheng  # 服务名称
-            fuwuid=fuwu_info.id #服务在数据库中的id
             dingdan_list = fuwu_info.dingdan_set.all()  # 反向查询所有的相关订单
             pingfen_sum = 0  # 设定最初总分0
             pingfen_num = 0  # 设定评分数量0
@@ -219,8 +220,8 @@ def fuwuliebiao(request):  # 服务列表页
             else:
                 pingfen = round(pingfen_sum / pingfen_num, 2)
             fuwuliebiao.append(
-                {"lifadian_name": lifadian_name, "jiage": jiage, "fuwumingcheng": fuwumingcheng, "leixing": leixing,
-                 "pingfen": pingfen,"fuwu_id":fuwuid})
+                {"fuwu_id": fuwu_info.id ,"lifadian_name": lifadian_name, "jiage": jiage, "fuwumingcheng": fuwumingcheng, "leixing": leixing,
+                 "pingfen": pingfen})
         except Exception as e:
             return JsonResponse({"status": 0, "msg": "访问错误"})
     if len(fuwuliebiao) == 0:
@@ -263,7 +264,10 @@ def fuwuliebiaoxiangqing(request):
         fw_dianzhulianxi=fuwuxiangqing.lifashi.lifadian.dianzhulianxi#店主联系方式
         lifadiantupian=tupian.objects.filter(tupianlaiyuan_id=fuwuxiangqing.lifashi.lifadian.id)[0]
         fw_lifadian_image=str(lifadiantupian.src)
-        result=JsonResponse({"leixing":fw_leixing,"jiage":fw_jiage,"mingcheng":fw_mingcheng,"pingfen":fw_pingfen,"xingming":fw_xingming,"xingbie":fw_xingbie,"lianxidianhua":fw_lianxidianhua,"lifashi_image":fw_lifashi_image,"lifadian_image":fw_lifadian_image,"dianming":fw_dianming,"dizhi":fw_dizhi,"dianzhulianxi":fw_dianzhulianxi})
+        result=JsonResponse({"leixing":fw_leixing,"jiage":fw_jiage,"mingcheng":fw_mingcheng,"pingfen":fw_pingfen,
+                             "xingming":fw_xingming,"xingbie":fw_xingbie,"lianxidianhua":fw_lianxidianhua,
+                             "lifashi_image":fw_lifashi_image,"lifadian_image":fw_lifadian_image,"dianming":fw_dianming,
+                             "dizhi":fw_dizhi,"dianzhulianxi":fw_dianzhulianxi})
     except Exception as e:
         result=JsonResponse({"status": 0, "msg": "访问失败","cuowu":str(e)})
     return result
@@ -542,7 +546,7 @@ def count_yuyue(request):
     return JsonResponse({"status":"1","msg":num})
 
 #理发师获取自己的理发店——理发师端
-def getLifadian(request, zhuangtaiid):
+def lifashigetLifadian(request, zhuangtaiid):
     if request.method == "POST":
         datagetter = request.POST
     else:
@@ -665,7 +669,7 @@ def OKdingdan(response):
     except:
         is_pingjia = 'false'
         the_pingjia = {}
-    return JsonResponse({"yonghuming": i_yonghu.yonghuming, "phone": i_yonghu.lianxidianhua, "touxiang": str(src),
+    return JsonResponse({"dingdan_id":i_dingdan.id,"yonghuming": i_yonghu.yonghuming, "phone": i_yonghu.lianxidianhua, "touxiang": str(src),
                          "jiesuanshijian": i_jiesuan.jieshushijian,
                          "lifashi":{ "lifashi_id": i_lifashi.id,"lifashi_phone":i_lifashi.lianxidianhua,"lifashi_name": i_lifashi.xingming,"lifashi_touxiang":lifashi_src},
                          "is_zhifu": shifouzhifu[i_jiesuan.shifouzhifu], "fuwu": i_fuwu.fuwumingcheng,
@@ -716,5 +720,61 @@ def zhifu(response):
     i_dingdan.save()
     return JsonResponse({"status": "1","msg":"支付成功"})
 
+@csrf_exempt
+#用户评价
+def set_pingjia(request):
+    if request.method == "POST":
+        datagetter = request.POST
+    else:
+        datagetter = request.GET
+    try:
+        dingdan_id = int(datagetter.get("dingdan_id"))
+        i_dingdan = dingdan.objects.get(id=dingdan_id)
+        pingfen = datagetter.get("score1")
+        pingfen=int(pingfen)
+        i_pingjia = datagetter.get("text")
+        yonghu_id=dingdan.objects.get(id=dingdan_id).yonghu_id
+        i_yonghu = yonghu.objects.get(id=yonghu_id)
+        yonghu_id=int(yonghu_id)
+        pingjia.objects.create(dingdan=i_dingdan,yonghu=i_yonghu,pingfen=pingfen,pingjia=i_pingjia)
+        return JsonResponse({ "msg": "评论成功"})
+    except Exception as e:
+        return JsonResponse({"message":str(e)})
 
+@csrf_exempt
+#用户添加社区资讯
+def fabuzixun(response):
+    yonghu_id = response.POST.get("yonghu_id")
+    the_neirong = response.POST.get("neirong")
+    i_zixun = zixun.objects.create(neirong=the_neirong, yonghu_id=yonghu_id)
+    zixun_id = i_zixun.id
+    print(zixun_id)
+    return JsonResponse({"staus":"发布成功", "zixun_id": zixun_id})
+
+
+#统计数据
+def tongji_yuedu(request):
+    yonghu_id = request.GET.get("id")
+    the_dingdan = jiesuandingdan.objects.filter(yonghu_id=yonghu_id,jieshushijian__year=timezone.now().year)
+    sum_month_res = the_dingdan.annotate(month=ExtractMonth("jieshushijian")).\
+        values("month").order_by("month").annotate(price=Sum('shijifeiyong'))
+    data=[0]*12
+    for i in sum_month_res:
+        data[i['month']-1] = i["price"]
+    return JsonResponse({'status':1,"data":data})
+
+def tongji_leixing(request):
+    yonghu_id = request.GET.get("id")
+    the_dingdan = jiesuandingdan.objects.filter(yonghu_id=yonghu_id,jieshushijian__year=timezone.now().year)
+
+    data = {}
+
+    for i in the_dingdan:
+        key = i.fuwuxiang.get_leixing_display()
+        data.setdefault(key,0)
+        data[key] += i.shijifeiyong
+    output= []
+    for k,v in data.items():
+        output.append({"name":k,"value":v})
+    return JsonResponse({'status': 1, "data": output})
 

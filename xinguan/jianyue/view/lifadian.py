@@ -57,6 +57,9 @@ def zhuce(request):  # 注册验证
         except:
             return JsonResponse({'status': -1, 'msg': '注册失败'})
 
+def dengchu(request):
+    del request.session['dianzhulianxi']
+    return redirect(reverse("jianyue:lifadian_shouye"))
 
 def denglu(request):
     if request.method == "POST":

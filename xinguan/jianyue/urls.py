@@ -19,6 +19,11 @@ urlpatterns = [
     path(r"cancelorder/", view.lifashi_yonghu.CancelOrder, name="YonghuCancelOrder"),
     path(r"yonghu/getlifadian/", view.lifashi_yonghu.getLifadian, name="YonghuGetLifadian"),
     path(r"yonghu/zhifu/", view.lifashi_yonghu.zhifu, name="Yonghuzhifu"),
+    # 评价
+    path(r"setpingjia/", view.lifashi_yonghu.set_pingjia, name="setpingjia"),
+    # 用户统计数据
+    path(r"tongji/yuedu",view.lifashi_yonghu.tongji_yuedu,name="tongjiyuedu"),
+    path(r"tongji/leixing", view.lifashi_yonghu.tongji_leixing, name="tongjileixing"),
     # 用户查看不同订单
     path(r"YonghuDingdan/<int:zhuangtai_id>", view.lifashi_yonghu.getYonghuDingdan, name="YonghuDingdan"),
     #理发师
@@ -30,6 +35,8 @@ urlpatterns = [
     path(r'shoucang/add/<int:shoucangleixing>', view.lifashi_yonghu.yonghu_shoucang_add, name='YonghuAddShoucang'),
     path(r'shoucang/delete/<int:shoucangleixing>', view.lifashi_yonghu.yonghu_shoucang_delete, name='YonghuDeleteShoucang'),
     path(r'shoucang/show/<int:shoucangleixing>', view.lifashi_yonghu.yonghu_shoucang_show,name='YonghuShowShoucang'),
+    #用户社区资讯
+    path(r'zixun/add', view.lifashi_yonghu.fabuzixun, name="YonghuAddZixun"),
     # 对图片的操作
     path(r'tupian/show/<int:tupianleixing>/<int:tupianlaiyuan_id>',views.tupian_show,name="YonghuLifashitupianshow"),
     path(r'tupian/delete/<path:tupianlujing>',views.tupian_delete,name="YonghuLifashitupiandelete"),
@@ -39,11 +46,12 @@ urlpatterns = [
     path(r'lifadian/zhuce/', view.lifadian.zhuce, name="lifadian_zhuceyanzheng"),
     path(r'lifadian/denglu/', view.lifadian.denglu, name="lifadian_degnluyanzheng"),
     path(r'lifadian/xiugai/', view.lifadian.xiugai, name="lifadian_xiugai"),
+    path(r'lifadian/dengchu/',view.lifadian.dengchu,name="lifadian_dengchu"),
     # 小程序理发师端
     path(r"getOKDingdan/", view.lifashi_yonghu.getOKDingdan, name="LifashigetOKDingdan"),
     path(r"lifashi/OKdingdan/show", view.lifashi_yonghu.OKdingdan, name="LifashiOKDingdan"),
     path(r"getLifadianName/", view.lifashi_yonghu.getLifadianName, name="LifashiZhuce"),
-    path(r"getLifadian/<int:zhuangtaiid>/", view.lifashi_yonghu.getLifadian, name="LifashiGetLifadian"),
+    path(r"getLifadian/<int:zhuangtaiid>/", view.lifashi_yonghu.lifashigetLifadian, name="LifashiGetLifadian"),
     path(r"thelifashiDetail/", view.lifashi_yonghu.lifashiDetail, name="LifashiDetail"),
     path(r"lifashi/fuwu/add", view.lifashi_yonghu.fuwu_add, name="LifashiFuwuAdd"),
     path(r"lifashi/fuwu/delete", view.lifashi_yonghu.fuwu_delete, name="LifashiFuwuDelete"),

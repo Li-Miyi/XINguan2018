@@ -47,7 +47,7 @@ class yonghu(models.Model):  # 用户
 
 def upload_to(instance,filename):
     tupianlianyuan_id = instance.tupianlaiyuan_id
-    tupianleixing = ["lifadian","lifashi","faxing"][int(instance.tupianleixing)]
+    tupianleixing = ["lifadian","lifashi","faxing","yonghu","zixun"][int(instance.tupianleixing)]
     return '/'.join([tupianleixing,str(tupianlianyuan_id),filename])
 
 class tupian(models.Model):
@@ -120,3 +120,4 @@ class zixun(models.Model):
     yonghu = models.ForeignKey(yonghu,on_delete=models.CASCADE)
     neirong = models.CharField(max_length=140)
     dianzanshu = models.IntegerField(default=0)
+    fabushijian = models.DateTimeField(auto_now_add=True)
