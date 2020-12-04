@@ -743,9 +743,10 @@ def set_pingjia(request):
 
 @csrf_exempt
 #用户添加社区资讯
-def fabuzixun(response):
-    yonghu_id = response.POST.get("yonghu_id")
-    the_neirong = response.POST.get("neirong")
+def fabuzixun(request):
+    yonghu_id = request.POST.get("yonghu_id")
+    print(yonghu_id)
+    the_neirong = request.POST.get("neirong")
     i_zixun = zixun.objects.create(neirong=the_neirong, yonghu_id=yonghu_id)
     zixun_id = i_zixun.id
     print(zixun_id)
@@ -753,8 +754,9 @@ def fabuzixun(response):
 
 
 #统计数据
+@csrf_exempt
 def tongji_yuedu(request):
-    yonghu_id = request.GET.get("id")
+    yonghu_id = request.POST.get("id")
     the_dingdan = jiesuandingdan.objects.filter(yonghu_id=yonghu_id,jieshushijian__year=timezone.now().year)
     sum_month_res = the_dingdan.annotate(month=ExtractMonth("jieshushijian")).\
         values("month").order_by("month").annotate(price=Sum('shijifeiyong'))
@@ -763,8 +765,9 @@ def tongji_yuedu(request):
         data[i['month']-1] = i["price"]
     return JsonResponse({'status':1,"data":data})
 
+@csrf_exempt
 def tongji_leixing(request):
-    yonghu_id = request.GET.get("id")
+    yonghu_id = request.POST.get("id")
     the_dingdan = jiesuandingdan.objects.filter(yonghu_id=yonghu_id,jieshushijian__year=timezone.now().year)
 
     data = {}
@@ -778,3 +781,4 @@ def tongji_leixing(request):
         output.append({"name":k,"value":v})
     return JsonResponse({'status': 1, "data": output})
 
+#用户得到社区资讯
