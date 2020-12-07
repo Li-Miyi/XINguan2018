@@ -713,8 +713,8 @@ def getLifadian(request):
 
 #用户支付函数
 @csrf_exempt
-def zhifu(response):
-    dingdan_id = response.POST.get('dingdan_id')
+def zhifu(request):
+    dingdan_id = request.POST.get('dingdan_id')
     i_dingdan = jiesuandingdan.objects.get(id=dingdan_id)
     i_dingdan.shifouzhifu='1'
     i_dingdan.save()
@@ -782,3 +782,40 @@ def tongji_leixing(request):
     return JsonResponse({'status': 1, "data": output})
 
 #用户得到社区资讯
+def getZixun(request):
+    page = request.GET.get('page')
+    start = int(page)*10
+    pagesize = int(request.GET.get('pagesize'))
+    ZixunList = []
+    zixun_len =  zixun.objects.all().count()
+    Zixun = zixun.objects.all().order_by('-id')[start:start+pagesize]
+    for item in Zixun:
+        i_yonghu = item.yonghu
+        the_zixun_tupian = tupian.objects.get(tupianlaiyuan_id=item.id, tupianleixing=4)
+        zixun_tupian_src = "http://127.0.0.1:8000/media/"+the_zixun_tupian.src.name
+        the_touxiang_tupian = tupian.objects.get(tupianlaiyuan_id=i_yonghu.id, tupianleixing=3)
+        touxiang_tupian_src = the_touxiang_tupian.src.name
+        zixun_detail = {"id":item.id, "yonghuming":i_yonghu.yonghuming, "yonghu_id": i_yonghu.id, "yonghu_touxiang":touxiang_tupian_src,
+                        "neirong": item.neirong, "dianzanshu": item.dianzanshu, 'fabushijian':item.fabushijian,
+                        'zixun_tupian_src':zixun_tupian_src}
+        ZixunList.append(zixun_detail)
+    return JsonResponse({'zixun':ZixunList,"pagenum": int(page)+1,'total':zixun_len})
+
+#用户对资讯进行点赞
+def dianzan_zixun(request):
+    zixun_id = request.GET.get('zixun_id')
+    i_zixun = zixun.objects.get(id=zixun_id)
+    dianzanshu = i_zixun.dianzanshu+1
+    i_zixun.dianzanshu = dianzanshu
+    try:
+        i_zixun.save()
+        return JsonResponse({"status":1,"msg":"点赞成功"})
+    except:
+        return JsonResponse({"status":0,"msg":"点赞失败"})
+
+
+
+
+
+
+
