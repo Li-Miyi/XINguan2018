@@ -565,17 +565,17 @@ def lifashigetLifadian(request, zhuangtaiid):
 
 #理发师增加其他地址
 @csrf_exempt
-def jishidizhi_add(response):
-    lifashi_id = response.POST.get("lifashi_id")
-    lifadian_id = response.POST.get("lifadian_id")
+def jishidizhi_add(request):
+    lifashi_id = request.POST.get("lifashi_id")
+    lifadian_id = request.POST.get("lifadian_id")
     jishiqitadizhi.objects.create(lifashi_id=lifashi_id,lifadian_id=lifadian_id,shenqingshijian=timezone.now(),zhuangtai='0')
     return JsonResponse({"status":1,"msg":"申请成功"})
 
 @csrf_exempt
 # 理发师撤销其他地址
-def jishidizhi_delete(response):
-    lifashi_id = int(response.POST.get("lifashi_id"))
-    lifadian_id = int(response.POST.get('lifadian_id'))
+def jishidizhi_delete(request):
+    lifashi_id = int(request.POST.get("lifashi_id"))
+    lifadian_id = int(request.POST.get('lifadian_id'))
     for i_dizhi in jishiqitadizhi.objects.filter(lifashi_id=lifashi_id):
         if i_dizhi.lifadian_id == lifadian_id:
             i_dizhi.delete()
@@ -584,26 +584,26 @@ def jishidizhi_delete(response):
 
 #理发师增加服务
 @csrf_exempt
-def fuwu_add(response):
-    lifashi_id = response.POST.get("lifashi_id")
-    fuwu_name = response.POST.get("fuwu_name")
-    fuwu_leixing = response.POST.get('leixing')
-    jiage = response.POST.get("jiage")
+def fuwu_add(request):
+    lifashi_id = request.POST.get("lifashi_id")
+    fuwu_name = request.POST.get("fuwu_name")
+    fuwu_leixing = request.POST.get('leixing')
+    jiage = request.POST.get("jiage")
     fuwu.objects.create(lifashi_id=lifashi_id, fuwumingcheng=fuwu_name, leixing=fuwu_leixing, jiage=jiage)
     return JsonResponse({"status":1,"msg":"增加成功"})
 
 @csrf_exempt
 # 理发师删除服务
-def fuwu_delete(response):
-    fuwu_id = int(response.POST.get('fuwu_id'))
+def fuwu_delete(request):
+    fuwu_id = int(request.POST.get('fuwu_id'))
     i_fuwu = fuwu.objects.get(id=fuwu_id)
     i_fuwu.delete()
     return JsonResponse({"status":1, "msg": "删除成功"})
 
 @csrf_exempt
 # 理发师——预约订单详情
-def yuyue_show(response):
-    yuyue_id = int(response.POST.get('yuyue_id'))
+def yuyue_show(request):
+    yuyue_id = int(request.POST.get('yuyue_id'))
     i_yuyue = yuyuedingdan.objects.get(id=yuyue_id)
     i_dingdan = dingdan.objects.get(id=yuyue_id)
     i_yonghu = yonghu.objects.get(id=i_dingdan.yonghu_id)
@@ -631,9 +631,9 @@ def yuyue_show(response):
 
 @csrf_exempt
 # 理发师——预约订单提交估计时间
-def yuyue_submit(response):
-    yuyue_id = int(response.POST.get('yuyue_id'))
-    yuyuexiaohao = response.POST.get('yuyuexiaohao')
+def yuyue_submit(request):
+    yuyue_id = int(request.POST.get('yuyue_id'))
+    yuyuexiaohao = request.POST.get('yuyuexiaohao')
     i_yuyue = yuyuedingdan.objects.get(id=yuyue_id)
     i_yuyue.yuyuexiaohao=yuyuexiaohao
     i_yuyue.yijieshou = '1'
@@ -642,8 +642,8 @@ def yuyue_submit(response):
 
 @csrf_exempt
 # 理发师——获取已完成订单详情
-def OKdingdan(response):
-    dingdan_id = int(response.POST.get('dingdan_id'))
+def OKdingdan(request):
+    dingdan_id = int(request.POST.get('dingdan_id'))
     i_dingdan = dingdan.objects.get(id=dingdan_id)
     i_jiesuan =jiesuandingdan.objects.get(id=i_dingdan.id)
     i_yonghu = yonghu.objects.get(id=i_dingdan.yonghu_id)
