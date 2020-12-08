@@ -11,10 +11,9 @@ from django.db.utils import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.csrf import csrf_exempt
 
-
 """用户与理发师"""
 
-
+@csrf_exempt
 def zhuce(request):
     if request.method == "POST":
         data_getter = request.POST
@@ -812,6 +811,45 @@ def dianzan_zixun(request):
         return JsonResponse({"status":1,"msg":"点赞成功"})
     except:
         return JsonResponse({"status":0,"msg":"点赞失败"})
+
+# 得到理发师所有发型——理发师端(1-短发，2 -烫发， 3 -长发，4 -染发）
+@csrf_exempt
+def getFaxing(request, faxing_c_id):
+    if request.method == "POST":
+        datagetter = request.POST
+    else:
+        datagetter = request.GET
+    i_lifashi = lifashi.objects.get(id=datagetter.get("lifashi_id"))
+    i_lifashi_id = i_lifashi.id
+    faxing_c_id = faxing_c_id
+    faxingList = []
+    faxing_leixing = {"1": "短发", "2": "烫发", "3": "长发", "4": "染发"}
+    for i_faxing in faxing.objects.filter(lifashi_id = i_lifashi_id,leixing=faxing_c_id):
+        imageList = []
+        for i_image in tupian.objects.filter(tupianlaiyuan_id=i_faxing.id,tupianleixing="2"):
+            if "https://" in str(i_image.src):
+                i_image.src = str(i_image.src)
+            else:
+                i_image.src = "http://127.0.0.1:8000/media/"+str(i_image.src)
+            imgae_detail = {"image_id": i_image.id, "image_src": str(i_image.src)}
+            imageList.append(imgae_detail)
+        faxing_detail = {"id": i_faxing.id, "c_id": i_faxing.leixing,
+                                     "c_name": faxing_leixing[i_faxing.leixing], "f_name": i_faxing.faxingming,
+                                     "f_beizhu": i_faxing.beizhu, "image": imageList}
+        faxingList.append(faxing_detail)
+    return JsonResponse(faxingList, safe=False)
+
+#理发师添加发型
+@csrf_exempt
+def faxing_add(request):
+    lifashi_id = request.POST.get("lifashi_id")
+    faxing_name = request.POST.get("mingcheng")
+    faxing_leixing = request.POST.get('leixing')
+    faxing_xinxi = request.POST.get("xinxi")
+    i_faxing= faxing.objects.create(lifashi_id = lifashi_id, faxingming = faxing_name, leixing = faxing_leixing, beizhu = faxing_xinxi)
+    faxing_id = i_faxing.id
+    print(faxing_id)
+    return JsonResponse({"staus": "添加成功", "faxing_id": faxing_id})
 
 
 
