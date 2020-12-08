@@ -39,6 +39,9 @@ urlpatterns = [
     path(r'shoucang/show/<int:shoucangleixing>', view.lifashi_yonghu.yonghu_shoucang_show,name='YonghuShowShoucang'),
     #用户社区资讯
     path(r'zixun/add', view.lifashi_yonghu.fabuzixun, name="YonghuAddZixun"),
+    path(r'zixun/show', view.lifashi_yonghu.getZixun, name="YonghuGetZixun"),
+    path(r'zixun/dianzan', view.lifashi_yonghu.dianzan_zixun, name="YonghuDianzan"),
+
     # 对图片的操作
     path(r'tupian/show/<int:tupianleixing>/<int:tupianlaiyuan_id>',views.tupian_show,name="YonghuLifashitupianshow"),
     path(r'tupian/delete/<path:tupianlujing>',views.tupian_delete,name="YonghuLifashitupiandelete"),
@@ -53,12 +56,15 @@ urlpatterns = [
     path(r"getOKDingdan/", view.lifashi_yonghu.getOKDingdan, name="LifashigetOKDingdan"),
     path(r"lifashi/OKdingdan/show", view.lifashi_yonghu.OKdingdan, name="LifashiOKDingdan"),
     path(r"getLifadianName/", view.lifashi_yonghu.getLifadianName, name="LifashiZhuce"),
-    path(r"getLifadian/<int:zhuangtaiid>/", view.lifashi_yonghu.getLifadian, name="LifashiGetLifadian"),
+    path(r"getLifadian/<int:zhuangtaiid>/", view.lifashi_yonghu.lifashigetLifadian, name="LifashiGetLifadian"),
     path(r"thelifashiDetail/", view.lifashi_yonghu.lifashiDetail, name="LifashiDetail"),
     path(r"lifashi/fuwu/add", view.lifashi_yonghu.fuwu_add, name="LifashiFuwuAdd"),
     path(r"lifashi/fuwu/delete", view.lifashi_yonghu.fuwu_delete, name="LifashiFuwuDelete"),
     path(r"lifashi/yuyue/show", view.lifashi_yonghu.yuyue_show, name="LifashiYuyueShow"),
     path(r"lifashi/yuyue/submit", view.lifashi_yonghu.yuyue_submit, name="LifashiYuyueSubmit"),
+    path(r"lifashi/get/faxing/<int:faxing_c_id>", view.lifashi_yonghu.getFaxing, name="lifashiFaxing"),
+    #发型添加
+    path(r"lifashi/faxing/add", view.lifashi_yonghu.faxing_add, name="LifashiFaxingAdd"),
     # 理发店图片
     path('lifadian/<int:dianzhulianxi>/xiangce/', view.lifadian.xiangce, name='lifadian_xiangce'),
     # 理发店个人界面

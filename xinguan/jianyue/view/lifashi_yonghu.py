@@ -14,7 +14,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 """用户与理发师"""
 
-
+@csrf_exempt
 def zhuce(request):
     if request.method == "POST":
         data_getter = request.POST
@@ -546,7 +546,7 @@ def count_yuyue(request):
     return JsonResponse({"status":"1","msg":num})
 
 #理发师获取自己的理发店——理发师端
-def getLifadian(request, zhuangtaiid):
+def lifashigetLifadian(request, zhuangtaiid):
     if request.method == "POST":
         datagetter = request.POST
     else:
@@ -566,17 +566,17 @@ def getLifadian(request, zhuangtaiid):
 
 #理发师增加其他地址
 @csrf_exempt
-def jishidizhi_add(response):
-    lifashi_id = response.POST.get("lifashi_id")
-    lifadian_id = response.POST.get("lifadian_id")
+def jishidizhi_add(request):
+    lifashi_id = request.POST.get("lifashi_id")
+    lifadian_id = request.POST.get("lifadian_id")
     jishiqitadizhi.objects.create(lifashi_id=lifashi_id,lifadian_id=lifadian_id,shenqingshijian=timezone.now(),zhuangtai='0')
     return JsonResponse({"status":1,"msg":"申请成功"})
 
 @csrf_exempt
 # 理发师撤销其他地址
-def jishidizhi_delete(response):
-    lifashi_id = int(response.POST.get("lifashi_id"))
-    lifadian_id = int(response.POST.get('lifadian_id'))
+def jishidizhi_delete(request):
+    lifashi_id = int(request.POST.get("lifashi_id"))
+    lifadian_id = int(request.POST.get('lifadian_id'))
     for i_dizhi in jishiqitadizhi.objects.filter(lifashi_id=lifashi_id):
         if i_dizhi.lifadian_id == lifadian_id:
             i_dizhi.delete()
@@ -585,26 +585,26 @@ def jishidizhi_delete(response):
 
 #理发师增加服务
 @csrf_exempt
-def fuwu_add(response):
-    lifashi_id = response.POST.get("lifashi_id")
-    fuwu_name = response.POST.get("fuwu_name")
-    fuwu_leixing = response.POST.get('leixing')
-    jiage = response.POST.get("jiage")
+def fuwu_add(request):
+    lifashi_id = request.POST.get("lifashi_id")
+    fuwu_name = request.POST.get("fuwu_name")
+    fuwu_leixing = request.POST.get('leixing')
+    jiage = request.POST.get("jiage")
     fuwu.objects.create(lifashi_id=lifashi_id, fuwumingcheng=fuwu_name, leixing=fuwu_leixing, jiage=jiage)
     return JsonResponse({"status":1,"msg":"增加成功"})
 
 @csrf_exempt
 # 理发师删除服务
-def fuwu_delete(response):
-    fuwu_id = int(response.POST.get('fuwu_id'))
+def fuwu_delete(request):
+    fuwu_id = int(request.POST.get('fuwu_id'))
     i_fuwu = fuwu.objects.get(id=fuwu_id)
     i_fuwu.delete()
     return JsonResponse({"status":1, "msg": "删除成功"})
 
 @csrf_exempt
 # 理发师——预约订单详情
-def yuyue_show(response):
-    yuyue_id = int(response.POST.get('yuyue_id'))
+def yuyue_show(request):
+    yuyue_id = int(request.POST.get('yuyue_id'))
     i_yuyue = yuyuedingdan.objects.get(id=yuyue_id)
     i_dingdan = dingdan.objects.get(id=yuyue_id)
     i_yonghu = yonghu.objects.get(id=i_dingdan.yonghu_id)
@@ -632,9 +632,9 @@ def yuyue_show(response):
 
 @csrf_exempt
 # 理发师——预约订单提交估计时间
-def yuyue_submit(response):
-    yuyue_id = int(response.POST.get('yuyue_id'))
-    yuyuexiaohao = response.POST.get('yuyuexiaohao')
+def yuyue_submit(request):
+    yuyue_id = int(request.POST.get('yuyue_id'))
+    yuyuexiaohao = request.POST.get('yuyuexiaohao')
     i_yuyue = yuyuedingdan.objects.get(id=yuyue_id)
     i_yuyue.yuyuexiaohao=yuyuexiaohao
     i_yuyue.yijieshou = '1'
@@ -643,8 +643,8 @@ def yuyue_submit(response):
 
 @csrf_exempt
 # 理发师——获取已完成订单详情
-def OKdingdan(response):
-    dingdan_id = int(response.POST.get('dingdan_id'))
+def OKdingdan(request):
+    dingdan_id = int(request.POST.get('dingdan_id'))
     i_dingdan = dingdan.objects.get(id=dingdan_id)
     i_jiesuan =jiesuandingdan.objects.get(id=i_dingdan.id)
     i_yonghu = yonghu.objects.get(id=i_dingdan.yonghu_id)
@@ -713,8 +713,8 @@ def getLifadian(request):
 
 #用户支付函数
 @csrf_exempt
-def zhifu(response):
-    dingdan_id = response.POST.get('dingdan_id')
+def zhifu(request):
+    dingdan_id = request.POST.get('dingdan_id')
     i_dingdan = jiesuandingdan.objects.get(id=dingdan_id)
     i_dingdan.shifouzhifu='1'
     i_dingdan.save()
@@ -743,16 +743,20 @@ def set_pingjia(request):
 
 @csrf_exempt
 #用户添加社区资讯
-def fabuzixun(response):
-    yonghu_id = response.POST.get("yonghu_id")
-    the_neirong = response.POST.get("neirong")
+def fabuzixun(request):
+    yonghu_id = request.POST.get("yonghu_id")
+    print(yonghu_id)
+    the_neirong = request.POST.get("neirong")
     i_zixun = zixun.objects.create(neirong=the_neirong, yonghu_id=yonghu_id)
     zixun_id = i_zixun.id
     print(zixun_id)
     return JsonResponse({"staus":"发布成功", "zixun_id": zixun_id})
+
+
 #统计数据
+@csrf_exempt
 def tongji_yuedu(request):
-    yonghu_id = request.GET.get("id")
+    yonghu_id = request.POST.get("id")
     the_dingdan = jiesuandingdan.objects.filter(yonghu_id=yonghu_id,jieshushijian__year=timezone.now().year)
     sum_month_res = the_dingdan.annotate(month=ExtractMonth("jieshushijian")).\
         values("month").order_by("month").annotate(price=Sum('shijifeiyong'))
@@ -761,8 +765,9 @@ def tongji_yuedu(request):
         data[i['month']-1] = i["price"]
     return JsonResponse({'status':1,"data":data})
 
+@csrf_exempt
 def tongji_leixing(request):
-    yonghu_id = request.GET.get("id")
+    yonghu_id = request.POST.get("id")
     the_dingdan = jiesuandingdan.objects.filter(yonghu_id=yonghu_id,jieshushijian__year=timezone.now().year)
 
     data = {}
@@ -775,6 +780,85 @@ def tongji_leixing(request):
     for k,v in data.items():
         output.append({"name":k,"value":v})
     return JsonResponse({'status': 1, "data": output})
+
+#用户得到社区资讯
+def getZixun(request):
+    page = request.GET.get('page')
+    start = int(page)*10
+    pagesize = int(request.GET.get('pagesize'))
+    ZixunList = []
+    zixun_len =  zixun.objects.all().count()
+    Zixun = zixun.objects.all().order_by('-id')[start:start+pagesize]
+    for item in Zixun:
+        i_yonghu = item.yonghu
+        the_zixun_tupian = tupian.objects.get(tupianlaiyuan_id=item.id, tupianleixing=4)
+        zixun_tupian_src = "http://127.0.0.1:8000/media/"+the_zixun_tupian.src.name
+        the_touxiang_tupian = tupian.objects.get(tupianlaiyuan_id=i_yonghu.id, tupianleixing=3)
+        touxiang_tupian_src = the_touxiang_tupian.src.name
+        zixun_detail = {"id":item.id, "yonghuming":i_yonghu.yonghuming, "yonghu_id": i_yonghu.id, "yonghu_touxiang":touxiang_tupian_src,
+                        "neirong": item.neirong, "dianzanshu": item.dianzanshu, 'fabushijian':item.fabushijian,
+                        'zixun_tupian_src':zixun_tupian_src}
+        ZixunList.append(zixun_detail)
+    return JsonResponse({'zixun':ZixunList,"pagenum": int(page)+1,'total':zixun_len})
+
+#用户对资讯进行点赞
+def dianzan_zixun(request):
+    zixun_id = request.GET.get('zixun_id')
+    i_zixun = zixun.objects.get(id=zixun_id)
+    dianzanshu = i_zixun.dianzanshu+1
+    i_zixun.dianzanshu = dianzanshu
+    try:
+        i_zixun.save()
+        return JsonResponse({"status":1,"msg":"点赞成功"})
+    except:
+        return JsonResponse({"status":0,"msg":"点赞失败"})
+
+# 得到理发师所有发型——理发师端(1-短发，2 -烫发， 3 -长发，4 -染发）
+@csrf_exempt
+def getFaxing(request, faxing_c_id):
+    if request.method == "POST":
+        datagetter = request.POST
+    else:
+        datagetter = request.GET
+    i_lifashi = lifashi.objects.get(id=datagetter.get("lifashi_id"))
+    i_lifashi_id = i_lifashi.id
+    faxing_c_id = faxing_c_id
+    faxingList = []
+    faxing_leixing = {"1": "短发", "2": "烫发", "3": "长发", "4": "染发"}
+    for i_faxing in faxing.objects.filter(lifashi_id = i_lifashi_id,leixing=faxing_c_id):
+        imageList = []
+        for i_image in tupian.objects.filter(tupianlaiyuan_id=i_faxing.id,tupianleixing="2"):
+            if "https://" in str(i_image.src):
+                i_image.src = str(i_image.src)
+            else:
+                i_image.src = "http://127.0.0.1:8000/media/"+str(i_image.src)
+            imgae_detail = {"image_id": i_image.id, "image_src": str(i_image.src)}
+            imageList.append(imgae_detail)
+        faxing_detail = {"id": i_faxing.id, "c_id": i_faxing.leixing,
+                                     "c_name": faxing_leixing[i_faxing.leixing], "f_name": i_faxing.faxingming,
+                                     "f_beizhu": i_faxing.beizhu, "image": imageList}
+        faxingList.append(faxing_detail)
+    return JsonResponse(faxingList, safe=False)
+
+#理发师添加发型
+@csrf_exempt
+def faxing_add(request):
+    lifashi_id = request.POST.get("lifashi_id")
+    faxing_name = request.POST.get("mingcheng")
+    faxing_leixing = request.POST.get('leixing')
+    faxing_xinxi = request.POST.get("xinxi")
+    i_faxing= faxing.objects.create(lifashi_id = lifashi_id, faxingming = faxing_name, leixing = faxing_leixing, beizhu = faxing_xinxi)
+    faxing_id = i_faxing.id
+    print(faxing_id)
+    return JsonResponse({"staus": "添加成功", "faxing_id": faxing_id})
+
+
+
+
+
+
+
+
 
 from django.conf import settings
 from django.core.mail import send_mail
