@@ -852,14 +852,6 @@ def faxing_add(request):
     print(faxing_id)
     return JsonResponse({"staus": "添加成功", "faxing_id": faxing_id})
 
-
-
-
-
-
-
-
-
 from django.conf import settings
 from django.core.mail import send_mail
 def fasongyouxiang(request):
@@ -868,3 +860,4 @@ def fasongyouxiang(request):
     send_mail('找回密码', 'Here is the message.', from_email,
           [email], fail_silently=False)
     return JsonResponse({"status":"1","msg":"已发送"})
+
