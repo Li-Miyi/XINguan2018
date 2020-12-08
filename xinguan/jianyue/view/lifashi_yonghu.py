@@ -775,3 +775,12 @@ def tongji_leixing(request):
     for k,v in data.items():
         output.append({"name":k,"value":v})
     return JsonResponse({'status': 1, "data": output})
+
+from django.conf import settings
+from django.core.mail import send_mail
+def fasongyouxiang(request):
+    email = request.GET.get("email")
+    from_email = settings.DEFAULT_FROM_EMAIL
+    send_mail('找回密码', 'Here is the message.', from_email,
+          [email], fail_silently=False)
+    return JsonResponse({"status":"1","msg":"已发送"})

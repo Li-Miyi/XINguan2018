@@ -18,7 +18,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
-
+#发送邮箱
+EMAIL_USE_SSL = True
+EMAIL_HOST = 'smtp.qq.com'  # 如果是 163 改成 smtp.163.com
+EMAIL_PORT = 465
+EMAIL_HOST_USER = 'xinguan2018scu@163.com' # 帐号
+EMAIL_HOST_PASSWORD = 'xinguan2018'  # 密码
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 's)$w04((9scmf10vz2@-qy-nwjs@&@v+87*5sx%h4b2e!%$zs$'
 

@@ -26,6 +26,7 @@ class lifashi(models.Model):  # 理发师
     mima = models.CharField(max_length=30)
     lianxidianhua = models.CharField(max_length=30, unique=True)
     xingbie = models.CharField(max_length=1, choices=(('1', '男'), ('0', '女')))
+    email = models.CharField(max_length=50,unique=True)
 
 
 class wuzi(models.Model):  # 物资
@@ -44,6 +45,7 @@ class yonghu(models.Model):  # 用户
     xingming = models.CharField(max_length=30)
     xingbie = models.CharField(max_length=1, choices=(('1', '男'), ('0', '女')))
     lianxidianhua = models.CharField(max_length=30, unique=True)
+    email = models.CharField(max_length=50,unique=True)
 
 def upload_to(instance,filename):
     tupianlianyuan_id = instance.tupianlaiyuan_id
