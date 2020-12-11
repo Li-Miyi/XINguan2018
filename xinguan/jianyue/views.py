@@ -28,12 +28,18 @@ def tupian_add(request,tupianleixing,tupianlaiyuan_id):
 
 @csrf_exempt
 def tupian_show(request,tupianlaiyuan_id,tupianleixing):
-    the_tupians = tp.objects.filter(tupianlaiyuan_id=tupianlaiyuan_id, tupianleixing=tupianleixing)
-    data =[]
-    for tupian in the_tupians:
-        info = {"tupianlaiyuan_id":tupian.tupianlaiyuan_id,"src":tupian.src.name}
-        data.append(info)
-    return JsonResponse({"status":"1","data":data})
+    try:
+        the_tupians = tp.objects.filter(tupianlaiyuan_id=tupianlaiyuan_id, tupianleixing=tupianleixing)
+        data =[]
+        for tupian in the_tupians:
+            info = {"tupianlaiyuan_id":tupian.tupianlaiyuan_id,"src":tupian.src.name}
+            data.append(info)
+        if len(data)==0:
+            return JsonResponse({"status": 0})
+        else:
+            return JsonResponse({"status": "1", "data": data})
+    except:
+        return JsonResponse({"status": 0,"msg":str(Exception)})
 
 @csrf_exempt
 def tupian_delete(request,tupianlujing):
@@ -45,3 +51,14 @@ def tupian_delete(request,tupianlujing):
     except ObjectDoesNotExist:
         return JsonResponse({"status":"0","msg":"删除失败"})
 
+@csrf_exempt
+def tupian_update(request,tupianlaiyuan_id,tupianleixing):
+    if request.method == "POST":
+        try:
+            src = request.FILES.get("src")
+            the_tupian = tp.objects.filter(tupianlaiyuan_id=tupianlaiyuan_id,tupianleixing=tupianleixing)
+            data={"src":src}
+            the_tupian.update(**data)
+            return JsonResponse({"status": 1,"msg": "更换头像成功"})
+        except:
+            return JsonResponse({"status": 0,"msg": "更换头像失败"})

@@ -41,6 +41,7 @@ urlpatterns = [
     path(r'tupian/show/<int:tupianleixing>/<int:tupianlaiyuan_id>',views.tupian_show,name="YonghuLifashitupianshow"),
     path(r'tupian/delete/<path:tupianlujing>',views.tupian_delete,name="YonghuLifashitupiandelete"),
     path(r'tupian/add/<int:tupianleixing>/<int:tupianlaiyuan_id>',views.tupian_add,name="YonghuLifashitupianadd"),
+    path(r'tupian/update/<int:tupianleixing>/<int:tupianlaiyuan_id>', views.tupian_update, name="touxiangupdate"),
     # 理发店管理操作
     path(r'lifadian/', view.lifadian.shouye, name="lifadian_shouye"),
     path(r'lifadian/zhuce/', view.lifadian.zhuce, name="lifadian_zhuceyanzheng"),
@@ -57,6 +58,7 @@ urlpatterns = [
     path(r"lifashi/fuwu/delete", view.lifashi_yonghu.fuwu_delete, name="LifashiFuwuDelete"),
     path(r"lifashi/yuyue/show", view.lifashi_yonghu.yuyue_show, name="LifashiYuyueShow"),
     path(r"lifashi/yuyue/submit", view.lifashi_yonghu.yuyue_submit, name="LifashiYuyueSubmit"),
+    path(r"lifashi/xiugai_lfs/",view.lifashi_yonghu.xiugai_lfs,name="lifashi_xiugai"),
     # 理发店图片
     path('lifadian/<int:dianzhulianxi>/xiangce/', view.lifadian.xiangce, name='lifadian_xiangce'),
     # 理发店个人界面
@@ -75,6 +77,13 @@ urlpatterns = [
     path(r"lifadian/<int:dianzhulianxi>/dizhi/<slug:zhuangtai>", view.lifadian.dizhi, name="dizhi"),
     path(r"lifadian/<int:dianzhulianxi>/dizhi/chexiao/", view.lifadian.dizhi_chexiao, name="dizhi_chexiao"),
     path(r"lifadian/<int:dianzhulianxi>/dizhi/fankui/", view.lifadian.dizhi_fankui, name="dizhi_fankui"),
-    path('', views.app_index, name='moreng1')
-
+    path('', views.app_index, name='moreng1'),
+    # 注册密保
+    path(r"zhucemibao/",view.lifashi_yonghu.zhucemibao,name="zhucemibao"),
+    # 获取密保
+    path(r"huoqumibao/", view.lifashi_yonghu.huoqumibao, name="huoqumibao"),
+    # 修改密保
+    path(r"xiugaimibao/",view.lifashi_yonghu.xiugaimibao,name="xiugaimibao"),
+    #修改密码
+    path(r"xiugaimima/",view.lifashi_yonghu.xiugaimima,name="xiugaimima")
     ]

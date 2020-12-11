@@ -6,7 +6,7 @@ from django.db.models.functions import ExtractMonth
 from django.http import JsonResponse
 from django.utils import timezone
 from ..models import yonghu, lifashi, lifadian, fuwu, jiesuandingdan, pingjia, dingdan, jishiqitadizhi, faxing, tupian, \
-    yuyuedingdan, shoucang, dizhi, zixun
+    yuyuedingdan, shoucang, dizhi, zixun,mibao
 from django.db.utils import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.csrf import csrf_exempt
@@ -34,6 +34,7 @@ def zhuce(request):
             lifadian_id = data_getter.get('lifadian_id')
             lifashi.objects.create(xingming=xingming, yonghuming=yonghuming, mima=mima,
                                    lianxidianhua=int(lianxifangshi), xingbie=xingbie, lifadian_id=lifadian_id)
+            tupianlaiyuan_id=lifashi.objects.get(lianxidianhua=lianxifangshi).id
         elif shenfen == 'yonghu':
             xingming = data_getter.get('xingming')
             mima = data_getter.get('mima')
@@ -42,7 +43,8 @@ def zhuce(request):
             yonghuming = data_getter.get('yonghuming')
             yonghu.objects.create(xingming=xingming, yonghuming=yonghuming, mima=mima, lianxidianhua=lianxifangshi,
                                   xingbie=xingbie)
-        return JsonResponse({"status": 1, "msg": "注册成功"})
+            tupianlaiyuan_id=yonghu.objects.get(lianxidianhua=lianxifangshi).id
+        return JsonResponse({"status": 1, "msg": "注册成功", "tupianlaiyuan_id": tupianlaiyuan_id})
     except IntegrityError:
         return JsonResponse({"success": 0, "msg": "手机号码已注册"})
 
@@ -92,6 +94,26 @@ def xiugai(request):
     data = {ziduan: neirong}
     try:
         the_yonghu.update(**data)
+    except TypeError:
+        return JsonResponse({"status": 0, "msg": "字段错误"})
+    except IntegrityError:
+        return JsonResponse({"status": 2, "msg": "字段内容已被注册"})
+    return JsonResponse({"status": 1, "msg": "修改成功"})
+
+def xiugai_lfs(request):
+    if request.method == "POST":
+        data_getter=request.POST
+    elif request.method == "GET":
+        data_getter=request.GET
+    else:
+        return  JsonResponse({"success": 0,"msg": "访问方法错误"})
+    ziduan=data_getter.get("ziduan")
+    lianxifangshi=data_getter.get("lianxifangshi")
+    neirong=data_getter.get("neirong")
+    the_lifashi=lifashi.objects.filter(lianxidianhua=lianxifangshi)
+    data = {ziduan:neirong}
+    try:
+        the_lifashi.update(**data)
     except TypeError:
         return JsonResponse({"status": 0, "msg": "字段错误"})
     except IntegrityError:
@@ -782,3 +804,93 @@ def tongji_leixing(request):
     return JsonResponse({'status': 1, "data": output})
 
 #用户得到社区资讯
+
+def zhucemibao(request):
+    if request.method == "POST":
+        data_getter = request.POST
+    elif request.method == "GET":
+        data_getter = request.GET
+    else:
+        return JsonResponse({"success": 0, "msg": "注册失败"})
+    shenfen = data_getter.get('shenfen')
+    mibaowenti=data_getter.get('mibaowenti')
+    mibaodaan=data_getter.get('mibaodaan')
+    mibaolaiyuan_id=data_getter.get('mibaolaiyuan_id')
+    try:
+        mibao.objects.create(shenfen=shenfen,mibaowenti=mibaowenti,mibaodaan=mibaodaan,mibaolaiyuan_id=mibaolaiyuan_id)
+        return JsonResponse({"status": 1, "msg": "注册成功"})
+    except:
+        return JsonResponse({"success": 0, "msg": "注册失败"})
+
+def huoqumibao(request):
+    if request.method == "POST":
+        data_getter = request.POST
+    elif request.method == "GET":
+        data_getter = request.GET
+    else:
+        return JsonResponse({"success": 0, "msg": "注册失败"})
+    shenfen=data_getter.get('shenfen')
+    mibaolaiyuan_id=data_getter.get('mibaolaiyuan_id')
+    try:
+        yonghumibao=mibao.objects.get(shenfen=shenfen,mibaolaiyuan_id=mibaolaiyuan_id)
+        mibaowenti=yonghumibao.mibaowenti
+        mibaodaan=yonghumibao.mibaodaan
+        return JsonResponse({"success": 1,"mibaozhuangtai": 1,"mibaowenti": mibaowenti,"mibaodaan" :mibaodaan})
+    except:
+        return JsonResponse({"success" :0,"mibaozhuangtai" :0,"msg" :"未找到该用户密保，请注册"})
+
+def xiugaimibao(request):
+    if request.method == "POST":
+        data_getter = request.POST
+    elif request.method == "GET":
+        data_getter = request.GET
+    else:
+        return JsonResponse({"success": 0, "msg": "修改失败"})
+    shenfen=data_getter.get('shenfen')
+    mibaolaiyuan_id=data_getter.get('mibaolaiyuan_id')
+    yuanmibaodaan=data_getter.get('yuanmibaodaan')
+    xinmibaowenti=data_getter.get('xinmibaowenti')
+    xinmibaodaan=data_getter.get('xinmibaodaan')
+    data={"mibaowenti": xinmibaowenti,"mibaodaan": xinmibaodaan}
+    try:
+        yonghumibao=mibao.objects.filter(shenfen=shenfen,mibaolaiyuan_id=mibaolaiyuan_id)
+        mibaodaan=mibao.objects.filter(shenfen=shenfen,mibaolaiyuan_id=mibaolaiyuan_id)[0].mibaodaan
+        print(yonghumibao)
+        if yuanmibaodaan==mibaodaan:
+            yonghumibao.update(**data)
+            return JsonResponse({"status": 1, "msg": "修改成功"})
+        else:
+            return JsonResponse({"status": 2,"msg": "原密保答案错误","yuanmibaodaan":yuanmibaodaan,"mibaodaan":mibaodaan})
+    except Exception as e:
+        return JsonResponse({"status": 0,"msg": str(e)})
+
+def xiugaimima(request):
+    if request.method == "POST":
+        data_getter = request.POST
+    elif request.method == "GET":
+        data_getter = request.GET
+    else:
+        return JsonResponse({"success": 0, "msg": "修改失败"})
+    yuanmima=data_getter.get('yuanmima')
+    xinmima=data_getter.get('xinmima')
+    shenfen=data_getter.get('shenfen')
+    lianxidianhua=data_getter.get('lianxidianhua')
+    data={"mima":xinmima}
+    try:
+        if shenfen == 'lifashi':
+            the_lifashi=lifashi.objects.filter(lianxidianhua=lianxidianhua)
+            if the_lifashi[0].mima == yuanmima:
+                the_lifashi.update(**data)
+                return JsonResponse({"status": 1,"msg" :"修改成功"})
+            else:
+                return JsonResponse({"status": 2,"msg": "密码错误"})
+        else:
+            the_yonghu=yonghu.objects.filter(lianxidianhua=lianxidianhua)
+            if the_yonghu[0].mima == yuanmima:
+                the_yonghu.update(**data)
+                return JsonResponse({"status": 1, "msg": "修改成功"})
+            else:
+                return JsonResponse({"status": 2, "msg": "密码错误"})
+    except Exception as e:
+        return  JsonResponse({"status": 0,"msg" :str(e)})
+
