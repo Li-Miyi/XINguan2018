@@ -45,7 +45,7 @@ def zhuce(request):
     except IntegrityError:
         return JsonResponse({"success": 0, "msg": "手机号码已注册"})
 
-
+@csrf_exempt
 def denglu(request):
     if request.method == "POST":
         datagetter = request.POST
@@ -435,7 +435,7 @@ def yonghu_shoucang_add(request, shoucangleixing):
         datagetter = request.GET
     shoucang_id = datagetter.get('shoucang_id')
     i_yonghu = yonghu.objects.get(id=datagetter.get('yonghu_id'))
-    shoucang.objects.create(beishoucang_id=shoucang_id, yonghu=i_yonghu, tupianleixing=shoucangleixing)
+    shoucang.objects.create(beishoucang_id=shoucang_id, yonghu=i_yonghu, shoucangleixing=shoucangleixing)
     return JsonResponse({"status": '1', "msg": "收藏成功"})
 
 
@@ -450,7 +450,7 @@ def yonghu_shoucang_delete(request, shoucangleixing):
     print(shoucangleixing)
     try:
         for i_shoucang in shoucang.objects.filter(yonghu=i_yonghu):
-            if int(i_shoucang.tupianleixing) == int(shoucangleixing) and i_shoucang.beishoucang_id == shoucang_id:
+            if int(i_shoucang.shoucangleixing) == int(shoucangleixing) and i_shoucang.beishoucang_id == shoucang_id:
                 i_shoucang.delete()
                 return JsonResponse({"status": "1", "msg": "删除成功"})
     except ObjectDoesNotExist:
@@ -467,20 +467,20 @@ def yonghu_shoucang_show(request, shoucangleixing):
     i_yonghu = yonghu.objects.get(id=datagetter.get('yonghu_id'))
     shoucang_list = []
     for i_shoucang in shoucang.objects.filter(yonghu=i_yonghu):
-        if  shoucangleixing== 0 and int(i_shoucang.tupianleixing) == shoucangleixing :
+        if  shoucangleixing== 0 and int(i_shoucang.shoucangleixing) == shoucangleixing :
             the_lifadian = lifadian.objects.get(id=i_shoucang.beishoucang_id)
-            shoucang_detail = {"lifadian_id": i_shoucang.beishoucang_id, "c_id": i_shoucang.tupianleixing,
+            shoucang_detail = {"lifadian_id": i_shoucang.beishoucang_id, "c_id": i_shoucang.shoucangleixing,
                                    "lifadian_name": the_lifadian.dianming, "phone": the_lifadian.dianzhulianxi}
             shoucang_list.append(shoucang_detail)
-        elif shoucangleixing== 1 and int(i_shoucang.tupianleixing) == shoucangleixing:
+        elif shoucangleixing== 1 and int(i_shoucang.shoucangleixing) == shoucangleixing:
             the_lifashi = lifashi.objects.get(id=i_shoucang.beishoucang_id)
-            shoucang_detail = {"lifashi_id": i_shoucang.beishoucang_id, "c_id": i_shoucang.tupianleixing,
+            shoucang_detail = {"lifashi_id": i_shoucang.beishoucang_id, "c_id": i_shoucang.shoucangleixing,
                                    "lifashi_name": the_lifashi.yonghuming, "phone": the_lifashi.lianxidianhua}
             shoucang_list.append(shoucang_detail)
-        elif shoucangleixing== 2 and int(i_shoucang.tupianleixing) == shoucangleixing:
+        elif shoucangleixing== 2 and int(i_shoucang.shoucangleixing) == shoucangleixing:
             print(i_shoucang.beishoucang_id)
             the_fuwu = fuwu.objects.get(id=i_shoucang.beishoucang_id)
-            shoucang_detail = {"fuwu_id": i_shoucang.beishoucang_id, "c_id": i_shoucang.tupianleixing,
+            shoucang_detail = {"fuwu_id": i_shoucang.beishoucang_id, "c_id": i_shoucang.shoucangleixing,
                                    "fuwu_name": the_fuwu.fuwumingcheng, "price": the_fuwu.jiage}
             shoucang_list.append(shoucang_detail)
     return JsonResponse(shoucang_list, safe=False)
