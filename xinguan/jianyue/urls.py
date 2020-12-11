@@ -19,6 +19,8 @@ urlpatterns = [
     path(r"cancelorder/", view.lifashi_yonghu.CancelOrder, name="YonghuCancelOrder"),
     path(r"yonghu/getlifadian/", view.lifashi_yonghu.getLifadian, name="YonghuGetLifadian"),
     path(r"yonghu/zhifu/", view.lifashi_yonghu.zhifu, name="Yonghuzhifu"),
+    #发送邮箱
+    path(r"email/",view.lifashi_yonghu.fasongyouxiang,name="fasongyongxiang"),
     # 评价
     path(r"setpingjia/", view.lifashi_yonghu.set_pingjia, name="setpingjia"),
     # 用户统计数据
