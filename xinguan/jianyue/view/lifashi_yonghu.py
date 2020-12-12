@@ -351,16 +351,21 @@ def yonghuDetail(request):
     lianxifangshi = datagetter.get("lianxifangshi")
     i_yonghu = yonghu.objects.get(lianxidianhua=lianxifangshi)
     yonghu_id = i_yonghu.id
-    for i_image in tupian.objects.filter(tupianlaiyuan_id=yonghu_id):
-        print(i_image.tupianleixing)
-        try:
-            if (i_image.tupianleixing == "3"):
-                yonghu_detail = {"id": i_yonghu.id, "yonghuming": i_yonghu.yonghuming, "xingming": i_yonghu.xingming,
-                                 "sex": sex[i_yonghu.xingbie], "touxiang": str(i_image.src)}
-        except:
-            yonghu_detail = {"id": i_yonghu.id, "yonghuming": i_yonghu.yonghuming, "xingming": i_yonghu.xingming,
-                             "sex": sex[i_yonghu.xingbie], "touxiang": "../../pages/image/默认头像.png"}
-    return JsonResponse(yonghu_detail)
+    try:
+        yonghu_detail = {"id": i_yonghu.id, "yonghuming": i_yonghu.yonghuming, "xingming": i_yonghu.xingming,
+                "sex": sex[i_yonghu.xingbie]}
+        return JsonResponse(yonghu_detail)
+    except:
+        return JsonResponse({"status": 0,"msg": "用户信息调取失败"})
+    # for i_image in tupian.objects.filter(tupianlaiyuan_id=yonghu_id):
+    #     print(i_image.tupianleixing)
+    #     try:
+    #         if (i_image.tupianleixing == "3"):
+    #             yonghu_detail = {"id": i_yonghu.id, "yonghuming": i_yonghu.yonghuming, "xingming": i_yonghu.xingming,
+    #                              "sex": sex[i_yonghu.xingbie], "touxiang": str(i_image.src)}
+    #     except:
+    #         yonghu_detail = {"id": i_yonghu.id, "yonghuming": i_yonghu.yonghuming, "xingming": i_yonghu.xingming,
+    #                          "sex": sex[i_yonghu.xingbie], "touxiang": "../../pages/image/默认头像.png"}
 
 
 # 理发师注册页面获取理发店名-理发师端

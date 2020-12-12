@@ -41,7 +41,7 @@ urlpatterns = [
     path(r'tupian/show/<int:tupianleixing>/<int:tupianlaiyuan_id>',views.tupian_show,name="YonghuLifashitupianshow"),
     path(r'tupian/delete/<path:tupianlujing>',views.tupian_delete,name="YonghuLifashitupiandelete"),
     path(r'tupian/add/<int:tupianleixing>/<int:tupianlaiyuan_id>',views.tupian_add,name="YonghuLifashitupianadd"),
-    path(r'tupian/update/<int:tupianleixing>/<int:tupianlaiyuan_id>', views.tupian_update, name="touxiangupdate"),
+    path(r'touxiang/update/<int:tupianleixing>/<int:tupianlaiyuan_id>/<path:tupianlujing>', views.touxiang_update, name="touxiangupdate"),
     # 理发店管理操作
     path(r'lifadian/', view.lifadian.shouye, name="lifadian_shouye"),
     path(r'lifadian/zhuce/', view.lifadian.zhuce, name="lifadian_zhuceyanzheng"),
