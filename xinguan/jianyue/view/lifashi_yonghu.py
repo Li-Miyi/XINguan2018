@@ -23,25 +23,29 @@ def zhuce(request):
     else:
         return JsonResponse({"success": 0, "msg": "注册失败"})
     shenfen = data_getter.get('shenfen')
-    print(shenfen)
+    print(data_getter.get('mima'))
     try:
         if shenfen == 'lifashi':
-            xingming = data_getter.get('xingming')
-            mima = data_getter.get('mima')
-            lianxifangshi = data_getter.get('lianxifangshi')
-            xingbie = data_getter.get('xingbie')
-            yonghuming = data_getter.get('yonghuming')
-            lifadian_id = data_getter.get('lifadian_id')
-            lifashi.objects.create(xingming=xingming, yonghuming=yonghuming, mima=mima,
-                                   lianxidianhua=int(lianxifangshi), xingbie=xingbie, lifadian_id=lifadian_id)
+                print("lifashi")
+                xingming = data_getter.get('xingming')
+                mima = data_getter.get('mima')
+                lianxifangshi = data_getter.get('lianxifangshi')
+                xingbie = data_getter.get('xingbie')
+                yonghuming = data_getter.get('yonghuming')
+                lifadian_id = data_getter.get('lifadian_id')
+                email = data_getter.get('email')
+                lifashi.objects.create(xingming=xingming, yonghuming=yonghuming, mima=mima,
+                                       lianxidianhua=int(lianxifangshi), xingbie=xingbie, lifadian_id=lifadian_id, email=email)
         elif shenfen == 'yonghu':
-            xingming = data_getter.get('xingming')
-            mima = data_getter.get('mima')
-            lianxifangshi = data_getter.get('lianxifangshi')
-            xingbie = data_getter.get('xingbie')
-            yonghuming = data_getter.get('yonghuming')
-            yonghu.objects.create(xingming=xingming, yonghuming=yonghuming, mima=mima, lianxidianhua=lianxifangshi,
-                                  xingbie=xingbie)
+                print("yonghu")
+                xingming = data_getter.get('xingming')
+                mima = data_getter.get('mima')
+                lianxifangshi = data_getter.get('lianxifangshi')
+                xingbie = data_getter.get('xingbie')
+                yonghuming = data_getter.get('yonghuming')
+                email = data_getter.get('email')
+                yonghu.objects.create(xingming=xingming, yonghuming=yonghuming, mima=mima, lianxidianhua=lianxifangshi,
+                                      xingbie=xingbie, email=email)
         return JsonResponse({"status": 1, "msg": "注册成功"})
     except IntegrityError:
         return JsonResponse({"success": 0, "msg": "手机号码已注册"})

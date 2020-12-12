@@ -7,7 +7,7 @@ class lifadian(models.Model):  # 理发店
     dianzhuming = models.CharField(max_length=30)
     dianzhulianxi = models.CharField(max_length=20, unique=True)
     dianming = models.CharField(max_length=30)
-    mima = models.CharField(max_length=30)
+    mima = models.CharField(max_length=100)
 
 
 class dizhi(models.Model):
@@ -23,7 +23,7 @@ class lifashi(models.Model):  # 理发师
     shenfenzheng = models.CharField(max_length=18, null=True, unique=True)
     xingming = models.CharField(max_length=30)
     yonghuming = models.CharField(max_length=30)
-    mima = models.CharField(max_length=30)
+    mima = models.CharField(max_length=1000)
     lianxidianhua = models.CharField(max_length=30, unique=True)
     xingbie = models.CharField(max_length=1, choices=(('1', '男'), ('0', '女')))
     email = models.CharField(max_length=50)
@@ -41,7 +41,7 @@ class wuzi(models.Model):  # 物资
 
 class yonghu(models.Model):  # 用户
     yonghuming = models.CharField(max_length=30)
-    mima = models.CharField(max_length=30)
+    mima = models.CharField(max_length=200)
     xingming = models.CharField(max_length=30)
     xingbie = models.CharField(max_length=1, choices=(('1', '男'), ('0', '女')))
     lianxidianhua = models.CharField(max_length=30, unique=True)
