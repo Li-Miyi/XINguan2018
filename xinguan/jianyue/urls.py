@@ -19,8 +19,6 @@ urlpatterns = [
     path(r"cancelorder/", view.lifashi_yonghu.CancelOrder, name="YonghuCancelOrder"),
     path(r"yonghu/getlifadian/", view.lifashi_yonghu.getLifadian, name="YonghuGetLifadian"),
     path(r"yonghu/zhifu/", view.lifashi_yonghu.zhifu, name="Yonghuzhifu"),
-    #发送邮箱
-    path(r"email/",view.lifashi_yonghu.fasongyouxiang,name="fasongyongxiang"),
     # 评价
     path(r"setpingjia/", view.lifashi_yonghu.set_pingjia, name="setpingjia"),
     # 用户统计数据
@@ -83,6 +81,10 @@ urlpatterns = [
     path(r"lifadian/<int:dianzhulianxi>/dizhi/<slug:zhuangtai>", view.lifadian.dizhi, name="dizhi"),
     path(r"lifadian/<int:dianzhulianxi>/dizhi/chexiao/", view.lifadian.dizhi_chexiao, name="dizhi_chexiao"),
     path(r"lifadian/<int:dianzhulianxi>/dizhi/fankui/", view.lifadian.dizhi_fankui, name="dizhi_fankui"),
-    path('', views.app_index, name='moreng1')
+    path('', views.app_index, name='moreng1'),
+    # 用户找回密码
+    path(r"zhaohuimima/<int:shenfen>",view.lifashi_yonghu.fasongyouxiang,name="fasongyongxiang"),
+    path(r"checkyanzhengma/<int:shenfen>", view.lifashi_yonghu.checkyanzhengma, name="checkyanzhengma"),
+    path(r"xiugaimima/<int:shenfen>", view.lifashi_yonghu.xiugaimima, name="xiugaimima")
 
-    ]
+]

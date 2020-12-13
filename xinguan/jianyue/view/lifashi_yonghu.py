@@ -3,9 +3,9 @@
 # Create your views here.
 from django.db.models import Sum
 from django.db.models.functions import ExtractMonth
-from django.http import JsonResponse
+from django.http import JsonResponse,HttpResponse
 from django.utils import timezone
-from ..models import yonghu, lifashi, lifadian, fuwu, jiesuandingdan, pingjia, dingdan, jishiqitadizhi, faxing, tupian, \
+from ..models import yonghu, lifashi, lifadian, fuwu, EmailVerifyRecord,jiesuandingdan, pingjia, dingdan, jishiqitadizhi, faxing, tupian, \
     yuyuedingdan, shoucang, dizhi, zixun
 from django.db.utils import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
@@ -856,12 +856,90 @@ def faxing_add(request):
     print(faxing_id)
     return JsonResponse({"staus": "添加成功", "faxing_id": faxing_id})
 
+
+import random
+def get_random_code(length=4):
+    """获得随机字符串"""
+    code = ''
+    choice_str = '0123456789'
+    for _ in range(length):
+        random_str = random.choice(choice_str)
+        code += random_str
+    return code
+
+#找回密码 0=用户 1=理发师
 from django.conf import settings
 from django.core.mail import send_mail
-def fasongyouxiang(request):
-    email = request.GET.get("email")
+def fasongyouxiang(request,shenfen):
+    """type=1 找回密码"""
+    _type = request.GET.get("type")
+    lianxifangshi = request.GET.get("lianxifangshi")
+    """发送邮件"""
+    email_rcode = EmailVerifyRecord()
     from_email = settings.DEFAULT_FROM_EMAIL
-    send_mail('找回密码', 'Here is the message.', from_email,
-          [email], fail_silently=False)
-    return JsonResponse({"status":"1","msg":"已发送"})
+    # 忘记密码发送验证邮件, 和 发送验证码逻辑一样
+    if shenfen==0:
+        try:
+            i_yonghu = yonghu.objects.get(lianxidianhua=lianxifangshi)
+            email = i_yonghu.email
+        except:
+            return JsonResponse({"status":"0", "msg":"用户不存在"})
+    else:
+        try:
+            i_yonghu = lifashi.objects.get(lianxidianhua=lianxifangshi)
+            email = i_yonghu.email
+        except:
+            return JsonResponse({"status":"0", "msg":"用户不存在"})
+    if _type == '1':
+        random_code = get_random_code()
+        email_title = '找回密码'
+        email_body = '您的验证码为：'+random_code
+        # 保存验证码
+        email_rcode.code = random_code
+        email_rcode.send_type = _type
+        email_rcode.email = email
+        email_rcode.yonghu = i_yonghu
+        email_rcode.save()
+        # 真正启动Django自带的发送邮件功能，邮件标题，邮件内容，发送人，发给谁，发送成功则返回1，失败则返回0
+        email_status = send_mail(subject=email_title, message=email_body, from_email=from_email, recipient_list=[email])
+        return HttpResponse(email_status)
+
+#找回密码，验证验证码 0=用户 1=理发师
+def checkyanzhengma(request, shenfen):
+    lianxifangshi = request.GET.get("lianxifangshi")
+    the_code = request.GET.get("code")
+    if shenfen==0:
+        i_yonghu = yonghu.objects.get(lianxidianhua=lianxifangshi)
+    else:
+        i_yonghu = lifashi.objects.get(lianxidianhua=lianxifangshi)
+    print(i_yonghu)
+    email_rcode = EmailVerifyRecord.objects.get(yonghu=i_yonghu)
+    code = email_rcode.code
+    if the_code == code:
+        email_rcode.delete()
+        return JsonResponse({"status":"1","msg":"验证码一致"})
+    else:
+        return JsonResponse({"status":"0","msg":"验证码错误"})
+
+#重置密码，验证验证码 0=用户 1=理发师
+@csrf_exempt
+def xiugaimima(request, shenfen):
+    lianxifangshi = request.POST.get("lianxifangshi")
+    new_mima = request.POST.get("mima")
+    try:
+        if shenfen==0:
+                i_yonghu = yonghu.objects.get(lianxidianhua=lianxifangshi)
+                i_yonghu.mima = new_mima
+                i_yonghu.save()
+        else:
+                i_yonghu = lifashi.objects.get(lianxidianhua=lianxifangshi)
+                i_yonghu.mima = new_mima
+                i_yonghu.save()
+        return JsonResponse({"status":"true","msg":"修改成功"})
+    except:
+        return JsonResponse({"status":"false","msg":"修改失败"})
+
+
+
+
 

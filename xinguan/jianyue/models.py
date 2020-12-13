@@ -123,3 +123,11 @@ class zixun(models.Model):
     neirong = models.CharField(max_length=140)
     dianzanshu = models.IntegerField(default=0)
     fabushijian = models.DateTimeField(auto_now_add=True)
+
+class EmailVerifyRecord(models.Model):
+    code = models.CharField(max_length=4)
+    send_type =  models.CharField(max_length=1, choices=(('0', '注册'), ('1', '找回密码')))
+    email = models.EmailField()
+    yonghu = models.ForeignKey(yonghu, on_delete=models.CASCADE)
+    class Meta:
+        unique_together = ('yonghu', 'email')
