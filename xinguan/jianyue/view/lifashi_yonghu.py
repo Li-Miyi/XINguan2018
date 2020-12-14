@@ -48,7 +48,7 @@ def zhuce(request):
     except IntegrityError:
         return JsonResponse({"success": 0, "msg": "手机号码已注册"})
 
-
+@csrf_exempt
 def denglu(request):
     if request.method == "POST":
         datagetter = request.POST
@@ -122,6 +122,15 @@ def xiugai_lfs(request):
 
 
 def liebiao(request):
+    if request.method == "POST":
+        datagetter = request.POST
+    else:
+        datagetter = request.GET
+    duixiang=datagetter.get('duixiang')
+    page=int(datagetter.get('page'))
+    pagesize=int(datagetter.get('pagesize'))
+    paixufangshi=datagetter.get('paixufangshi')
+    #理发师和理发店的所有数据
     lifadian_datas = []
     lifashi_datas = []
     for i_lifadian in lifadian.objects.all():
@@ -164,7 +173,62 @@ def liebiao(request):
         except:
             lifadian_data["price"] = 0
         lifadian_datas.append(lifadian_data)
-    return JsonResponse({"lifashi": lifashi_datas, "lifadian": lifadian_datas})
+    #分页数据
+    if duixiang=="lifashi":
+        if paixufangshi=='价格最低':
+            lifashi_datas=jiageshengxu(lifashi_datas)
+        elif paixufangshi=='价格最高':
+            lifashi_datas=jiagejiangxu(lifashi_datas)
+        elif paixufangshi=='好评优先':
+            lifashi_datas==pingfenjiangxu(lifashi_datas)
+        else:
+            pass
+        lifashi_return=[]
+        if(len(lifashi_datas)%pagesize==0):
+            total_pages=len(lifashi_datas)//pagesize
+        else:
+            total_pages=len(lifashi_datas)//pagesize + 1
+        print((len((lifashi_datas))))
+        if(page<total_pages):
+            i=0
+            while(i<pagesize):
+                lifashi_return.append(lifashi_datas[i+(page-1)*pagesize])
+                i=i+1
+            return JsonResponse({"lifashi": lifashi_return, "lifashihasMoreData": True})
+        if(page>=total_pages):
+            i=0
+            while(i<len(lifashi_datas)-(page-1)*pagesize):
+                lifashi_return.append(lifashi_datas[i+(page-1)*pagesize])
+                i=i+1
+            return JsonResponse({"lifashi": lifashi_return, "lifashihasMoreData": False})
+    if duixiang=="lifadian":
+        if paixufangshi=='价格最低':
+            lifadian_datas=jiageshengxu(lifadian_datas)
+        elif paixufangshi=='价格最高':
+            lifadian_datas=jiagejiangxu(lifadian_datas)
+        elif paixufangshi=='好评优先':
+            lifadian_datas==pingfenjiangxu(lifadian_datas)
+        else:
+            pass
+        lifadian_return=[]
+        if(len(lifadian_datas)%pagesize==0):
+            total_pages=len(lifadian_datas)//pagesize
+        else:
+            total_pages=len(lifadian_datas)//pagesize + 1
+        print((len((lifadian_datas))))
+        if(page<total_pages):
+            i=0
+            while(i<pagesize):
+                lifadian_return.append(lifadian_datas[i+(page-1)*pagesize])
+                i=i+1
+            return JsonResponse({"lifadian": lifadian_return, "lifadianhasMoreData": True})
+        if(page>=total_pages):
+            i=0
+            while(i<len(lifadian_datas)-(page-1)*pagesize):
+                lifadian_return.append(lifadian_datas[i+(page-1)*pagesize])
+                i=i+1
+            return JsonResponse({"lifadian": lifadian_return, "lifadianhasMoreData": False})
+    # return JsonResponse({"lifashi": lifashi_datas, "lifadian": lifadian_datas})
 
 
 def lifashi_detail(request):
@@ -463,7 +527,7 @@ def yonghu_shoucang_add(request, shoucangleixing):
         datagetter = request.GET
     shoucang_id = datagetter.get('shoucang_id')
     i_yonghu = yonghu.objects.get(id=datagetter.get('yonghu_id'))
-    shoucang.objects.create(beishoucang_id=shoucang_id, yonghu=i_yonghu, tupianleixing=shoucangleixing)
+    shoucang.objects.create(beishoucang_id=shoucang_id, yonghu=i_yonghu, shoucangleixing=shoucangleixing)
     return JsonResponse({"status": '1', "msg": "收藏成功"})
 
 
@@ -478,7 +542,7 @@ def yonghu_shoucang_delete(request, shoucangleixing):
     print(shoucangleixing)
     try:
         for i_shoucang in shoucang.objects.filter(yonghu=i_yonghu):
-            if int(i_shoucang.tupianleixing) == int(shoucangleixing) and i_shoucang.beishoucang_id == shoucang_id:
+            if int(i_shoucang.shoucangleixing) == int(shoucangleixing) and i_shoucang.beishoucang_id == shoucang_id:
                 i_shoucang.delete()
                 return JsonResponse({"status": "1", "msg": "删除成功"})
     except ObjectDoesNotExist:
@@ -495,20 +559,20 @@ def yonghu_shoucang_show(request, shoucangleixing):
     i_yonghu = yonghu.objects.get(id=datagetter.get('yonghu_id'))
     shoucang_list = []
     for i_shoucang in shoucang.objects.filter(yonghu=i_yonghu):
-        if  shoucangleixing== 0 and int(i_shoucang.tupianleixing) == shoucangleixing :
+        if  shoucangleixing== 0 and int(i_shoucang.shoucangleixing) == shoucangleixing :
             the_lifadian = lifadian.objects.get(id=i_shoucang.beishoucang_id)
-            shoucang_detail = {"lifadian_id": i_shoucang.beishoucang_id, "c_id": i_shoucang.tupianleixing,
+            shoucang_detail = {"lifadian_id": i_shoucang.beishoucang_id, "c_id": i_shoucang.shoucangleixing,
                                    "lifadian_name": the_lifadian.dianming, "phone": the_lifadian.dianzhulianxi}
             shoucang_list.append(shoucang_detail)
-        elif shoucangleixing== 1 and int(i_shoucang.tupianleixing) == shoucangleixing:
+        elif shoucangleixing== 1 and int(i_shoucang.shoucangleixing) == shoucangleixing:
             the_lifashi = lifashi.objects.get(id=i_shoucang.beishoucang_id)
-            shoucang_detail = {"lifashi_id": i_shoucang.beishoucang_id, "c_id": i_shoucang.tupianleixing,
+            shoucang_detail = {"lifashi_id": i_shoucang.beishoucang_id, "c_id": i_shoucang.shoucangleixing,
                                    "lifashi_name": the_lifashi.yonghuming, "phone": the_lifashi.lianxidianhua}
             shoucang_list.append(shoucang_detail)
-        elif shoucangleixing== 2 and int(i_shoucang.tupianleixing) == shoucangleixing:
+        elif shoucangleixing== 2 and int(i_shoucang.shoucangleixing) == shoucangleixing:
             print(i_shoucang.beishoucang_id)
             the_fuwu = fuwu.objects.get(id=i_shoucang.beishoucang_id)
-            shoucang_detail = {"fuwu_id": i_shoucang.beishoucang_id, "c_id": i_shoucang.tupianleixing,
+            shoucang_detail = {"fuwu_id": i_shoucang.beishoucang_id, "c_id": i_shoucang.shoucangleixing,
                                    "fuwu_name": the_fuwu.fuwumingcheng, "price": the_fuwu.jiage}
             shoucang_list.append(shoucang_detail)
     return JsonResponse(shoucang_list, safe=False)
@@ -899,3 +963,53 @@ def xiugaimima(request):
     except Exception as e:
         return  JsonResponse({"status": 0,"msg" :str(e)})
 
+def jiageshengxu(list):
+    n = len(list)
+    # 外层循环控制从头走到尾的次数
+    for j in range(n - 1):
+        # 用一个count记录一共交换的次数，可以排除已经是排好的序列
+        count = 0
+        # 内层循环控制走一次的过程
+        for i in range(0, n - 1 - j):
+            # 如果前一个元素大于后一个元素，则交换两个元素（升序）
+            if list[i]['price'] > list[i + 1]['price']:
+                # 交换元素
+                list[i], list[i + 1] = list[i + 1], list[i]
+                # 记录交换的次数
+                count += 1
+        # count == 0 代表没有交换，序列已经有序
+    return list
+
+def jiagejiangxu(list):
+    n = len(list)
+    # 外层循环控制从头走到尾的次数
+    for j in range(n - 1):
+        # 用一个count记录一共交换的次数，可以排除已经是排好的序列
+        count = 0
+        # 内层循环控制走一次的过程
+        for i in range(0, n - 1 - j):
+            # 如果前一个元素小于后一个元素，则交换两个元素（升序）
+            if list[i]['price'] < list[i + 1]['price']:
+                # 交换元素
+                list[i], list[i + 1] = list[i + 1], list[i]
+                # 记录交换的次数
+                count += 1
+        # count == 0 代表没有交换，序列已经有序
+    return list
+
+def pingfenjiangxu(list):
+    n = len(list)
+    # 外层循环控制从头走到尾的次数
+    for j in range(n - 1):
+        # 用一个count记录一共交换的次数，可以排除已经是排好的序列
+        count = 0
+        # 内层循环控制走一次的过程
+        for i in range(0, n - 1 - j):
+            # 如果前一个元素小于后一个元素，则交换两个元素（升序）
+            if list[i]['pingfen'] < list[i + 1]['pingfen']:
+                # 交换元素
+                list[i], list[i + 1] = list[i + 1], list[i]
+                # 记录交换的次数
+                count += 1
+        # count == 0 代表没有交换，序列已经有序
+    return list
