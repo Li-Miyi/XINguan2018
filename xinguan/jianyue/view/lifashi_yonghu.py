@@ -3,10 +3,10 @@
 # Create your views here.
 from django.db.models import Sum
 from django.db.models.functions import ExtractMonth
-from django.http import JsonResponse
+from django.http import JsonResponse,HttpResponse
 from django.utils import timezone
-from ..models import yonghu, lifashi, lifadian, fuwu, jiesuandingdan, pingjia, dingdan, jishiqitadizhi, faxing, tupian, \
-    yuyuedingdan, shoucang, dizhi, zixun,mibao
+from ..models import yonghu, lifashi, lifadian, fuwu, EmailVerifyRecord,jiesuandingdan, pingjia, dingdan, jishiqitadizhi, faxing, tupian, \
+    yuyuedingdan, shoucang, dizhi, zixun, mibao
 from django.db.utils import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.csrf import csrf_exempt
@@ -14,7 +14,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 """用户与理发师"""
 
-
+@csrf_exempt
 def zhuce(request):
     if request.method == "POST":
         data_getter = request.POST
@@ -23,28 +23,30 @@ def zhuce(request):
     else:
         return JsonResponse({"success": 0, "msg": "注册失败"})
     shenfen = data_getter.get('shenfen')
-    print(shenfen)
+    print(data_getter.get('mima'))
     try:
         if shenfen == 'lifashi':
-            xingming = data_getter.get('xingming')
-            mima = data_getter.get('mima')
-            lianxifangshi = data_getter.get('lianxifangshi')
-            xingbie = data_getter.get('xingbie')
-            yonghuming = data_getter.get('yonghuming')
-            lifadian_id = data_getter.get('lifadian_id')
-            lifashi.objects.create(xingming=xingming, yonghuming=yonghuming, mima=mima,
-                                   lianxidianhua=int(lianxifangshi), xingbie=xingbie, lifadian_id=lifadian_id)
-            tupianlaiyuan_id=lifashi.objects.get(lianxidianhua=lianxifangshi).id
+                print("lifashi")
+                xingming = data_getter.get('xingming')
+                mima = data_getter.get('mima')
+                lianxifangshi = data_getter.get('lianxifangshi')
+                xingbie = data_getter.get('xingbie')
+                yonghuming = data_getter.get('yonghuming')
+                lifadian_id = data_getter.get('lifadian_id')
+                email = data_getter.get('email')
+                lifashi.objects.create(xingming=xingming, yonghuming=yonghuming, mima=mima,
+                                       lianxidianhua=int(lianxifangshi), xingbie=xingbie, lifadian_id=lifadian_id, email=email)
         elif shenfen == 'yonghu':
-            xingming = data_getter.get('xingming')
-            mima = data_getter.get('mima')
-            lianxifangshi = data_getter.get('lianxifangshi')
-            xingbie = data_getter.get('xingbie')
-            yonghuming = data_getter.get('yonghuming')
-            yonghu.objects.create(xingming=xingming, yonghuming=yonghuming, mima=mima, lianxidianhua=lianxifangshi,
-                                  xingbie=xingbie)
-            tupianlaiyuan_id=yonghu.objects.get(lianxidianhua=lianxifangshi).id
-        return JsonResponse({"status": 1, "msg": "注册成功", "tupianlaiyuan_id": tupianlaiyuan_id})
+                print("yonghu")
+                xingming = data_getter.get('xingming')
+                mima = data_getter.get('mima')
+                lianxifangshi = data_getter.get('lianxifangshi')
+                xingbie = data_getter.get('xingbie')
+                yonghuming = data_getter.get('yonghuming')
+                email = data_getter.get('email')
+                yonghu.objects.create(xingming=xingming, yonghuming=yonghuming, mima=mima, lianxidianhua=lianxifangshi,
+                                      xingbie=xingbie, email=email)
+        return JsonResponse({"status": 1, "msg": "注册成功"})
     except IntegrityError:
         return JsonResponse({"success": 0, "msg": "手机号码已注册"})
 
@@ -657,17 +659,17 @@ def lifashigetLifadian(request, zhuangtaiid):
 
 #理发师增加其他地址
 @csrf_exempt
-def jishidizhi_add(response):
-    lifashi_id = response.POST.get("lifashi_id")
-    lifadian_id = response.POST.get("lifadian_id")
+def jishidizhi_add(request):
+    lifashi_id = request.POST.get("lifashi_id")
+    lifadian_id = request.POST.get("lifadian_id")
     jishiqitadizhi.objects.create(lifashi_id=lifashi_id,lifadian_id=lifadian_id,shenqingshijian=timezone.now(),zhuangtai='0')
     return JsonResponse({"status":1,"msg":"申请成功"})
 
 @csrf_exempt
 # 理发师撤销其他地址
-def jishidizhi_delete(response):
-    lifashi_id = int(response.POST.get("lifashi_id"))
-    lifadian_id = int(response.POST.get('lifadian_id'))
+def jishidizhi_delete(request):
+    lifashi_id = int(request.POST.get("lifashi_id"))
+    lifadian_id = int(request.POST.get('lifadian_id'))
     for i_dizhi in jishiqitadizhi.objects.filter(lifashi_id=lifashi_id):
         if i_dizhi.lifadian_id == lifadian_id:
             i_dizhi.delete()
@@ -676,26 +678,26 @@ def jishidizhi_delete(response):
 
 #理发师增加服务
 @csrf_exempt
-def fuwu_add(response):
-    lifashi_id = response.POST.get("lifashi_id")
-    fuwu_name = response.POST.get("fuwu_name")
-    fuwu_leixing = response.POST.get('leixing')
-    jiage = response.POST.get("jiage")
+def fuwu_add(request):
+    lifashi_id = request.POST.get("lifashi_id")
+    fuwu_name = request.POST.get("fuwu_name")
+    fuwu_leixing = request.POST.get('leixing')
+    jiage = request.POST.get("jiage")
     fuwu.objects.create(lifashi_id=lifashi_id, fuwumingcheng=fuwu_name, leixing=fuwu_leixing, jiage=jiage)
     return JsonResponse({"status":1,"msg":"增加成功"})
 
 @csrf_exempt
 # 理发师删除服务
-def fuwu_delete(response):
-    fuwu_id = int(response.POST.get('fuwu_id'))
+def fuwu_delete(request):
+    fuwu_id = int(request.POST.get('fuwu_id'))
     i_fuwu = fuwu.objects.get(id=fuwu_id)
     i_fuwu.delete()
     return JsonResponse({"status":1, "msg": "删除成功"})
 
 @csrf_exempt
 # 理发师——预约订单详情
-def yuyue_show(response):
-    yuyue_id = int(response.POST.get('yuyue_id'))
+def yuyue_show(request):
+    yuyue_id = int(request.POST.get('yuyue_id'))
     i_yuyue = yuyuedingdan.objects.get(id=yuyue_id)
     i_dingdan = dingdan.objects.get(id=yuyue_id)
     i_yonghu = yonghu.objects.get(id=i_dingdan.yonghu_id)
@@ -723,9 +725,9 @@ def yuyue_show(response):
 
 @csrf_exempt
 # 理发师——预约订单提交估计时间
-def yuyue_submit(response):
-    yuyue_id = int(response.POST.get('yuyue_id'))
-    yuyuexiaohao = response.POST.get('yuyuexiaohao')
+def yuyue_submit(request):
+    yuyue_id = int(request.POST.get('yuyue_id'))
+    yuyuexiaohao = request.POST.get('yuyuexiaohao')
     i_yuyue = yuyuedingdan.objects.get(id=yuyue_id)
     i_yuyue.yuyuexiaohao=yuyuexiaohao
     i_yuyue.yijieshou = '1'
@@ -734,8 +736,8 @@ def yuyue_submit(response):
 
 @csrf_exempt
 # 理发师——获取已完成订单详情
-def OKdingdan(response):
-    dingdan_id = int(response.POST.get('dingdan_id'))
+def OKdingdan(request):
+    dingdan_id = int(request.POST.get('dingdan_id'))
     i_dingdan = dingdan.objects.get(id=dingdan_id)
     i_jiesuan =jiesuandingdan.objects.get(id=i_dingdan.id)
     i_yonghu = yonghu.objects.get(id=i_dingdan.yonghu_id)
@@ -804,8 +806,8 @@ def getLifadian(request):
 
 #用户支付函数
 @csrf_exempt
-def zhifu(response):
-    dingdan_id = response.POST.get('dingdan_id')
+def zhifu(request):
+    dingdan_id = request.POST.get('dingdan_id')
     i_dingdan = jiesuandingdan.objects.get(id=dingdan_id)
     i_dingdan.shifouzhifu='1'
     i_dingdan.save()
@@ -873,6 +875,24 @@ def tongji_leixing(request):
     return JsonResponse({'status': 1, "data": output})
 
 #用户得到社区资讯
+def getZixun(request):
+    page = request.GET.get('page')
+    start = int(page)*10
+    pagesize = int(request.GET.get('pagesize'))
+    ZixunList = []
+    zixun_len =  zixun.objects.all().count()
+    Zixun = zixun.objects.all().order_by('-id')[start:start+pagesize]
+    for item in Zixun:
+        i_yonghu = item.yonghu
+        the_zixun_tupian = tupian.objects.get(tupianlaiyuan_id=item.id, tupianleixing=4)
+        zixun_tupian_src = "http://127.0.0.1:8000/media/"+the_zixun_tupian.src.name
+        the_touxiang_tupian = tupian.objects.get(tupianlaiyuan_id=i_yonghu.id, tupianleixing=3)
+        touxiang_tupian_src = the_touxiang_tupian.src.name
+        zixun_detail = {"id":item.id, "yonghuming":i_yonghu.yonghuming, "yonghu_id": i_yonghu.id, "yonghu_touxiang":touxiang_tupian_src,
+                        "neirong": item.neirong, "dianzanshu": item.dianzanshu, 'fabushijian':item.fabushijian,
+                        'zixun_tupian_src':zixun_tupian_src}
+        ZixunList.append(zixun_detail)
+    return JsonResponse({'zixun':ZixunList,"pagenum": int(page)+1,'total':zixun_len})
 
 def zhucemibao(request):
     if request.method == "POST":
@@ -1013,3 +1033,164 @@ def pingfenjiangxu(list):
                 count += 1
         # count == 0 代表没有交换，序列已经有序
     return list
+#用户对资讯进行点赞
+def dianzan_zixun(request):
+    zixun_id = request.GET.get('zixun_id')
+    i_zixun = zixun.objects.get(id=zixun_id)
+    dianzanshu = i_zixun.dianzanshu+1
+    i_zixun.dianzanshu = dianzanshu
+    try:
+        i_zixun.save()
+        return JsonResponse({"status":1,"msg":"点赞成功"})
+    except:
+        return JsonResponse({"status":0,"msg":"点赞失败"})
+
+# 得到理发师所有发型——理发师端(1-短发，2 -烫发， 3 -长发，4 -染发）
+@csrf_exempt
+def getFaxing(request, faxing_c_id):
+    if request.method == "POST":
+        datagetter = request.POST
+    else:
+        datagetter = request.GET
+    i_lifashi = lifashi.objects.get(id=datagetter.get("lifashi_id"))
+    i_lifashi_id = i_lifashi.id
+    faxing_c_id = faxing_c_id
+    faxingList = []
+    faxing_leixing = {"1": "短发", "2": "烫发", "3": "长发", "4": "染发"}
+    for i_faxing in faxing.objects.filter(lifashi_id = i_lifashi_id,leixing=faxing_c_id):
+        imageList = []
+        for i_image in tupian.objects.filter(tupianlaiyuan_id=i_faxing.id,tupianleixing="2"):
+            if "https://" in str(i_image.src):
+                i_image.src = str(i_image.src)
+            else:
+                i_image.src = "http://127.0.0.1:8000/media/"+str(i_image.src)
+            imgae_detail = {"image_id": i_image.id, "image_src": str(i_image.src)}
+            imageList.append(imgae_detail)
+        faxing_detail = {"id": i_faxing.id, "c_id": i_faxing.leixing,
+                                     "c_name": faxing_leixing[i_faxing.leixing], "f_name": i_faxing.faxingming,
+                                     "f_beizhu": i_faxing.beizhu, "image": imageList}
+        faxingList.append(faxing_detail)
+    return JsonResponse(faxingList, safe=False)
+
+#理发师添加发型
+@csrf_exempt
+def faxing_add(request):
+    lifashi_id = request.POST.get("lifashi_id")
+    faxing_name = request.POST.get("mingcheng")
+    faxing_leixing = request.POST.get('leixing')
+    faxing_xinxi = request.POST.get("xinxi")
+    i_faxing= faxing.objects.create(lifashi_id = lifashi_id, faxingming = faxing_name, leixing = faxing_leixing, beizhu = faxing_xinxi)
+    faxing_id = i_faxing.id
+    print(faxing_id)
+    return JsonResponse({"staus": "添加成功", "faxing_id": faxing_id})
+
+
+import random
+def get_random_code(length=4):
+    """获得随机字符串"""
+    code = ''
+    choice_str = '0123456789'
+    for _ in range(length):
+        random_str = random.choice(choice_str)
+        code += random_str
+    return code
+
+#找回密码 0=用户 1=理发师
+from django.conf import settings
+from django.core.mail import send_mail
+def fasongyouxiang(request,shenfen):
+    """type=1 找回密码"""
+    _type = request.GET.get("type")
+    lianxifangshi = request.GET.get("lianxifangshi")
+    """发送邮件"""
+    email_rcode = EmailVerifyRecord()
+    from_email = settings.DEFAULT_FROM_EMAIL
+    # 忘记密码发送验证邮件, 和 发送验证码逻辑一样
+    if shenfen==0:
+        try:
+            i_yonghu = yonghu.objects.get(lianxidianhua=lianxifangshi)
+            email = i_yonghu.email
+        except:
+            return JsonResponse({"status":"0", "msg":"用户不存在"})
+    else:
+        try:
+            i_yonghu = lifashi.objects.get(lianxidianhua=lianxifangshi)
+            email = i_yonghu.email
+        except:
+            return JsonResponse({"status":"0", "msg":"用户不存在"})
+    if _type == '1':
+        random_code = get_random_code()
+        email_title = '找回密码'
+        email_body = '您的验证码为：'+random_code
+        # 保存验证码
+        email_rcode.code = random_code
+        email_rcode.send_type = _type
+        email_rcode.email = email
+        email_rcode.yonghu = i_yonghu
+        email_rcode.save()
+        # 真正启动Django自带的发送邮件功能，邮件标题，邮件内容，发送人，发给谁，发送成功则返回1，失败则返回0
+        email_status = send_mail(subject=email_title, message=email_body, from_email=from_email, recipient_list=[email])
+        return HttpResponse(email_status)
+
+#找回密码，验证验证码 0=用户 1=理发师
+def checkyanzhengma(request, shenfen):
+    lianxifangshi = request.GET.get("lianxifangshi")
+    the_code = request.GET.get("code")
+    if shenfen==0:
+        i_yonghu = yonghu.objects.get(lianxidianhua=lianxifangshi)
+    else:
+        i_yonghu = lifashi.objects.get(lianxidianhua=lianxifangshi)
+    print(i_yonghu)
+    email_rcode = EmailVerifyRecord.objects.get(yonghu=i_yonghu)
+    code = email_rcode.code
+    if the_code == code:
+        email_rcode.delete()
+        return JsonResponse({"status":"1","msg":"验证码一致"})
+    else:
+        return JsonResponse({"status":"0","msg":"验证码错误"})
+
+#重置密码，验证验证码 0=用户 1=理发师
+@csrf_exempt
+def xiugaimima(request, shenfen):
+    lianxifangshi = request.POST.get("lianxifangshi")
+    new_mima = request.POST.get("mima")
+    try:
+        if shenfen==0:
+                i_yonghu = yonghu.objects.get(lianxidianhua=lianxifangshi)
+                i_yonghu.mima = new_mima
+                i_yonghu.save()
+        else:
+                i_yonghu = lifashi.objects.get(lianxidianhua=lianxifangshi)
+                i_yonghu.mima = new_mima
+                i_yonghu.save()
+        return JsonResponse({"status":"true","msg":"修改成功"})
+    except:
+        return JsonResponse({"status":"false","msg":"修改失败"})
+
+
+
+#统计理发师数据
+@csrf_exempt
+def lifashi_tongji_yuedu(request):
+    lifashi_id = request.POST.get("id")
+    the_dingdan = jiesuandingdan.objects.filter(lifashi_id=lifashi_id,jieshushijian__year=timezone.now().year)
+    sum_month_res = the_dingdan.annotate(month=ExtractMonth("jieshushijian")).\
+        values("month").order_by("month").annotate(price=Sum('shijifeiyong'))
+    data=[0]*12
+    for i in sum_month_res:
+        data[i['month']-1] = i["price"]
+    return JsonResponse({'status':1,"data":data})
+
+@csrf_exempt
+def lifashi_tongji_leixing(request):
+    lifashi_id = request.POST.get("id")
+    the_dingdan = jiesuandingdan.objects.filter(lifashi_id=lifashi_id,jieshushijian__year=timezone.now().year)
+    data = {}
+    for i in the_dingdan:
+        key = i.fuwuxiang.get_leixing_display()
+        data.setdefault(key,0)
+        data[key] += i.shijifeiyong
+    output= []
+    for k,v in data.items():
+        output.append({"name":k,"value":v})
+    return JsonResponse({'status': 1, "data": output})

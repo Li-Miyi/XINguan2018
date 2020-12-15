@@ -24,6 +24,9 @@ urlpatterns = [
     # 用户统计数据
     path(r"tongji/yuedu",view.lifashi_yonghu.tongji_yuedu,name="tongjiyuedu"),
     path(r"tongji/leixing", view.lifashi_yonghu.tongji_leixing, name="tongjileixing"),
+    # 理发师统计数据
+    path(r"lifashi/tongji/yuedu",view.lifashi_yonghu.lifashi_tongji_yuedu,name="tongjiyuedu"),
+    path(r"lifashi/tongji/leixing", view.lifashi_yonghu.lifashi_tongji_leixing, name="tongjileixing"),
     # 用户查看不同订单
     path(r"YonghuDingdan/<int:zhuangtai_id>", view.lifashi_yonghu.getYonghuDingdan, name="YonghuDingdan"),
     #理发师
@@ -37,6 +40,9 @@ urlpatterns = [
     path(r'shoucang/show/<int:shoucangleixing>', view.lifashi_yonghu.yonghu_shoucang_show,name='YonghuShowShoucang'),
     #用户社区资讯
     path(r'zixun/add', view.lifashi_yonghu.fabuzixun, name="YonghuAddZixun"),
+    path(r'zixun/show', view.lifashi_yonghu.getZixun, name="YonghuGetZixun"),
+    path(r'zixun/dianzan', view.lifashi_yonghu.dianzan_zixun, name="YonghuDianzan"),
+
     # 对图片的操作
     path(r'tupian/show/<int:tupianleixing>/<int:tupianlaiyuan_id>',views.tupian_show,name="YonghuLifashitupianshow"),
     path(r'tupian/delete/<path:tupianlujing>',views.tupian_delete,name="YonghuLifashitupiandelete"),
@@ -78,12 +84,16 @@ urlpatterns = [
     path(r"lifadian/<int:dianzhulianxi>/dizhi/chexiao/", view.lifadian.dizhi_chexiao, name="dizhi_chexiao"),
     path(r"lifadian/<int:dianzhulianxi>/dizhi/fankui/", view.lifadian.dizhi_fankui, name="dizhi_fankui"),
     path('', views.app_index, name='moreng1'),
+    # 用户找回密码
+    path(r"zhaohuimima/<int:shenfen>",view.lifashi_yonghu.fasongyouxiang,name="fasongyongxiang"),
+    path(r"checkyanzhengma/<int:shenfen>", view.lifashi_yonghu.checkyanzhengma, name="checkyanzhengma"),
+    path(r"xiugaimima/<int:shenfen>", view.lifashi_yonghu.xiugaimima, name="xiugaimima"),
     # 注册密保
-    path(r"zhucemibao/",view.lifashi_yonghu.zhucemibao,name="zhucemibao"),
+    path(r"zhucemibao/", view.lifashi_yonghu.zhucemibao, name="zhucemibao"),
     # 获取密保
     path(r"huoqumibao/", view.lifashi_yonghu.huoqumibao, name="huoqumibao"),
     # 修改密保
-    path(r"xiugaimibao/",view.lifashi_yonghu.xiugaimibao,name="xiugaimibao"),
-    #修改密码
-    path(r"xiugaimima2/",view.lifashi_yonghu.xiugaimima2,name="xiugaimima")
-    ]
+    path(r"xiugaimibao/", view.lifashi_yonghu.xiugaimibao, name="xiugaimibao"),
+    # 修改密码
+    path(r"xiugaimima2/", view.lifashi_yonghu.xiugaimima2, name="xiugaimima")
+]

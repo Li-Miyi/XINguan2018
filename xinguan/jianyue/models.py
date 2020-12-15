@@ -49,13 +49,13 @@ class yonghu(models.Model):  # 用户
 
 def upload_to(instance,filename):
     tupianlianyuan_id = instance.tupianlaiyuan_id
-    tupianleixing = ["lifadian","lifashi","faxing","yonghu","zixun","touxiang"][int(instance.tupianleixing)]
+    tupianleixing = ["lifadian","lifashi","faxing","yonghu","zixun"][int(instance.tupianleixing)]
     return '/'.join([tupianleixing,str(tupianlianyuan_id),filename])
 
 class tupian(models.Model):
     tupianlaiyuan_id = models.CharField(max_length=700)
     src = models.ImageField(upload_to=upload_to)
-    tupianleixing = models.CharField(max_length=1, choices=(('0', '理发店'), ('1', '理发师'),('2','发型'),('3','用户'),('4','资讯'),('5','头像')))
+    tupianleixing = models.CharField(max_length=1, choices=(('0', '理发店'), ('1', '理发师'),('2','发型'),('3','用户'),('4','资讯')))
 
 """服务与理发师理发店对应"""
 
@@ -124,9 +124,10 @@ class zixun(models.Model):
     dianzanshu = models.IntegerField(default=0)
     fabushijian = models.DateTimeField(auto_now_add=True)
 
-"更改密码和手机号的密保"
-class mibao(models.Model):
-    mibaowenti=models.CharField(max_length=1000)
-    mibaodaan=models.CharField(max_length=1000)
-    mibaolaiyuan_id=models.CharField(max_length=300)
-    shenfen=models.CharField(max_length=300,default="null")
+class EmailVerifyRecord(models.Model):
+    code = models.CharField(max_length=4)
+    send_type =  models.CharField(max_length=1, choices=(('0', '注册'), ('1', '找回密码')))
+    email = models.EmailField()
+    yonghu = models.ForeignKey(yonghu, on_delete=models.CASCADE)
+    class Meta:
+        unique_together = ('yonghu', 'email')
