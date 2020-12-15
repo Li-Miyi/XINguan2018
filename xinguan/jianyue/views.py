@@ -28,20 +28,43 @@ def tupian_add(request,tupianleixing,tupianlaiyuan_id):
 
 @csrf_exempt
 def tupian_show(request,tupianlaiyuan_id,tupianleixing):
-    the_tupians = tp.objects.filter(tupianlaiyuan_id=tupianlaiyuan_id, tupianleixing=tupianleixing)
-    data =[]
-    for tupian in the_tupians:
-        info = {"tupianlaiyuan_id":tupian.tupianlaiyuan_id,"src":tupian.src.name}
-        data.append(info)
-    return JsonResponse({"status":"1","data":data})
+    try:
+        the_tupians = tp.objects.filter(tupianlaiyuan_id=tupianlaiyuan_id, tupianleixing=tupianleixing)
+        data =[]
+        for tupian in the_tupians:
+            info = {"tupianlaiyuan_id":tupian.tupianlaiyuan_id,"src":tupian.src.name}
+            data.append(info)
+        if len(data)==0:
+            return JsonResponse({"status": 0})
+        else:
+            return JsonResponse({"status": "1", "data": data})
+    except:
+        return JsonResponse({"status": 0,"msg":str(Exception)})
 
 @csrf_exempt
 def tupian_delete(request,tupianlujing):
     try:
         tp.objects.get(src=tupianlujing).delete()
         file_full_path = os.path.join(MEDIA_ROOT, tupianlujing)
+        file_full_path.replace('\\\\','/')
         os.remove(file_full_path)
         return JsonResponse({"status":"1","msg":"删除成功"})
     except ObjectDoesNotExist:
         return JsonResponse({"status":"0","msg":"删除失败"})
 
+@csrf_exempt
+def touxiang_update(request,tupianleixing,tupianlaiyuan_id,tupianlujing):
+    if request.method == "POST":
+        # try:
+            #删除原图片
+            tp.objects.get(tupianleixing=tupianleixing,tupianlaiyuan_id=tupianlaiyuan_id).delete()
+            file_full_path = os.path.join(MEDIA_ROOT, tupianlujing)
+            os.remove(file_full_path)
+            file_full_path.replace('\\\\','/')
+            #创建新头像
+            src = request.FILES.get("src")
+            the_tupian = tp.objects.create(tupianlaiyuan_id=tupianlaiyuan_id, src=src, tupianleixing=tupianleixing)
+            new_tupian = tp.objects.get(tupianlaiyuan_id=tupianlaiyuan_id,tupianleixing=tupianleixing)
+            return JsonResponse({"status": "1", "msg": "更换头像成功"})
+        # except:
+        #     return JsonResponse({"status": 0,"msg": str(Exception)})
