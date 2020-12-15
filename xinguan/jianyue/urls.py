@@ -24,6 +24,9 @@ urlpatterns = [
     # 用户统计数据
     path(r"tongji/yuedu",view.lifashi_yonghu.tongji_yuedu,name="tongjiyuedu"),
     path(r"tongji/leixing", view.lifashi_yonghu.tongji_leixing, name="tongjileixing"),
+    # 理发师统计数据
+    path(r"lifashi/tongji/yuedu",view.lifashi_yonghu.lifashi_tongji_yuedu,name="tongjiyuedu"),
+    path(r"lifashi/tongji/leixing", view.lifashi_yonghu.lifashi_tongji_leixing, name="tongjileixing"),
     # 用户查看不同订单
     path(r"YonghuDingdan/<int:zhuangtai_id>", view.lifashi_yonghu.getYonghuDingdan, name="YonghuDingdan"),
     #理发师

@@ -941,5 +941,30 @@ def xiugaimima(request, shenfen):
 
 
 
+#统计理发师数据
+@csrf_exempt
+def lifashi_tongji_yuedu(request):
+    lifashi_id = request.POST.get("id")
+    the_dingdan = jiesuandingdan.objects.filter(lifashi_id=lifashi_id,jieshushijian__year=timezone.now().year)
+    sum_month_res = the_dingdan.annotate(month=ExtractMonth("jieshushijian")).\
+        values("month").order_by("month").annotate(price=Sum('shijifeiyong'))
+    data=[0]*12
+    for i in sum_month_res:
+        data[i['month']-1] = i["price"]
+    return JsonResponse({'status':1,"data":data})
+
+@csrf_exempt
+def lifashi_tongji_leixing(request):
+    lifashi_id = request.POST.get("id")
+    the_dingdan = jiesuandingdan.objects.filter(lifashi_id=lifashi_id,jieshushijian__year=timezone.now().year)
+    data = {}
+    for i in the_dingdan:
+        key = i.fuwuxiang.get_leixing_display()
+        data.setdefault(key,0)
+        data[key] += i.shijifeiyong
+    output= []
+    for k,v in data.items():
+        output.append({"name":k,"value":v})
+    return JsonResponse({'status': 1, "data": output})
 
 
