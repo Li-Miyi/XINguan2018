@@ -65,7 +65,7 @@ class fuwu(models.Model):
     jiage = models.IntegerField()
     fuwumingcheng = models.CharField(max_length=30)
     leixing = models.CharField(max_length=1, choices=(('1', '洗吹'), ('2', '烫发'), ('3', '染发'), ('4', '剪发'), ('5', '护理')))
-
+    shijian = models.TimeField()
     class Meta:
         unique_together = ('fuwumingcheng', 'lifashi')
 
@@ -87,7 +87,7 @@ class dingdan(models.Model):
 class yuyuedingdan(dingdan):
     yuyuekaishi = models.DateTimeField()
     yuyuexiaohao = models.TimeField(null=True)
-    yijieshou = models.BooleanField()
+    yijieshou = models.IntegerField(max_length=1, choices=(('-1', '已拒绝'), ('0', '未接受'), ('1', '已接受')))
 
 
 class jiesuandingdan(dingdan):
