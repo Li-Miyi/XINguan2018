@@ -52,6 +52,7 @@ def upload_to(instance,filename):
     tupianleixing = ["lifadian","lifashi","faxing","yonghu","zixun","touxiang"][int(instance.tupianleixing)]
     return '/'.join([tupianleixing,str(tupianlianyuan_id),filename])
 
+
 class tupian(models.Model):
     tupianlaiyuan_id = models.CharField(max_length=700)
     src = models.ImageField(upload_to=upload_to)
@@ -87,7 +88,7 @@ class dingdan(models.Model):
 class yuyuedingdan(dingdan):
     yuyuekaishi = models.DateTimeField()
     yuyuexiaohao = models.TimeField(null=True)
-    yijieshou = models.IntegerField(max_length=1, choices=(('-1', '已拒绝'), ('0', '未接受'), ('1', '已接受')))
+    yijieshou = models.IntegerField(choices=(('-1', '已拒绝'), ('0', '未接受'), ('1', '已接受')))
 
 
 class jiesuandingdan(dingdan):

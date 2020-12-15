@@ -6,7 +6,7 @@ from django.db.models.functions import ExtractMonth
 from django.http import JsonResponse,HttpResponse
 from django.utils import timezone
 from ..models import yonghu, lifashi, lifadian, fuwu, EmailVerifyRecord,jiesuandingdan, pingjia, dingdan, jishiqitadizhi, faxing, tupian, \
-    yuyuedingdan, shoucang, dizhi, zixun, mibao
+    yuyuedingdan, shoucang, dizhi, zixun,mibao
 from django.db.utils import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.csrf import csrf_exempt
@@ -122,6 +122,22 @@ def xiugai_lfs(request):
         return JsonResponse({"status": 2, "msg": "字段内容已被注册"})
     return JsonResponse({"status": 1, "msg": "修改成功"})
 
+def pingfenjiangxu(list):
+    n = len(list)
+    # 外层循环控制从头走到尾的次数
+    for j in range(n - 1):
+        # 用一个count记录一共交换的次数，可以排除已经是排好的序列
+        count = 0
+        # 内层循环控制走一次的过程
+        for i in range(0, n - 1 - j):
+            # 如果前一个元素小于后一个元素，则交换两个元素（升序）
+            if list[i]['pingfen'] < list[i + 1]['pingfen']:
+                # 交换元素
+                list[i], list[i + 1] = list[i + 1], list[i]
+                # 记录交换的次数
+                count += 1
+        # count == 0 代表没有交换，序列已经有序
+    return list
 
 def liebiao(request):
     if request.method == "POST":
@@ -1017,22 +1033,7 @@ def jiagejiangxu(list):
         # count == 0 代表没有交换，序列已经有序
     return list
 
-def pingfenjiangxu(list):
-    n = len(list)
-    # 外层循环控制从头走到尾的次数
-    for j in range(n - 1):
-        # 用一个count记录一共交换的次数，可以排除已经是排好的序列
-        count = 0
-        # 内层循环控制走一次的过程
-        for i in range(0, n - 1 - j):
-            # 如果前一个元素小于后一个元素，则交换两个元素（升序）
-            if list[i]['pingfen'] < list[i + 1]['pingfen']:
-                # 交换元素
-                list[i], list[i + 1] = list[i + 1], list[i]
-                # 记录交换的次数
-                count += 1
-        # count == 0 代表没有交换，序列已经有序
-    return list
+
 #用户对资讯进行点赞
 def dianzan_zixun(request):
     zixun_id = request.GET.get('zixun_id')
