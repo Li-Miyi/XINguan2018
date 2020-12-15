@@ -933,7 +933,7 @@ def xiugaimibao(request):
     except Exception as e:
         return JsonResponse({"status": 0,"msg": str(e)})
 
-def xiugaimima(request):
+def xiugaimima2(request):
     if request.method == "POST":
         data_getter = request.POST
     elif request.method == "GET":

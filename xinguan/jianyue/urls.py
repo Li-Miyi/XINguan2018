@@ -85,5 +85,5 @@ urlpatterns = [
     # 修改密保
     path(r"xiugaimibao/",view.lifashi_yonghu.xiugaimibao,name="xiugaimibao"),
     #修改密码
-    path(r"xiugaimima/",view.lifashi_yonghu.xiugaimima,name="xiugaimima")
+    path(r"xiugaimima2/",view.lifashi_yonghu.xiugaimima2,name="xiugaimima")
     ]
