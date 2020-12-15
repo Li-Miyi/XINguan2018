@@ -65,6 +65,7 @@ urlpatterns = [
     path(r"lifashi/yuyue/show", view.lifashi_yonghu.yuyue_show, name="LifashiYuyueShow"),
     path(r"lifashi/yuyue/submit", view.lifashi_yonghu.yuyue_submit, name="LifashiYuyueSubmit"),
     path(r"lifashi/xiugai_lfs/",view.lifashi_yonghu.xiugai_lfs,name="lifashi_xiugai"),
+    path(r"lifashi/fuwu/show/",view.lifashi_yonghu.getFuwu,name="LifashiFuwushow"),
     # 理发店图片
     path('lifadian/<int:dianzhulianxi>/xiangce/', view.lifadian.xiangce, name='lifadian_xiangce'),
     # 理发店个人界面

@@ -1194,3 +1194,30 @@ def lifashi_tongji_leixing(request):
     for k,v in data.items():
         output.append({"name":k,"value":v})
     return JsonResponse({'status': 1, "data": output})
+@csrf_exempt
+def getFuwu(request):
+    page = request.GET.get('page')
+    start = int(page) * 10
+    pagesize = int(request.GET.get('pagesize'))
+    lifa_fuwu = []
+    fuwuleixing = {"1": "洗吹", "2": "烫发", "3": "染发", "4": "剪发", "5": "护理"}
+    the_lifashi = lifashi.objects.get(id=request.GET.get('lifashi_id'))
+    lifashi_id = the_lifashi.id
+    try:
+        i_lifashi = lifashi.objects.get(id=lifashi_id)
+    except lifashi.DoesNotExist:
+        return JsonResponse({"status": 0, "msg": "id输入错误"})
+    fuwu_len = fuwu.objects.filter(lifashi=i_lifashi).count()
+    for i_fuwu in fuwu.objects.filter(lifashi=i_lifashi).order_by('-id')[start:start + pagesize]:
+        try:
+            #search_dict = {"tupianleixing": "1", "tupianlaiyuan_id": i_lifashi.id}
+            # i_tupian = tupian.objects.filter(**search_dict).first()
+            i_tupian = tupian.objects.get(tupianlaiyuan=i_lifashi.id, tupianleixing="1")
+            src = str(i_tupian.src)
+        except:
+            src = "../../image/0.jpg"
+        lifa_fuwu_detail = {"fuwu_id": i_fuwu.id, "type": fuwuleixing[i_fuwu.leixing],
+                            "fuwu_name": i_fuwu.fuwumingcheng,
+                            "price": i_fuwu.jiage, "tupian": src}
+        lifa_fuwu.append(lifa_fuwu_detail)
+    return JsonResponse({'fuwu': lifa_fuwu, "pagenum": int(page) + 1, 'total': fuwu_len})

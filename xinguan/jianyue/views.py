@@ -55,16 +55,17 @@ def tupian_delete(request,tupianlujing):
 @csrf_exempt
 def touxiang_update(request,tupianleixing,tupianlaiyuan_id,tupianlujing):
     if request.method == "POST":
-        # try:
+        try:
             #删除原图片
             tp.objects.get(tupianleixing=tupianleixing,tupianlaiyuan_id=tupianlaiyuan_id).delete()
             file_full_path = os.path.join(MEDIA_ROOT, tupianlujing)
-            os.remove(file_full_path)
             file_full_path.replace('\\\\','/')
+            print(file_full_path)
+            os.remove(file_full_path)
             #创建新头像
             src = request.FILES.get("src")
             the_tupian = tp.objects.create(tupianlaiyuan_id=tupianlaiyuan_id, src=src, tupianleixing=tupianleixing)
             new_tupian = tp.objects.get(tupianlaiyuan_id=tupianlaiyuan_id,tupianleixing=tupianleixing)
             return JsonResponse({"status": "1", "msg": "更换头像成功"})
-        # except:
-        #     return JsonResponse({"status": 0,"msg": str(Exception)})
+        except:
+            return JsonResponse({"status": 0,"msg": str(Exception)})
