@@ -96,6 +96,10 @@ class jiesuandingdan(dingdan):
     shijifeiyong = models.FloatField()
     shifouzhifu = models.BooleanField(default=0)
 
+class quxiaodingdan(dingdan):
+    quxiaoshijian = models.DateTimeField()
+    quxiaoyuanyin = models.CharField(max_length=50)
+
 class pingjia(models.Model):
     yonghu = models.ForeignKey(yonghu, on_delete=models.CASCADE)
     dingdan = models.ForeignKey(dingdan, on_delete=models.CASCADE)
@@ -138,3 +142,4 @@ class mibao(models.Model):
     mibaodaan=models.CharField(max_length=1000)
     mibaolaiyuan_id=models.CharField(max_length=1000)
     shenfen=models.CharField(default='null', max_length=300)
+

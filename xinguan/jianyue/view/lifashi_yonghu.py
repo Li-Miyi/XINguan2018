@@ -1,15 +1,17 @@
 
 
 # Create your views here.
+from datetime import datetime
 from django.db.models import Sum
 from django.db.models.functions import ExtractMonth
 from django.http import JsonResponse,HttpResponse
 from django.utils import timezone
-from ..models import yonghu, lifashi, lifadian, fuwu, EmailVerifyRecord,jiesuandingdan, pingjia, dingdan, jishiqitadizhi, faxing, tupian, \
+from ..models import quxiaodingdan, yonghu, lifashi, lifadian, fuwu, EmailVerifyRecord,jiesuandingdan, pingjia, dingdan, jishiqitadizhi, faxing, tupian, \
     yuyuedingdan, shoucang, dizhi, zixun,mibao
 from django.db.utils import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.csrf import csrf_exempt
+import datetime
 
 
 """用户与理发师"""
@@ -384,19 +386,28 @@ def faxingList(request):
     else:
         datagetter = request.GET
     faxing_c_id = int(datagetter.get('faxing_c_id')[0])
+    page =  datagetter.get('page')
+    start = int(page)*6
+    pagesize = int(datagetter.get('pagesize'))
+    faxing_len = faxing.objects.filter(leixing=faxing_c_id).count()
+    faxing1 = faxing.objects.filter(leixing=faxing_c_id).order_by('-id')[start:start+pagesize]
     faxingList = []
     faxing_leixing = {"1": "短发", "2": "烫发", "3": "长发", "4": "染发"}
-    for i_faxing in faxing.objects.filter(leixing=faxing_c_id):
+    for i_faxing in faxing1:
         imageList = []
         for i_image in tupian.objects.filter(tupianlaiyuan_id=i_faxing.id):
             if (i_image.tupianleixing == "2"):
+                if "https://" in str(i_image.src):
+                    i_image.src = str(i_image.src)
+                else:
+                    i_image.src = "http://127.0.0.1:8000/media/" + str(i_image.src)
                 imgae_detail = {"image_id": i_image.id, "image_src": str(i_image.src)}
                 imageList.append(imgae_detail)
-                faxing_detail = {"id": i_faxing.id, "c_id": i_faxing.leixing,
+        faxing_detail = {"id": i_faxing.id, "c_id": i_faxing.leixing,
                                  "c_name": faxing_leixing[i_faxing.leixing], "f_name": i_faxing.faxingming,
                                  "beizhu": i_faxing.beizhu, "image": imageList}
-                faxingList.append(faxing_detail)
-    return JsonResponse(faxingList, safe=False)
+        faxingList.append(faxing_detail)
+    return JsonResponse({'faxing':faxingList, "pagenum" : int(page)+1, 'total':faxing_len})
 
 
 # 发型详情页面-用户端
@@ -466,36 +477,44 @@ def getLifadianName(request):
 
 
 # 理发师获取首页获取订单-理发师端
-def getOKDingdan(request):
+@csrf_exempt
+def lifashi_get_dingdan(request):
     if request.method == "POST":
         datagetter = request.POST
     else:
         datagetter = request.GET
+    page = datagetter.get('page')
+    start = int(page)*10
+    pagesize = int(datagetter.get('pagesize'))
     the_lifashi = lifashi.objects.get(id=datagetter.get('lifashi_id'))
     zhuangtai_id = int(datagetter.get('zhuangtai_id'))
     dingdanList = []
-    for i_dingdan in dingdan.objects.filter(lifashi_id=the_lifashi.id):
-        if zhuangtai_id == 1 or zhuangtai_id == 0:
-            for i_jiesuan in jiesuandingdan.objects.filter(dingdan_ptr_id=i_dingdan.id):
+    shifouzhifu = ['未支付',"已支付"]
+    if zhuangtai_id == 1 or zhuangtai_id == 0:
+            dingdan_len = jiesuandingdan.objects.filter(lifashi_id=the_lifashi.id,shifouzhifu=zhuangtai_id).count()
+            Dingdan =  jiesuandingdan.objects.filter(lifashi_id=the_lifashi.id,shifouzhifu=zhuangtai_id).order_by('-id')[start:start+pagesize]
+            for i_jiesuan in Dingdan:
                 if i_jiesuan.shifouzhifu == zhuangtai_id:
                     jieshushijian = str(i_jiesuan.jieshushijian).replace("T", " ")
                     try:
-                        i_fuwu = fuwu.objects.get(id=i_dingdan.fuwuxiang_id)
-                        i_yonghu = yonghu.objects.get(id=i_dingdan.yonghu_id)
-                        dingdan_detail = {"dingdan_id": i_dingdan.id, "fuwu_name": i_fuwu.fuwumingcheng,"price": i_fuwu.jiage, "jiesuanshijian": jieshushijian,
-                                         }
+                        i_fuwu = fuwu.objects.get(id=i_jiesuan.fuwuxiang_id)
+                        i_yonghu = yonghu.objects.get(id=i_jiesuan.yonghu_id)
+                        dingdan_detail = {"dingdan_id": i_jiesuan.id, "fuwu_name": i_fuwu.fuwumingcheng,"price": i_fuwu.jiage, 
+                                        "shijian": jieshushijian,"shifouzhifu":shifouzhifu[int(i_jiesuan.shifouzhifu)]}
                         dingdanList.append(dingdan_detail)
                     except:
                         return JsonResponse({"status": 0, "msg": "您还没有已完成的订单"})
-        else:
-                for i_yuyue in yuyuedingdan.objects.filter(dingdan_ptr_id=i_dingdan.id):
-                    i_fuwu = fuwu.objects.get(id=i_dingdan.fuwuxiang_id)
-                    i_yonghu = yonghu.objects.get(id=i_dingdan.yonghu_id)
-                    dingdan_detail = {"yueyu_id": i_dingdan.id, "is_ok":i_yuyue.yijieshou,"yuyue_start": i_yuyue.yuyuekaishi,
+    else:
+        dingdan_len = yuyuedingdan.objects.filter(lifashi_id=the_lifashi.id).count()
+        Yuyue =  yuyuedingdan.objects.filter(lifashi_id=the_lifashi.id).order_by('-dingdan_ptr_id')[start:start+pagesize]
+        for i_yuyue in Yuyue:
+            i_fuwu = fuwu.objects.get(id=i_yuyue.fuwuxiang_id)
+            i_yonghu = yonghu.objects.get(id=i_yuyue.yonghu_id)
+            dingdan_detail = {"yuyue_id": i_yuyue.id, "is_jieshou":i_yuyue.yijieshou,"shijian": i_yuyue.yuyuekaishi,
                                       "yuyue_xiaohao": i_yuyue.yuyuexiaohao, "fuwu_name": i_fuwu.fuwumingcheng,"price": i_fuwu.jiage,
                                       }
-                    dingdanList.append(dingdan_detail)
-    return JsonResponse(dingdanList, safe=False)
+            dingdanList.append(dingdan_detail)
+    return JsonResponse({'Dingdan':dingdanList,'pagenum': int(page)+1,'total': dingdan_len})
 
 # 获取理发师信息——理发师端
 def lifashiDetail(request):
@@ -600,6 +619,7 @@ def yonghu_shoucang_show(request, shoucangleixing):
 
 
 # 得到用户所有订单——用户端(0-未支付， 1-已支付，2 -预约）
+@csrf_exempt
 def getYonghuDingdan(request, zhuangtai_id):
     if request.method == "POST":
         datagetter = request.POST
@@ -633,15 +653,15 @@ def getYonghuDingdan(request, zhuangtai_id):
 
 #理发师——预约订单总数
 def count_yuyue(request):
-    print(request.GET.get("yuyuedingdan_id"))
     id = request.GET.get("yuyuedingdan_id")
-    print(id)
+    yuyuexiaohao = request.GET.get("yuyuexiaohao")
+    yuyuexiaohao = datetime.datetime.strptime(yuyuexiaohao, '%H:%M')
     the = yuyuedingdan.objects.get(id=id)
     begin = the.yuyuekaishi
     deadline = the.yuyuekaishi + timezone.timedelta(
-        hours=the.yuyuexiaohao.hour,
-        minutes=the.yuyuexiaohao.minute,
-        seconds=the.yuyuexiaohao.second)
+        hours=yuyuexiaohao.hour,
+        minutes=yuyuexiaohao.minute,
+        )
     after = yuyuedingdan.objects.filter(lifadian__lifashi=the.lifashi,yuyuekaishi__gt=begin,yuyuekaishi__lt=deadline,yijieshou=1)
     before = []
     for i in yuyuedingdan.objects.filter(lifadian__lifashi=the.lifashi,yijieshou=1):
@@ -1056,9 +1076,14 @@ def getFaxing(request, faxing_c_id):
     i_lifashi = lifashi.objects.get(id=datagetter.get("lifashi_id"))
     i_lifashi_id = i_lifashi.id
     faxing_c_id = faxing_c_id
+    page = datagetter.get('page')
+    start = int(page)*6
+    pagesize = int(datagetter.get('pagesize'))
+    faxing_len = faxing.objects.filter(lifashi_id = i_lifashi_id,leixing=faxing_c_id).count()
+    faxing1 = faxing.objects.filter(lifashi_id = i_lifashi_id,leixing=faxing_c_id).order_by('-id')[start:start+pagesize]
     faxingList = []
     faxing_leixing = {"1": "短发", "2": "烫发", "3": "长发", "4": "染发"}
-    for i_faxing in faxing.objects.filter(lifashi_id = i_lifashi_id,leixing=faxing_c_id):
+    for i_faxing in faxing1:
         imageList = []
         for i_image in tupian.objects.filter(tupianlaiyuan_id=i_faxing.id,tupianleixing="2"):
             if "https://" in str(i_image.src):
@@ -1071,7 +1096,7 @@ def getFaxing(request, faxing_c_id):
                                      "c_name": faxing_leixing[i_faxing.leixing], "f_name": i_faxing.faxingming,
                                      "f_beizhu": i_faxing.beizhu, "image": imageList}
         faxingList.append(faxing_detail)
-    return JsonResponse(faxingList, safe=False)
+    return JsonResponse({'faxing': faxingList, 'pagenum': int(page)+1, 'total':faxing_len})
 
 #理发师添加发型
 @csrf_exempt
@@ -1084,7 +1109,6 @@ def faxing_add(request):
     faxing_id = i_faxing.id
     print(faxing_id)
     return JsonResponse({"staus": "添加成功", "faxing_id": faxing_id})
-
 
 import random
 def get_random_code(length=4):
@@ -1222,3 +1246,84 @@ def getFuwu(request):
                             "price": i_fuwu.jiage, "tupian": src}
         lifa_fuwu.append(lifa_fuwu_detail)
     return JsonResponse({'fuwu': lifa_fuwu, "pagenum": int(page) + 1, 'total': fuwu_len})
+
+
+#用户——当前理发师预约人数
+@csrf_exempt
+def lifashi_count_yuyue(request):
+    begin = request.GET.get('begin')
+    begin = datetime.datetime.strptime(begin, "%Y-%m-%d %H:%M")
+    lifashi_id = request.GET.get('lifashi_id')
+    deadline = begin + timezone.timedelta(hours=2)
+    # after = yuyuedingdan.objects.filter(lifashi_id=lifashi_id,yijieshou=1,yuyuekaishi__gt=begin,yuyuekaishi__lt=deadline)
+    before = []
+    for i in yuyuedingdan.objects.filter(lifashi_id=lifashi_id,yijieshou=1):
+        i_deadline = i.yuyuekaishi + timezone.ti1medelta(
+            hours=i.yuyuexiaohao.hour,
+            minutes=i.yuyuexiaohao.minute,
+            seconds=i.yuyuexiaohao.second)
+        if begin <= i_deadline <= deadline:
+            before.append(i)
+    num = len(before)
+    return JsonResponse({"status":"1","msg":num})
+
+#理发师修改预约订单为结算订单
+@csrf_exempt
+def lifashi_yuyue_jiesuan(request):
+    if request.method == "POST":
+        datagetter = request.POST
+    else:
+        datagetter = request.GET
+    yuyuedingdan_id = datagetter.get("yuyuedingdan_id")
+    jieshushijian = datetime.datetime.now()
+    # 保存主表的订单
+    i_dingdan = dingdan.objects.get(id=yuyuedingdan_id)
+    i_fuwuxiang_id = i_dingdan.fuwuxiang_id
+    i_lifadian_id = i_dingdan.lifadian_id
+    i_lifashi_id = i_dingdan.lifashi_id
+    i_yonghu_id = i_dingdan.yonghu_id
+    #保存子表的订单信息，然后删除
+    i_yuyuedingdan = yuyuedingdan.objects.get(id=yuyuedingdan_id)
+    i_dingdan.delete()
+    i_yuyuedingdan.delete()
+    print(i_lifadian_id)
+    print(i_lifashi_id)
+    try:
+        dingdan.objects.create(id=yuyuedingdan_id, fuwuxiang_id=i_fuwuxiang_id, lifadian_id=i_lifadian_id, lifashi_id=i_lifashi_id, yonghu_id=i_yonghu_id)
+        i_fuwu = fuwu.objects.get(id=i_fuwuxiang_id)
+        fuwu_price = i_fuwu.jiage
+        jiesuandingdan.objects.create(id=yuyuedingdan_id,jieshushijian=jieshushijian,shijifeiyong=fuwu_price,
+        fuwuxiang_id=i_fuwuxiang_id, lifadian_id=i_lifadian_id, lifashi_id=i_lifashi_id, yonghu_id=i_yonghu_id)
+        return JsonResponse({'status':1,"msg":"修改订单状态成功"})
+    except:
+        return JsonResponse({'status':0,"msg":"失败"})
+
+#理发师或者用户取消预约订单
+# @csrf_exempt
+def cancel_yuyue_dingdan(request):
+    if request.method == "POST":
+        datagetter = request.POST
+    else:
+        datagetter = request.GET
+    yuyuedingdan_id = datagetter.get('yuyuedingdan_id')
+    i_quxiaoshijian = datetime.datetime.now()
+    i_quxiaoyuanyin = datagetter.get('yuanyin')
+     # 保存主表的信息
+    i_dingdan = dingdan.objects.get(id=yuyuedingdan_id)
+    i_fuwuxiang_id = i_dingdan.fuwuxiang_id
+    i_lifadian_id = i_dingdan.lifadian_id
+    i_lifashi_id = i_dingdan.lifashi_id
+    i_yonghu_id = i_dingdan.yonghu_id
+    #保存子表的订单信息，然后删除
+    i_yuyuedingdan = yuyuedingdan.objects.get(id=yuyuedingdan_id)
+    i_dingdan.delete()
+    i_yuyuedingdan.delete()
+    try:
+        dingdan.objects.create(id=yuyuedingdan_id, fuwuxiang_id=i_fuwuxiang_id, lifadian_id=i_lifadian_id, lifashi_id=i_lifashi_id, yonghu_id=i_yonghu_id)
+        i_fuwu = fuwu.objects.get(id=i_fuwuxiang_id)
+        fuwu_price = i_fuwu.jiage
+        quxiaodingdan.objects.create(id=yuyuedingdan_id,quxiaoshijian=i_quxiaoshijian,quxiaoyuanyin=i_quxiaoyuanyin,
+        fuwuxiang_id=i_fuwuxiang_id, lifadian_id=i_lifadian_id, lifashi_id=i_lifashi_id, yonghu_id=i_yonghu_id)
+        return JsonResponse({'status':1,"msg":"取消订单成功"})
+    except:
+        return JsonResponse({'status':0,"msg":"失败"})

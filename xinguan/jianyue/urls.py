@@ -19,6 +19,8 @@ urlpatterns = [
     path(r"cancelorder/", view.lifashi_yonghu.CancelOrder, name="YonghuCancelOrder"),
     path(r"yonghu/getlifadian/", view.lifashi_yonghu.getLifadian, name="YonghuGetLifadian"),
     path(r"yonghu/zhifu/", view.lifashi_yonghu.zhifu, name="Yonghuzhifu"),
+    #用户预约订单显示理发师预约人数
+    path(r"yonghu/yuyue/lifashi/count", view.lifashi_yonghu.lifashi_count_yuyue, name="lifashiyuyuecount"),
     # 评价
     path(r"setpingjia/", view.lifashi_yonghu.set_pingjia, name="setpingjia"),
     # 用户统计数据
@@ -28,9 +30,10 @@ urlpatterns = [
     path(r"lifashi/tongji/yuedu",view.lifashi_yonghu.lifashi_tongji_yuedu,name="tongjiyuedu"),
     path(r"lifashi/tongji/leixing", view.lifashi_yonghu.lifashi_tongji_leixing, name="tongjileixing"),
     # 用户查看不同订单
-    path(r"YonghuDingdan/<int:zhuangtai_id>", view.lifashi_yonghu.getYonghuDingdan, name="YonghuDingdan"),
+    path(r"yonghu/get/dingdan/<int:zhuangtai_id>", view.lifashi_yonghu.getYonghuDingdan, name="YonghuDingdan"),
     #理发师
     path(r"lifashi/yuyue/count/", view.lifashi_yonghu.count_yuyue, name="LifashiYuyueCount"),
+    path(r"lifashi/yuyue/xiugai/jiesuan", view.lifashi_yonghu.lifashi_yuyue_jiesuan, name="lifashiXiugaiYuyue"),
     # 服务列表页
     path(r"fuwuliebiao/", view.lifashi_yonghu.fuwuliebiao, name="fuwuliebiao"),
     path(r"fuwuliebiaoxiangqing/",view.lifashi_yonghu.fuwuliebiaoxiangqing,name="fuwuliebiaoxiangqing"),
@@ -55,7 +58,7 @@ urlpatterns = [
     path(r'lifadian/xiugai/', view.lifadian.xiugai, name="lifadian_xiugai"),
     path(r'lifadian/dengchu/',view.lifadian.dengchu,name="lifadian_dengchu"),
     # 小程序理发师端
-    path(r"getOKDingdan/", view.lifashi_yonghu.getOKDingdan, name="LifashigetOKDingdan"),
+    path(r"lifashi/get/dingdan", view.lifashi_yonghu.lifashi_get_dingdan, name="LifashigetOKDingdan"),
     path(r"lifashi/OKdingdan/show", view.lifashi_yonghu.OKdingdan, name="LifashiOKDingdan"),
     path(r"getLifadianName/", view.lifashi_yonghu.getLifadianName, name="LifashiZhuce"),
     path(r"getLifadian/<int:zhuangtaiid>/", view.lifashi_yonghu.lifashigetLifadian, name="LifashiGetLifadian"),
@@ -80,6 +83,10 @@ urlpatterns = [
     path(r"lifadian/<int:dianzhulianxi>/lifashi/anpai/", view.lifadian.anpai, name="lifashi_anpai"),
     path(r"lifadian/<int:dianzhulianxi>/lifashi/yuyuedingdan/", view.lifadian.dingdan_getter, name="lifashi_yuyue"),
     path(r"lifadian/<int:dianzhulianxi>/lifashi/fuwu/", view.lifadian.fuwu_getter, name="lifashi_fuwu"),
+    #理发师发型展示
+    path(r"lifashi/get/faxing/<int:faxing_c_id>", view.lifashi_yonghu.getFaxing, name="lifashiFaxing"),
+    #发型添加
+    path(r"lifashi/faxing/add", view.lifashi_yonghu.faxing_add, name="LifashiFaxingAdd"),
     # 地址借用
     path(r"lifadian/<int:dianzhulianxi>/dizhi/<slug:zhuangtai>", view.lifadian.dizhi, name="dizhi"),
     path(r"lifadian/<int:dianzhulianxi>/dizhi/chexiao/", view.lifadian.dizhi_chexiao, name="dizhi_chexiao"),
@@ -96,5 +103,7 @@ urlpatterns = [
     # 修改密保
     path(r"xiugaimibao/", view.lifashi_yonghu.xiugaimibao, name="xiugaimibao"),
     # 修改密码
-    path(r"xiugaimima2/", view.lifashi_yonghu.xiugaimima2, name="xiugaimima")
+    path(r"xiugaimima2/", view.lifashi_yonghu.xiugaimima2, name="xiugaimima"),
+    # 取消预约订单
+    path("yuyue/dingdan/cancel",view.lifashi_yonghu.cancel_yuyue_dingdan, name="CancelYuyue")
 ]
