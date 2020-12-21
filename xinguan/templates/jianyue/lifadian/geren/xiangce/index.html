@@ -122,24 +122,7 @@
                     <h1 class="biaoti">图片管理</h1>
                 <br/>
 
-                <form enctype="multipart/form-data" class="shadowbackground site-header container">
-                    {% csrf_token %}
-                    <h3 class="biaoti">可将图片拖拽到下框中上传</h3>
-                    <div id="drop_area"></div>
-                </form>
-                <section class="shadowbackground site-header container">
-                    <h1 class="biaoti">相册</h1>
-                    <div class="ma5-gallery" style="width: 1200px">
-                        {% if imgs %}
-                        {% for img in imgs %}
-                        <figure class="gallery-item gallery-item ma5-lightbox">
-                            <img src="/media/{{ img.src }}">
-                        </figure>
-                        <a  class="btn btn-primary btn-sm tupianshanchu" style="position: relative;left: -46px;">删除</a>
-                        {% endfor %}
-                        {% endif %}
-                    </div>
-                </section>
+                
             </div>
             <!--右侧内容结束-->
         </div>

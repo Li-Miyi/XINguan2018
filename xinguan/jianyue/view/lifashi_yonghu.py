@@ -442,6 +442,7 @@ def yonghuDetail(request):
     yonghu_detail = {}
     sex = {"0":"女","1":"男"}
     lianxifangshi = datagetter.get("lianxifangshi")
+    print(lianxifangshi)
     i_yonghu = yonghu.objects.get(lianxidianhua=lianxifangshi)
     yonghu_id = i_yonghu.id
     try:
@@ -1299,7 +1300,7 @@ def lifashi_yuyue_jiesuan(request):
         return JsonResponse({'status':0,"msg":"失败"})
 
 #理发师或者用户取消预约订单
-# @csrf_exempt
+@csrf_exempt
 def cancel_yuyue_dingdan(request):
     if request.method == "POST":
         datagetter = request.POST
