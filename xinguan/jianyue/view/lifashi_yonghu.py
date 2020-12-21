@@ -1,5 +1,3 @@
-
-
 # Create your views here.
 from datetime import datetime
 from django.db.models import Sum
@@ -665,6 +663,7 @@ def count_yuyue(request):
         )
     after = yuyuedingdan.objects.filter(lifadian__lifashi=the.lifashi,yuyuekaishi__gt=begin,yuyuekaishi__lt=deadline,yijieshou=1)
     before = []
+    the_in = []
     for i in yuyuedingdan.objects.filter(lifadian__lifashi=the.lifashi,yijieshou=1):
         i_deadline = i.yuyuekaishi + timezone.timedelta(
             hours=i.yuyuexiaohao.hour,
@@ -672,7 +671,9 @@ def count_yuyue(request):
             seconds=i.yuyuexiaohao.second)
         if begin <= i_deadline <= deadline:
             before.append(i)
-    num =  len(list(set(list(after))  & set(before) ))
+        elif i_deadline >= deadline and i.yuyuekaishi <= begin:
+            the_in.append(i)
+    num =  len(list(set(list(after))  | set(before) | set(the_in)))
     return JsonResponse({"status":"1","msg":num})
 
 #理发师获取自己的理发店——理发师端
@@ -1248,26 +1249,39 @@ def getFuwu(request):
         lifa_fuwu.append(lifa_fuwu_detail)
     return JsonResponse({'fuwu': lifa_fuwu, "pagenum": int(page) + 1, 'total': fuwu_len})
 
-
-#用户——当前理发师预约人数
-@csrf_exempt
-def lifashi_count_yuyue(request):
-    begin = request.GET.get('begin')
-    begin = datetime.datetime.strptime(begin, "%Y-%m-%d %H:%M")
-    lifashi_id = request.GET.get('lifashi_id')
-    deadline = begin + timezone.timedelta(hours=2)
-    # after = yuyuedingdan.objects.filter(lifashi_id=lifashi_id,yijieshou=1,yuyuekaishi__gt=begin,yuyuekaishi__lt=deadline)
+def number_timefield(the_dingdan,begin,deadline):
+    after = the_dingdan.filter(yuyuekaishi__gt=begin, yuyuekaishi__lt=deadline,
+                                        yijieshou=1)
     before = []
-    for i in yuyuedingdan.objects.filter(lifashi_id=lifashi_id,yijieshou=1):
-        i_deadline = i.yuyuekaishi + timezone.ti1medelta(
+    the_in = []
+    for i in the_dingdan:
+        i_deadline = i.yuyuekaishi + timezone.timedelta(
             hours=i.yuyuexiaohao.hour,
             minutes=i.yuyuexiaohao.minute,
             seconds=i.yuyuexiaohao.second)
         if begin <= i_deadline <= deadline:
             before.append(i)
-    num = len(before)
-    return JsonResponse({"status":"1","msg":num})
+        elif i_deadline>=deadline and i.yuyuekaishi <= begin:#计算包括这段时间的
+            the_in.append(i)
 
+    # print([after,before,the_in])
+    num =  len(list(set(list(after))  | set(before)| set(the_in)))
+    return num
+#用户——当前理发师预约人数
+@csrf_exempt
+def lifashi_count_yuyue(request):
+    lifashi_id = request.GET.get("lifashi_id")
+    now = timezone.now().today()
+    data=[]
+
+    start = timezone.datetime(year=now.year, month=now.month, day=now.day)
+    the_dingdan = yuyuedingdan.objects.filter(lifashi_id=lifashi_id,yuyuekaishi__gte=start)
+    for i in range(12):
+        end = start+ timezone.timedelta(hours=2)
+        num = number_timefield(the_dingdan, start, end)
+        data.append({"begin": start, "end": end, "number": num})
+        start = end
+    return JsonResponse({"msg":"好了","data":data})
 #理发师修改预约订单为结算订单
 @csrf_exempt
 def lifashi_yuyue_jiesuan(request):
