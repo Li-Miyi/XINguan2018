@@ -575,6 +575,7 @@ def CancelOrder(request):
 
 
 # 用户收藏 0-理发店 1-理发师 2-服务——用户端
+@csrf_exempt
 def yonghu_shoucang_add(request, shoucangleixing):
     if request.method == "POST":
         datagetter = request.POST
@@ -584,6 +585,21 @@ def yonghu_shoucang_add(request, shoucangleixing):
     i_yonghu = yonghu.objects.get(id=datagetter.get('yonghu_id'))
     shoucang.objects.create(beishoucang_id=shoucang_id, yonghu=i_yonghu, shoucangleixing=shoucangleixing)
     return JsonResponse({"status": '1', "msg": "收藏成功"})
+
+#判断用户是否收藏 0-理发店 1-理发师 2-服务——用户端
+@csrf_exempt
+def yonghu_is_shoucang(request, shoucangleixing):
+    if request.method == "POST":
+        datagetter = request.POST
+    else:
+        datagetter = request.GET
+    yonghu_id = datagetter.get('yonghu_id')
+    shoucang_id = datagetter.get('shoucang_id')
+    result = shoucang.objects.filter(beishoucang_id=shoucang_id,yonghu=yonghu_id,shoucangleixing=shoucangleixing)
+    if result:
+        return JsonResponse({'msg':"收藏","is_shoucang":True})
+    else:
+        return JsonResponse({'msg':"没有收藏","is_shoucang":False})
 
 
 # 用户取消收藏 0-理发店 1-理发师 2-服务——用户端
@@ -1287,20 +1303,21 @@ def number_timefield(the_dingdan,begin,deadline):
     num =  len(list(set(list(after))  | set(before)| set(the_in)))
     return num
 #用户——当前理发师预约人数
-@csrf_exempt
 def lifashi_count_yuyue(request):
     lifashi_id = request.GET.get("lifashi_id")
-    now = timezone.now().today()
+    select_time = request.GET.get("select_time")
+    the_time = datetime.datetime.strptime(select_time, "%Y-%M-%d")
+    # now = timezone.now().today()
     data=[]
-
-    start = timezone.datetime(year=now.year, month=now.month, day=now.day)
+    start = timezone.datetime(year=the_time.year, month=the_time.month, day=the_time.day)
     the_dingdan = yuyuedingdan.objects.filter(lifashi_id=lifashi_id,yuyuekaishi__gte=start)
     for i in range(12):
         end = start+ timezone.timedelta(hours=2)
         num = number_timefield(the_dingdan, start, end)
-        data.append({"begin": start, "end": end, "number": num})
+        if i==5 or i==6 or i==7 or i==8 or i==9 or i==10:
+            data.append({"begin": start, "end": end, "number": num})
         start = end
-    return JsonResponse({"msg":"好了","data":data})
+    return JsonResponse({"msg":"成功","data":data})
 #理发师修改预约订单为结算订单
 @csrf_exempt
 def lifashi_yuyue_jiesuan(request):
@@ -1320,8 +1337,6 @@ def lifashi_yuyue_jiesuan(request):
     i_yuyuedingdan = yuyuedingdan.objects.get(id=yuyuedingdan_id)
     i_dingdan.delete()
     i_yuyuedingdan.delete()
-    print(i_lifadian_id)
-    print(i_lifashi_id)
     try:
         dingdan.objects.create(id=yuyuedingdan_id, fuwuxiang_id=i_fuwuxiang_id, lifadian_id=i_lifadian_id, lifashi_id=i_lifashi_id, yonghu_id=i_yonghu_id)
         i_fuwu = fuwu.objects.get(id=i_fuwuxiang_id)
