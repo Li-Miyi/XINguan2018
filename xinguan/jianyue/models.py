@@ -56,7 +56,7 @@ def upload_to(instance,filename):
 class tupian(models.Model):
     tupianlaiyuan_id = models.CharField(max_length=700)
     src = models.ImageField(upload_to=upload_to)
-    tupianleixing = models.CharField(max_length=1, choices=(('0', '理发店'), ('1', '理发师'),('2','发型'),('3','用户'),('4','资讯'),('5','头像')))
+    tupianleixing = models.CharField(max_length=1, choices=(('0', '理发店'), ('1', '理发师'),('2','发型'),('3','用户'),('4','资讯'),('5','头像'),('6','服务')))
 
 """服务与理发师理发店对应"""
 

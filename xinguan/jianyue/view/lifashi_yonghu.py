@@ -556,6 +556,7 @@ def CancelOrder(request):
 
 
 # 用户收藏 0-理发店 1-理发师 2-服务——用户端
+@csrf_exempt
 def yonghu_shoucang_add(request, shoucangleixing):
     if request.method == "POST":
         datagetter = request.POST
@@ -565,6 +566,21 @@ def yonghu_shoucang_add(request, shoucangleixing):
     i_yonghu = yonghu.objects.get(id=datagetter.get('yonghu_id'))
     shoucang.objects.create(beishoucang_id=shoucang_id, yonghu=i_yonghu, shoucangleixing=shoucangleixing)
     return JsonResponse({"status": '1', "msg": "收藏成功"})
+
+#判断用户是否收藏 0-理发店 1-理发师 2-服务——用户端
+@csrf_exempt
+def yonghu_is_shoucang(request, shoucangleixing):
+    if request.method == "POST":
+        datagetter = request.POST
+    else:
+        datagetter = request.GET
+    yonghu_id = datagetter.get('yonghu_id')
+    shoucang_id = datagetter.get('shoucang_id')
+    result = shoucang.objects.filter(beishoucang_id=shoucang_id,yonghu=yonghu_id,shoucangleixing=shoucangleixing)
+    if result:
+        return JsonResponse({'msg':"收藏","is_shoucang":True})
+    else:
+        return JsonResponse({'msg':"没有收藏","is_shoucang":False})
 
 
 # 用户取消收藏 0-理发店 1-理发师 2-服务——用户端
