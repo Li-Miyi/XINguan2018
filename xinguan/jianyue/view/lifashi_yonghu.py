@@ -157,11 +157,30 @@ def liebiao(request):
         i_lifadian_total_jiage = 0
         i_lifadian_count = 0
         for i_lifashi in lifashi.objects.filter(lifadian=i_lifadian):
-            lifashi_data = {'id': i_lifashi.id, 'name': i_lifashi.xingming}
+            lifashi_data = {'id': i_lifashi.id, 'name': i_lifashi.xingming, 'lifadian' :i_lifadian.dianming}
+            #头像
+            try:
+                lifashitouxiang=tupian.objects.get(tupianleixing=5,tupianlaiyuan_id=i_lifashi.id).src.name
+                if "http" in lifashitouxiang:
+                    lifashi_data["lifashitouxiang"]=lifashitouxiang
+                else:
+                    lifashi_data["lifashitouxiang"]="http://127.0.0.1:8000/media/"+lifashitouxiang
+            except:
+                lifashi_data["lifashitouxiang"]="https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=1746949651,2632447771&fm=26&gp=0.jpg"
             i_lifashi_total_pingfen = 0
             i_lifashi_total_jiage = 0
             i_lifashi_count = 0
+            lifashi_data["month_count"] = "暂无"
             for i_jiesuan in jiesuandingdan.objects.filter(lifashi=i_lifashi):
+                #月销售额
+                month_count=0
+                time_now_year=datetime.datetime.now().year
+                time_now_month=datetime.datetime.now().month
+                if i_jiesuan.jieshushijian.year==time_now_year and i_jiesuan.jieshushijian.month==time_now_month:
+                    month_count += 1
+                #月销售额
+                if month_count!= 0:
+                    lifashi_data["month_count"] = str(month_count)+"件"
                 i_lifashi_count += 1
                 i_lifashi_total_jiage += i_jiesuan.shijifeiyong
                 try:

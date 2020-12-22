@@ -143,3 +143,9 @@ class mibao(models.Model):
     mibaolaiyuan_id=models.CharField(max_length=1000)
     shenfen=models.CharField(default='null', max_length=300)
 
+class mibao(models.Model):
+    mibaowenti=models.CharField(max_length=1000)
+    mibaodaan=models.CharField(max_length=1000)
+    mibaolaiyuan_id=models.CharField(max_length=1000)
+    shenfen=models.CharField(default='null', max_length=300)
+
