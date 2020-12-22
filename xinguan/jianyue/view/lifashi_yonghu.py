@@ -545,8 +545,28 @@ def lifashiDetail(request):
     the_detail = {"id":the_lifashi.id, "name": the_lifashi.xingming,
                           "yonghuming": the_lifashi.yonghuming, "phone": the_lifashi.lianxidianhua}
     return JsonResponse(the_detail)
+#用户修改订单信息
+@csrf_exempt
+def xiugai_yuyue_dingdan(request):
+    if request.method == "POST":
+        datagetter = request.POST
+    else:
+        datagetter = request.GET
+    yuyue_id = datagetter.get("yuyue_id")
+    yuyue_shijian = datagetter.get('yuyue_shijian')
+    print(yuyue_shijian)
+    try:
+        i_yuyue = yuyuedingdan.objects.get(id=yuyue_id)
+        i_yuyue.yuyuekaishi = yuyue_shijian
+        i_yuyue.save()
+        return JsonResponse({"msg":"修改成功","status":1})
+    except:
+        return JsonResponse({"msg":"修改失败","status":0})
+
+
 
 # 用户提交预约订单——用户端
+@csrf_exempt
 def getYuyueOrder(request):
     if request.method == "POST":
         datagetter = request.POST
@@ -603,6 +623,7 @@ def yonghu_is_shoucang(request, shoucangleixing):
 
 
 # 用户取消收藏 0-理发店 1-理发师 2-服务——用户端
+@csrf_exempt
 def yonghu_shoucang_delete(request, shoucangleixing):
     if request.method == "POST":
         datagetter = request.POST
@@ -610,15 +631,12 @@ def yonghu_shoucang_delete(request, shoucangleixing):
         datagetter = request.GET
     shoucang_id = datagetter.get('shoucang_id')
     i_yonghu = yonghu.objects.get(id=datagetter.get('yonghu_id'))
-    print(shoucangleixing)
     try:
-        for i_shoucang in shoucang.objects.filter(yonghu=i_yonghu):
-            if int(i_shoucang.shoucangleixing) == int(shoucangleixing) and i_shoucang.beishoucang_id == shoucang_id:
-                i_shoucang.delete()
-                return JsonResponse({"status": "1", "msg": "删除成功"})
+        i_shoucang = shoucang.objects.get(yonghu=i_yonghu,shoucangleixing=shoucangleixing,beishoucang_id=shoucang_id)
+        i_shoucang.delete()
+        return JsonResponse({"status": "1", "msg": "删除成功"})
     except ObjectDoesNotExist:
-        return JsonResponse({"status": "0", "msg": "删除失败1"})
-    return JsonResponse({"status": "0", "msg": "删除失败"})
+        return JsonResponse({"status": "0", "msg": "删除失败"})
 
 
 # 用户展示收藏 0-理发店 1-理发师 2-服务——用户端
@@ -865,6 +883,7 @@ def getLifadian(request):
         the_detail = {"lifashi_id": i_lifashi.id, "name": i_lifashi.yonghuming, "phone": i_lifashi.lianxidianhua,"lifashi_img": str(src)}
         lifashiList.append(the_detail)
         for i_fuwu in fuwu.objects.filter(lifashi_id=i_lifashi.id):
+            print(i_fuwu.leixing)
             the_fuwu = {"fuwu_id": i_fuwu.id, "name": i_fuwu.fuwumingcheng, "type": leixing[int(i_fuwu.leixing)]}
             fuwuList.append(the_fuwu)
     try:
