@@ -152,7 +152,16 @@ def liebiao(request):
     lifadian_datas = []
     lifashi_datas = []
     for i_lifadian in lifadian.objects.all():
+        #理发店图片
         lifadian_data = {"name": i_lifadian.dianming, "id": i_lifadian.pk}
+        try:
+            lifadiantupian=tupian.objects.filter(tupianleixing=0,tupianlaiyuan_id=i_lifadian.pk)[0].src.name
+            if "http" in lifadiantupian:
+                lifadian_data["lifadiantupian"]=lifadiantupian
+            else:
+                lifadian_data["lifadiantupian"]="http://127.0.0.1:8000/media/"+lifadiantupian
+        except:
+            lifadian_data["lifadiantupian"]="https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=1023914563,1561594966&fm=26&gp=0.jpg"
         i_lifadian_total_pingfen = 0
         i_lifadian_total_jiage = 0
         i_lifadian_count = 0
@@ -299,6 +308,7 @@ def lifashi_detail(request):
             src = "../../image/0.jpg"
         lifadian_detail = {"lifadian_id": i_lifadian.id, "lifadian_name": i_lifadian.dianming, "tupian":src}
         lifashi_lifadian.append(lifadian_detail)
+        print(lifadian_detail)
     for i_faxing in faxing.objects.filter(lifashi=i_lifashi):
         try:
             search_dict = {"tupianleixing": "2", "tupianlaiyuan_id": i_faxing.id}
