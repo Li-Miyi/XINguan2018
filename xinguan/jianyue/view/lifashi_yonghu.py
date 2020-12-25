@@ -443,21 +443,50 @@ def faxingDetail(request):
         datagetter = request.POST
     else:
         datagetter = request.GET
-    faxing_id = int(datagetter.get('faxing_id')[0])
+    faxing_id = int(datagetter.get('faxing_id'))
     imageList = []
+    faxingList = []
+    lifashiList = []
     lifadianList = []
+    lifadianimageList = []
     i_faxing = faxing.objects.get(id=faxing_id)
     i_lifashi = lifashi.objects.get(id=i_faxing.lifashi_id)
-    lifashi_detail = {"f_id": i_lifashi.id, "f_name": i_lifashi.yonghuming, "phone": i_lifashi.lianxidianhua}
+    for lifashi_image in tupian.objects.filter(tupianlaiyuan_id=i_lifashi.id):
+        if (lifashi_image.tupianleixing == "5"):
+            if "https://" in str(lifashi_image.src):
+                lifashi_image.src = str(lifashi_image.src)
+            else:
+                lifashi_image.src = "http://127.0.0.1:8000/media/" + str(lifashi_image.src)
+            lifashi_image_src = str(lifashi_image.src)
+    lifashi_detail = {"f_id": i_lifashi.id, "f_name": i_lifashi.yonghuming,
+                      "phone": i_lifashi.lianxidianhua, "f_image" : lifashi_image_src}
+    lifashiList.append(lifashi_detail)
     i_lifadian = lifadian.objects.get(id=i_lifashi.lifadian_id)
-    lifadian_detail = {"s_id": i_lifadian.id, "s_name": i_lifadian.dianming}
+    i_dizhi = dizhi.objects.get(lifadian_id=i_lifadian.id)
+    for lifadian_image in tupian.objects.filter(tupianlaiyuan_id=i_lifadian.id):
+        if (lifadian_image.tupianleixing == "0"):
+            if "https://" in str(lifadian_image.src):
+                lifadian_image.src = str(lifadian_image.src)
+            else:
+                lifadian_image.src = "http://127.0.0.1:8000/media/" + str(lifadian_image.src)
+            lifadian_image_src = str(lifadian_image.src)
+            lifadianimageList.append(lifadian_image_src)
+    lifadian_detail = {"s_id": i_lifadian.id, "s_name": i_lifadian.dianming,
+                       "s_address" : i_dizhi.name, "s_image" : lifadianimageList[0]}
+    lifadianList.append(lifadian_detail)
     for i_image in tupian.objects.filter(tupianlaiyuan_id=faxing_id):
         if (i_image.tupianleixing == "2"):
+            if "https://" in str(i_image.src):
+                i_image.src = str(i_image.src)
+            else:
+                i_image.src = "http://127.0.0.1:8000/media/" + str(i_image.src)
             i_image_src = str(i_image.src)
             imageList.append(i_image_src)
     faxing_detail = {"id": faxing_id, "c_id": i_faxing.leixing, "f_name": i_faxing.faxingming,
-                     "beizhu": i_faxing.beizhu, "image": imageList, "lifashi": lifashi_detail, "lifadian": lifadian_detail}
-    return JsonResponse(faxing_detail)
+                     "beizhu": i_faxing.beizhu, "image": imageList}
+    faxingList.append(faxing_detail)
+    return JsonResponse({'faxing': faxingList, 'lifashi': lifashiList, 'lifadian': lifadianList})
+
 
 
 # 获取用户信息-用户端
@@ -602,6 +631,26 @@ def CancelOrder(request):
     except:
         return JsonResponse({"status":1, "msg": "删除失败"})
 
+@csrf_exempt
+#返回理发师所有的取消订单
+def lifashi_show_quxiao_dingdan(request):
+    if request.method == "POST":
+        datagetter = request.POST
+    else:
+        datagetter = request.GET
+    lifashi_id = datagetter.get('lifashi_id')
+    page = datagetter.get('page')
+    start = page*6
+    pagesize = datagetter.get('pagesize')
+    dingdanList = []
+    for i_quxiao in quxiaodingdan.objects.filter(lifashi_id=lifashi_id).order_by('-id')[start:start+pagesize]:
+        i_fuwu_id = i_quxiao.fuwuxiang_id
+        i_fuwu = fuwu.objects.get(id=i_fuwu_id)
+        i_lifashi_id = i_fuwu.lifashi_id
+        dingdan_detail = {"fuwu_id":i_fuwu.id,"fuwu_name":i_fuwu.fuwumingcheng,
+        "quxiaoshijian":i_quxiao.quxiaoshijian,"quxiao_yuanyin":i_quxiao.quxiaoyuanyin}
+        dingdanList.append(dingdan_detail)
+    return JsonResponse({"dingdan":dingdanList})
 
 
 # 用户收藏 0-理发店 1-理发师 2-服务——用户端
@@ -1285,6 +1334,8 @@ def lifashi_tongji_leixing(request):
     for k,v in data.items():
         output.append({"name":k,"value":v})
     return JsonResponse({'status': 1, "data": output})
+
+
 @csrf_exempt
 def getFuwu(request):
     page = request.GET.get('page')
