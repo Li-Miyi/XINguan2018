@@ -149,3 +149,8 @@ class mibao(models.Model):
     mibaolaiyuan_id=models.CharField(max_length=1000)
     shenfen=models.CharField(default='null', max_length=300)
 
+class huiyuan(models.Model):
+    lifashi=models.ForeignKey(lifashi, on_delete=models.CASCADE)
+    yonghu=models.ForeignKey(yonghu,on_delete=models.CASCADE)
+    zhuangtai=models.CharField(max_length=1, choices=(('1', '已接受'), ('0','未接受')))
+

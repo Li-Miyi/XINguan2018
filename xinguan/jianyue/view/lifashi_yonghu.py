@@ -4,7 +4,7 @@ from django.db.models import Sum
 from django.db.models.functions import ExtractMonth
 from django.http import JsonResponse,HttpResponse
 from django.utils import timezone
-from ..models import quxiaodingdan, yonghu, lifashi, lifadian, fuwu, EmailVerifyRecord,jiesuandingdan, pingjia, dingdan, jishiqitadizhi, faxing, tupian, \
+from ..models import quxiaodingdan, yonghu, lifashi, lifadian,huiyuan, fuwu, EmailVerifyRecord,jiesuandingdan, pingjia, dingdan, jishiqitadizhi, faxing, tupian, \
     yuyuedingdan, shoucang, dizhi, zixun,mibao
 from django.db.utils import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
@@ -296,8 +296,14 @@ def lifashi_detail(request):
     except lifashi.DoesNotExist:
         return JsonResponse({"status": 0,"msg":"id输入错误"})
     for i_fuwu in fuwu.objects.filter(lifashi=i_lifashi):
+        try:
+            search_dict = {"tupianleixing": "6", "tupianlaiyuan_id":i_lifadian.id}
+            i_tupian = tupian.objects.filter(**search_dict).first()
+            src = str(i_tupian.src)
+        except:
+            src = "http://img.08087.cc/uploads/20190819/10/1566182856-otPJlNpiKT.jpeg"
         lifa_fuwu_detail = {"fuwu_id": i_fuwu.id, "type": fuwuleixing[i_fuwu.leixing], "fuwu_name": i_fuwu.fuwumingcheng,
-                                "price": i_fuwu.jiage}
+                                "price": i_fuwu.jiage,"tupian":src}
         lifa_fuwu.append(lifa_fuwu_detail)
     for i_lifadian in lifadian.objects.filter(lifashi=i_lifashi):
         try:
@@ -1456,3 +1462,124 @@ def cancel_yuyue_dingdan(request):
         return JsonResponse({'status':1,"msg":"取消订单成功"})
     except:
         return JsonResponse({'status':0,"msg":"失败"})
+
+#用户申请理发师会员
+@csrf_exempt
+def yonghu_huiyuan(request):
+    if request.method == "POST":
+        datagetter = request.POST
+    else:
+        datagetter = request.GET
+    lifashi_id = datagetter.get('lifashi_id')
+    yonghu_id = datagetter.get('yonghu_id')
+    i_lifashi = lifashi.objects.get(id=lifashi_id)
+    i_yonghu = yonghu.objects.get(id=yonghu_id)
+    try:
+        huiyuan.objects.create(yonghu=i_yonghu,lifashi=i_lifashi,zhuangtai="0")
+        return JsonResponse({'status':1,"msg":"申请会员成功"})
+    except:
+        return JsonResponse({'status':0,"msg":"申请会员失败"})
+
+# 判断用户是否是该理发师的会员
+@csrf_exempt
+def yonghu_is_huiyuan(request):
+    if request.method == "POST":
+        datagetter = request.POST
+    else:
+        datagetter = request.GET
+    lifashi_id = datagetter.get('lifashi_id')
+    yonghu_id = datagetter.get('yonghu_id')
+    i_lifashi = lifashi.objects.get(id=lifashi_id)
+    i_yonghu = yonghu.objects.get(id=yonghu_id)
+    try:
+        i_huiyuan = huiyuan.objects.get(yonghu=i_yonghu,lifashi=i_lifashi,zhuangtai="1")
+        return JsonResponse({'is_huiyuan':True,"msg":"是会员"})
+    except:
+        return JsonResponse({'is_huiyuan':False,"msg":"不是会员"})
+
+#理发师同意用户申请会员
+@csrf_exempt
+def lifashi_confirm_huiyuan(request):
+    if request.method == "POST":
+        datagetter = request.POST
+    else:
+        datagetter = request.GET
+    lifashi_id = datagetter.get('lifashi_id')
+    yonghu_id = datagetter.get('yonghu_id')
+    i_lifashi = lifashi.objects.get(id=lifashi_id)
+    i_yonghu = yonghu.objects.get(id=yonghu_id)
+    try:
+        i_huiyuan = huiyuan.objects.get(yonghu=i_yonghu,lifashi=i_lifashi)
+        i_huiyuan.zhuangtai = "1"
+        return JsonResponse({'status':1,"msg":"确认成功"})
+    except:
+        return JsonResponse({'status':0,"msg":"确认失败"})
+
+#用户获取自己所有会员
+@csrf_exempt
+def yonghu_show_huiyuan(request):
+    if request.method == "POST":
+        datagetter = request.POST
+    else:
+        datagetter = request.GET
+    yonghu_id = datagetter.get("yonghu_id")
+    page = datagetter.get('page')
+    pagesize = datagetter.get('pagesize')
+    start = page*6
+    huiyuan_list = []
+    try:
+        huiyuan_len = huiyuan.objects.filter(yonghu=yonghu_id).count()
+    except:
+        huiyuan_len = 0
+    Huiyuan = huiyuan.objects.filter(yonghu=yonghu_id,zhuangtai="1").order_by('-id')[int(start):int(start+pagesize)]
+    for item in Huiyuan:
+        i_lifashi = item.lifashi
+        print(i_lifashi.id)
+        try:
+            i_lifashi_tupian = tupian.objects.get(tupianlaiyuan_id=i_lifashi.id, tupianleixing=1)
+            lifashi_tupian_src = i_lifashi_tupian.src.name
+        except:
+            lifashi_tupian_src = "../../image/lifashi1.png"
+        try:
+            xiaofei_count = jiesuandingdan.objects.get(yonghu=yonghu_id,lifashi=i_lifashi).count()
+        except:
+            xiaofei_count = 0
+        huiyuan_detail = {
+            'id':item.id,"lifashi_id":i_lifashi.id,"lifashi_name":i_lifashi.yonghuming,"xiaofei_count":xiaofei_count,"lifashi_image":lifashi_tupian_src
+        }
+        huiyuan_list.append(huiyuan_detail)
+    return JsonResponse({"huiyuan":huiyuan_list,"pagenum":int(page)+1,"total":huiyuan_len})
+
+#理发师获取用户会员列表
+@csrf_exempt
+def lifashi_show_huiyuan(request):
+    if request.method == "POST":
+        datagetter = request.POST
+    else:
+        datagetter = request.GET
+    lifashi_id = datagetter.get("lifashi_id")
+    page = datagetter.get('page')
+    pagesize = datagetter.get('pagesize')
+    start = page*6
+    huiyuan_list = []
+    try:
+        huiyuan_len = huiyuan.objects.filter(lifashi=lifashi_id).count()
+    except:
+        huiyuan_len = 0
+    Huiyuan = huiyuan.objects.filter(lifashi=lifashi_id).order_by('-id')[int(start):int(start+pagesize)]
+    for item in Huiyuan:
+        i_yonghu = item.yonghu
+        try:
+            i_yonghu_tupian = tupian.objects.get(tupianlaiyuan_id=i_yonghu.id, tupianleixing=3)
+            yonghu_tupian_src = i_yonghu_tupian.src.name
+        except:
+            yonghu_tupian_src = "../../image/lifashi1.png"
+        try:
+            xiaofei_count = jiesuandingdan.objects.get(yonghu=i_yonghu.id,lifashi=lifashi_id).count()
+        except:
+            xiaofei_count = 0
+        huiyuan_detail = {
+            'id':item.id,"yonghu_id":i_yonghu.id,"yonghu_name":i_yonghu.yonghuming,"xiaofei_count":xiaofei_count,"lifashi_image":yonghu_tupian_src
+            ,"zhuangtai":item.zhuangtai       }
+        huiyuan_list.append(huiyuan_detail)
+    return JsonResponse({"huiyuan":huiyuan_list,"pagenum":int(page)+1,"total":huiyuan_len})

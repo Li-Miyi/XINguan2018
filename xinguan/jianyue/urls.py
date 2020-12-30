@@ -108,6 +108,12 @@ urlpatterns = [
     # 取消预约订单
     path("yuyue/dingdan/cancel",view.lifashi_yonghu.cancel_yuyue_dingdan, name="CancelYuyue"),
     # 用户修改预约订单时间
-    path("yuyue/dingdan/xiugai", view.lifashi_yonghu.xiugai_yuyue_dingdan, name="XiugaiYuyue")
+    path("yuyue/dingdan/xiugai", view.lifashi_yonghu.xiugai_yuyue_dingdan, name="XiugaiYuyue"),
+    # 用户会员
+    path("huiyuan/add", view.lifashi_yonghu.yonghu_huiyuan, name="YonghuAddHuiyuan"),
+    path("huiyuan/panduan", view.lifashi_yonghu.yonghu_is_huiyuan, name="YonghuIsHuiyuan"),
+    path("huiyuan/lifashi/confirm", view.lifashi_yonghu.lifashi_confirm_huiyuan, name="LifashiConfirmHuiyuan"),
+    path("yonghu/huiyuan/show", view.lifashi_yonghu.yonghu_show_huiyuan, name="YonghuShowHuiyuan"),
+    path("lifashi/huiyuan/show", view.lifashi_yonghu.lifashi_show_huiyuan, name="lifashiShowHuiyuan")
 
 ]
