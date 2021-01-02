@@ -1,5 +1,5 @@
+# from xinguan.jianyue.view import lifashi_yonghu
 from django.urls import path
-
 from . import views
 from . import view
 
@@ -107,6 +107,8 @@ urlpatterns = [
     path(r"xiugaimima2/", view.lifashi_yonghu.xiugaimima2, name="xiugaimima"),
     # 取消预约订单
     path("yuyue/dingdan/cancel",view.lifashi_yonghu.cancel_yuyue_dingdan, name="CancelYuyue"),
+    # 理发师用户获取取消订单
+    path("quxiao/dingdan/show/<int:shenfeng>",view.lifashi_yonghu.lifashi_show_quxiao_dingdan, name="ShowQuxiao"),
     # 用户修改预约订单时间
     path("yuyue/dingdan/xiugai", view.lifashi_yonghu.xiugai_yuyue_dingdan, name="XiugaiYuyue"),
     # 用户会员
@@ -114,6 +116,10 @@ urlpatterns = [
     path("huiyuan/panduan", view.lifashi_yonghu.yonghu_is_huiyuan, name="YonghuIsHuiyuan"),
     path("huiyuan/lifashi/confirm", view.lifashi_yonghu.lifashi_confirm_huiyuan, name="LifashiConfirmHuiyuan"),
     path("yonghu/huiyuan/show", view.lifashi_yonghu.yonghu_show_huiyuan, name="YonghuShowHuiyuan"),
-    path("lifashi/huiyuan/show", view.lifashi_yonghu.lifashi_show_huiyuan, name="lifashiShowHuiyuan")
-
+    path("lifashi/huiyuan/show", view.lifashi_yonghu.lifashi_show_huiyuan, name="lifashiShowHuiyuan"),
+    # 消息
+    path("xiaoxi/add/<int:shenfeng>", view.lifashi_yonghu.add_xiaoxi, name="Addxiaoxi"),
+    path("xiaoxi/show/<int:shenfeng>", view.lifashi_yonghu.show_xiaoxi, name="ShowXiaoxi"),
+    # 获取消息列表
+    path("xiaoxi/list/show/<int:shenfeng>", view.lifashi_yonghu.get_xiaoxi_list, name="ShowXiaoxiList"),
 ]

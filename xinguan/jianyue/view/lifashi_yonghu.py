@@ -4,7 +4,7 @@ from django.db.models import Sum
 from django.db.models.functions import ExtractMonth
 from django.http import JsonResponse,HttpResponse
 from django.utils import timezone
-from ..models import quxiaodingdan, yonghu, lifashi, lifadian,huiyuan, fuwu, EmailVerifyRecord,jiesuandingdan, pingjia, dingdan, jishiqitadizhi, faxing, tupian, \
+from ..models import quxiaodingdan, lifashi_xiaoxi,xiaoxi,yonghu, lifashi, lifadian,huiyuan, fuwu, EmailVerifyRecord,jiesuandingdan, pingjia, dingdan, jishiqitadizhi, faxing, tupian, \
     yuyuedingdan, shoucang, dizhi, zixun,mibao
 from django.db.utils import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
@@ -560,10 +560,14 @@ def lifashi_get_dingdan(request):
                 if i_jiesuan.shifouzhifu == zhuangtai_id:
                     jieshushijian = str(i_jiesuan.jieshushijian).replace("T", " ")
                     try:
+                        i_huiyuan = huiyuan.objects.filter(yonghu=i_jiesuan.yonghu,lifashi=i_jiesuan.lifashi)
+                        if i_huiyuan.exists():
+                            is_huiyuan = True
+                        else:
+                            is_huiyuan = False
                         i_fuwu = fuwu.objects.get(id=i_jiesuan.fuwuxiang_id)
-                        i_yonghu = yonghu.objects.get(id=i_jiesuan.yonghu_id)
                         dingdan_detail = {"dingdan_id": i_jiesuan.id, "fuwu_name": i_fuwu.fuwumingcheng,"price": i_fuwu.jiage, 
-                                        "shijian": jieshushijian,"shifouzhifu":shifouzhifu[int(i_jiesuan.shifouzhifu)]}
+                                        "shijian": jieshushijian,"shifouzhifu":shifouzhifu[int(i_jiesuan.shifouzhifu)],"is_huiyuan":is_huiyuan}
                         dingdanList.append(dingdan_detail)
                     except:
                         return JsonResponse({"status": 0, "msg": "您还没有已完成的订单"})
@@ -572,9 +576,13 @@ def lifashi_get_dingdan(request):
         Yuyue =  yuyuedingdan.objects.filter(lifashi_id=the_lifashi.id).order_by('-dingdan_ptr_id')[start:start+pagesize]
         for i_yuyue in Yuyue:
             i_fuwu = fuwu.objects.get(id=i_yuyue.fuwuxiang_id)
-            i_yonghu = yonghu.objects.get(id=i_yuyue.yonghu_id)
-            dingdan_detail = {"yuyue_id": i_yuyue.id, "is_jieshou":i_yuyue.yijieshou,"shijian": i_yuyue.yuyuekaishi,
-                                      "yuyue_xiaohao": i_yuyue.yuyuexiaohao, "fuwu_name": i_fuwu.fuwumingcheng,"price": i_fuwu.jiage,
+            i_huiyuan = huiyuan.objects.filter(yonghu=i_yuyue.yonghu,lifashi=i_yuyue.lifashi)
+            if i_huiyuan.exists():
+                is_huiyuan = True
+            else:
+                is_huiyuan = False
+            dingdan_detail = {"yuyue_id": i_yuyue.id, "is_jieshou":i_yuyue.yijieshou,"shijian": i_yuyue.yuyuekaishi,"is_huiyuan":is_huiyuan,
+                              "yuyue_xiaohao": i_yuyue.yuyuexiaohao, "fuwu_name": i_fuwu.fuwumingcheng,"price": i_fuwu.jiage,
                                       }
             dingdanList.append(dingdan_detail)
     return JsonResponse({'Dingdan':dingdanList,'pagenum': int(page)+1,'total': dingdan_len})
@@ -638,25 +646,35 @@ def CancelOrder(request):
         return JsonResponse({"status":1, "msg": "删除失败"})
 
 @csrf_exempt
-#返回理发师所有的取消订单
-def lifashi_show_quxiao_dingdan(request):
+#返回所有的取消订单 0-用户 1-理发师
+def lifashi_show_quxiao_dingdan(request,shenfeng):
     if request.method == "POST":
         datagetter = request.POST
     else:
         datagetter = request.GET
-    lifashi_id = datagetter.get('lifashi_id')
+    the_id = datagetter.get('the_id')
     page = datagetter.get('page')
-    start = page*6
-    pagesize = datagetter.get('pagesize')
+    start = int(page*6)
+    pagesize = int(datagetter.get('pagesize'))
+    if(shenfeng==0):
+        Quxiao = quxiaodingdan.objects.filter(yonghu=the_id).order_by('-id')[start:start+pagesize]
+        quxiao_len = quxiaodingdan.objects.filter(yonghu=the_id).count()
+    else:
+        Quxiao = quxiaodingdan.objects.filter(lifashi=the_id).order_by('-id')[start:start+pagesize]
+        quxiao_len = quxiaodingdan.objects.filter(lifashi=the_id).count()
     dingdanList = []
-    for i_quxiao in quxiaodingdan.objects.filter(lifashi_id=lifashi_id).order_by('-id')[start:start+pagesize]:
+    for i_quxiao in Quxiao:
         i_fuwu_id = i_quxiao.fuwuxiang_id
         i_fuwu = fuwu.objects.get(id=i_fuwu_id)
+        try:
+            i_tupian_src = tupian.objects.get(tupianleixing="6",tupianlaiyuan_id=i_fuwu_id)
+        except:
+            i_tupian_src = "https://s3.ax1x.com/2020/12/11/rAJowR.jpg"
         i_lifashi_id = i_fuwu.lifashi_id
         dingdan_detail = {"fuwu_id":i_fuwu.id,"fuwu_name":i_fuwu.fuwumingcheng,
-        "quxiaoshijian":i_quxiao.quxiaoshijian,"quxiao_yuanyin":i_quxiao.quxiaoyuanyin}
+        "quxiaoshijian":i_quxiao.quxiaoshijian,"quxiao_yuanyin":i_quxiao.quxiaoyuanyin,"fuwu_tupian":i_tupian_src}
         dingdanList.append(dingdan_detail)
-    return JsonResponse({"dingdan":dingdanList})
+    return JsonResponse({"dingdan":dingdanList,"total":quxiao_len,"pagenum":int(page)+1})
 
 
 # 用户收藏 0-理发店 1-理发师 2-服务——用户端
@@ -746,7 +764,6 @@ def getYonghuDingdan(request, zhuangtai_id):
     zhuangtai = ["未支付", "已支付", "预约"]
     yonghu_id = the_yonghu.id
     dingdanList = []
-    print(yonghu_id)
     for i_dingdan in dingdan.objects.filter(yonghu_id=yonghu_id):
         if zhuangtai_id == 1 or zhuangtai_id == 0:
             for i_jiesuan in jiesuandingdan.objects.filter(dingdan_ptr_id=i_dingdan.id):
@@ -754,17 +771,30 @@ def getYonghuDingdan(request, zhuangtai_id):
                     try:
                         i_fuwu = fuwu.objects.get(id=i_dingdan.fuwuxiang_id)
                         jiesuanshijian = str(i_jiesuan.jieshushijian).replace("T"," ")
+                        try:
+                            i_huiyuan = huiyuan.objects.get(yonghu=the_yonghu,lifashi=i_fuwu.lifashi)
+                            is_huiyuan = True
+                        except:
+                            is_huiyuan = False
+                        try:
+                            i_jiage = i_jiesuan.shijifeiyong
+                        except:
+                            i_jiage = i_fuwu.jiage
                         dingdan_detail = {"dingdan_id": i_dingdan.id, "fuwu_name": i_fuwu.fuwumingcheng, "zhuangtai": zhuangtai[zhuangtai_id],
-                                          "price": i_fuwu.jiage, "jiesuanshijian": jiesuanshijian}
+                                          "price": i_jiage, "jiesuanshijian": jiesuanshijian,"is_huiyuan":is_huiyuan}
                         dingdanList.append(dingdan_detail)
                     except:
                         return JsonResponse({"status": 0, "msg": "您还没有已完成的订单"})
         if zhuangtai_id == 2:
                 for i_yuyue in yuyuedingdan.objects.filter(dingdan_ptr_id=i_dingdan.id):
-                    print(i_dingdan.id)
+                    try:
+                        i_huiyuan = huiyuan.objects.get(yonghu=the_yonghu,lifashi=i_yuyue.lifashi)
+                        is_huiyuan = True
+                    except:
+                        is_huiyuan = False
                     i_fuwu = fuwu.objects.get(id=i_dingdan.fuwuxiang_id)
                     dingdan_detail = {"yuyue_id": i_dingdan.id, "yuyue_start": i_yuyue.yuyuekaishi,"zhuangtai": zhuangtai[zhuangtai_id],
-                                      "yuyue_xiaohao": i_yuyue.yuyuexiaohao, "fuwu_name": i_fuwu.fuwumingcheng,"price": i_fuwu.jiage}
+                                      "yuyue_xiaohao": i_yuyue.yuyuexiaohao, "fuwu_name": i_fuwu.fuwumingcheng,"price": i_fuwu.jiage,"is_huiyuan":is_huiyuan}
                     dingdanList.append(dingdan_detail)
     return JsonResponse(dingdanList, safe=False)
 
@@ -966,7 +996,19 @@ def getLifadian(request):
 def zhifu(request):
     dingdan_id = request.POST.get('dingdan_id')
     i_dingdan = jiesuandingdan.objects.get(id=dingdan_id)
+    i_fuwu = i_dingdan.fuwuxiang
+    i_yonghu = i_dingdan.yonghu
+    i_lifashi = i_dingdan.lifashi
+    print(i_yonghu.id)
+    print(i_lifashi.id)
+    try:
+        i_huiyuan = huiyuan.objects.get(yonghu=i_yonghu,lifashi=i_lifashi) 
+        dingdan_jiage = i_fuwu.jiage * 0.8
+    except:
+        dingdan_jiage = i_fuwu.jiage
+    print(dingdan_jiage)
     i_dingdan.shifouzhifu='1'
+    i_dingdan.shijifeiyong = dingdan_jiage 
     i_dingdan.save()
     return JsonResponse({"status": "1","msg":"支付成功"})
 
@@ -1545,7 +1587,8 @@ def yonghu_show_huiyuan(request):
         except:
             xiaofei_count = 0
         huiyuan_detail = {
-            'id':item.id,"lifashi_id":i_lifashi.id,"lifashi_name":i_lifashi.yonghuming,"xiaofei_count":xiaofei_count,"lifashi_image":lifashi_tupian_src
+            'id':item.id,"lifashi_id":i_lifashi.id,"lifashi_name":i_lifashi.yonghuming,"xiaofei_count":xiaofei_count,"lifashi_image":lifashi_tupian_src,
+            "zhuangtai": int(item.zhuangtai)
         }
         huiyuan_list.append(huiyuan_detail)
     return JsonResponse({"huiyuan":huiyuan_list,"pagenum":int(page)+1,"total":huiyuan_len})
@@ -1580,6 +1623,122 @@ def lifashi_show_huiyuan(request):
             xiaofei_count = 0
         huiyuan_detail = {
             'id':item.id,"yonghu_id":i_yonghu.id,"yonghu_name":i_yonghu.yonghuming,"xiaofei_count":xiaofei_count,"lifashi_image":yonghu_tupian_src
-            ,"zhuangtai":item.zhuangtai       }
+            ,"zhuangtai":item.zhuangtai }
         huiyuan_list.append(huiyuan_detail)
     return JsonResponse({"huiyuan":huiyuan_list,"pagenum":int(page)+1,"total":huiyuan_len})
+
+
+#发送消息 0-用户 1-理发师
+@csrf_exempt
+def add_xiaoxi(request,shenfeng):
+    if request.method == "POST":
+        datagetter = request.POST
+    else:
+        datagetter = request.GET
+    from_id = int(datagetter.get('from_id'))
+    to_id = int(datagetter.get('to_id'))
+    content = datagetter.get('content')
+    print(from_id)
+    try:
+        if(shenfeng==0):
+                the_from = yonghu.objects.get(id=from_id)
+                the_to = lifashi.objects.get(id=to_id)
+                the_xiaoxi = xiaoxi(from_id=the_from,to_id=the_to,content=content)
+        else:
+                the_from = lifashi.objects.get(id=from_id)
+                the_to = yonghu.objects.get(id=to_id)
+                the_xiaoxi = lifashi_xiaoxi(from_id=the_from,to_id=the_to,content=content)
+        the_xiaoxi.save()
+        return JsonResponse({"status":1,"msg":"发送成功"})
+    except:
+        return JsonResponse({"status":0,"msg":"发送失败"})
+
+#获取聊天信息 0-用户 1-理发师
+@csrf_exempt
+def show_xiaoxi(request,shenfeng):
+    if request.method == "POST":
+        datagetter = request.POST
+    else:
+        datagetter = request.GET
+    from_id = datagetter.get('from_id')
+    to_id = datagetter.get('to_id')
+    self_count = int(datagetter.get('self_count'))
+    other_count = int(datagetter.get('other_count'))
+    if(shenfeng==0):
+        # 获取用户发送的消息
+        the_from = yonghu.objects.get(id=from_id)
+        the_to = lifashi.objects.get(id=to_id)
+        xiaoxi_list = xiaoxi.objects.filter(from_id=the_from,to_id=the_to)[self_count:]
+        self_count = xiaoxi.objects.filter(from_id=the_from,to_id=the_to)[self_count:].count() + self_count
+        xiaoxi_new_list1 = []
+        for i_xiaoxi in xiaoxi_list:
+            xiaoxi_detail = {"pubtime":i_xiaoxi.pubtime,"content":i_xiaoxi.content,"self":True}
+            xiaoxi_new_list1.append(xiaoxi_detail)
+        #获取理发师 发送的消息
+        the_from = lifashi.objects.get(id=to_id)
+        the_to = yonghu.objects.get(id=from_id)
+        xiaoxi_list = lifashi_xiaoxi.objects.filter(from_id=the_from,to_id=the_to)[other_count:]
+        other_count = lifashi_xiaoxi.objects.filter(from_id=the_from,to_id=the_to)[other_count:].count() + other_count
+        xiaoxi_new_list2 = []
+        for i_xiaoxi in xiaoxi_list:
+            xiaoxi_detail = {"pubtime":i_xiaoxi.pubtime,"content":i_xiaoxi.content,"self":False}
+            xiaoxi_new_list2.append(xiaoxi_detail)
+        new_list = xiaoxi_new_list1+xiaoxi_new_list2
+    if(shenfeng==1):
+            # 获取用户发送的消息
+        the_from = yonghu.objects.get(id=to_id)
+        the_to = lifashi.objects.get(id=from_id)
+        xiaoxi_list = xiaoxi.objects.filter(from_id=the_from,to_id=the_to)[other_count:]
+        other_count = xiaoxi.objects.filter(from_id=the_from,to_id=the_to)[other_count:].count() + other_count
+        xiaoxi_new_list1 = []
+        for i_xiaoxi in xiaoxi_list:
+            xiaoxi_detail = {"pubtime":i_xiaoxi.pubtime,"content":i_xiaoxi.content,"self":False}
+            xiaoxi_new_list1.append(xiaoxi_detail)
+        #获取理发师 发送的消息
+        the_from = lifashi.objects.get(id=from_id)
+        the_to = yonghu.objects.get(id=to_id)
+        xiaoxi_list = lifashi_xiaoxi.objects.filter(from_id=the_from,to_id=the_to)[self_count:]
+        self_count = lifashi_xiaoxi.objects.filter(from_id=the_from,to_id=the_to)[self_count:].count() + self_count
+        xiaoxi_new_list2 = []
+        for i_xiaoxi in xiaoxi_list:
+            xiaoxi_detail = {"pubtime":i_xiaoxi.pubtime,"content":i_xiaoxi.content,"self":True}
+            xiaoxi_new_list2.append(xiaoxi_detail)
+        new_list = xiaoxi_new_list1+xiaoxi_new_list2
+    return JsonResponse({"xiaoxi_list":new_list,"self_count":self_count,"other_count":other_count})
+
+#获取聊天列表 0-用户 1-理发师
+@csrf_exempt
+def get_xiaoxi_list(request,shenfeng):
+    if request.method == "POST":
+        datagetter = request.POST
+    else:
+        datagetter = request.GET
+    yonghu_id = datagetter.get('yonghu_id')
+    print(yonghu_id)
+    if(shenfeng==0):
+        xiaoxi_list = xiaoxi.objects.filter(from_id=yonghu_id)
+    else:
+        xiaoxi_list = lifashi_xiaoxi.objects.filter(from_id=yonghu_id)
+    to_list_id = []
+    for i_xiaoxi in xiaoxi_list:
+        to_id = i_xiaoxi.to_id.id
+        to_list_id.append(to_id)
+        to_list_id = list(set(to_list_id))
+    detail_list = []
+    for i_id in to_list_id:
+        if(shenfeng==0):
+            try:
+                to_img_src =  tupian.objects.get(tupianlaiyuan_id=i_id,tupianleixing=1)
+            except:
+                to_img_src = "../../image/默认头像.png"
+        else:
+            try:
+                to_img_src =  tupian.objects.get(tupianlaiyuan_id=i_id,tupianleixing=3)
+            except:
+                to_img_src = "../../image/默认头像.png"
+        to_detail = {"to_id":i_id,"to_img":to_img_src}
+        detail_list.append(to_detail)
+    return JsonResponse({"status":1,"list":detail_list})
+
+
+

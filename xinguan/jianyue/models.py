@@ -154,3 +154,16 @@ class huiyuan(models.Model):
     yonghu=models.ForeignKey(yonghu,on_delete=models.CASCADE)
     zhuangtai=models.CharField(max_length=1, choices=(('1', '已接受'), ('0','未接受')))
 
+#用户发送消息表
+class xiaoxi(models.Model):
+    from_id =  models.ForeignKey(yonghu,on_delete=models.CASCADE)
+    to_id =  models.ForeignKey(lifashi,on_delete=models.CASCADE)
+    content = models.CharField(max_length=256)
+    pubtime = models.DateTimeField(auto_now_add=True)
+
+
+class lifashi_xiaoxi(models.Model):
+    from_id =  models.ForeignKey(lifashi,on_delete=models.CASCADE)
+    to_id =  models.ForeignKey(yonghu,on_delete=models.CASCADE)
+    content = models.CharField(max_length=256)
+    pubtime = models.DateTimeField(auto_now_add=True)
