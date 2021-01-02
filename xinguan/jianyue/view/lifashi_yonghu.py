@@ -358,9 +358,20 @@ def fuwuliebiao(request):  # 服务列表页
                 pingfen = 'null'
             else:
                 pingfen = round(pingfen_sum / pingfen_num, 2)
+                #图片
+            fuwutupian=tupian.objects.filter(tupianleixing=6,tupianlaiyuan_id=fuwu_info.id)
+            if len(fuwutupian)==0:
+                fuwutp="https://img-u-1.51miz.com/preview/muban/00/00/44/88/M-448856-2A607753.jpg-1.jpg"
+            else:
+                if('http' in fuwutupian.src.name):
+                    fuwutp=fuwutupian.src.name
+                else:
+                    fuwutp='http://127.0.0.1:8000/media/'+fuwutupian.src.name
+            print(fuwutp)
+                #图片
             fuwuliebiao.append(
                 {"fuwu_id": fuwu_info.id ,"lifadian_name": lifadian_name, "jiage": jiage, "fuwumingcheng": fuwumingcheng, "leixing": leixing,
-                 "pingfen": pingfen})
+                 "pingfen": pingfen,"fuwutupian":fuwutp})
         except Exception as e:
             return JsonResponse({"status": 0, "msg": "访问错误"})
     if len(fuwuliebiao) == 0:
@@ -383,6 +394,17 @@ def fuwuliebiaoxiangqing(request):
         dingdan=fuwuxiangqing.dingdan_set.all() #反向查询每一个订单的相关评价
         pingfen_sum = 0  # 设定最初总分0
         pingfen_num = 0  # 设定评分数量0
+        # 图片
+        fuwutupian = tupian.objects.filter(tupianleixing=6, tupianlaiyuan_id=fuwu_id)
+        if len(fuwutupian) == 0:
+            fuwutp = "https://img-u-1.51miz.com/preview/muban/00/00/44/88/M-448856-2A607753.jpg-1.jpg"
+        else:
+            if ('http' in fuwutupian.src.name):
+                fuwutp = fuwutupian.src.name
+            else:
+                fuwutp = 'http://127.0.0.1:8000/media/' + fuwutupian.src.name
+        print(fuwutp)
+        # 图片
         for dd in dingdan:
             pingjia_list = dd.pingjia_set.all()  # 反向查询每一个订单的相关评价
             for pj in pingjia_list:
@@ -406,7 +428,7 @@ def fuwuliebiaoxiangqing(request):
         result=JsonResponse({"leixing":fw_leixing,"jiage":fw_jiage,"mingcheng":fw_mingcheng,"pingfen":fw_pingfen,
                              "xingming":fw_xingming,"xingbie":fw_xingbie,"lianxidianhua":fw_lianxidianhua,
                              "lifashi_image":fw_lifashi_image,"lifadian_image":fw_lifadian_image,"dianming":fw_dianming,
-                             "dizhi":fw_dizhi,"dianzhulianxi":fw_dianzhulianxi})
+                             "dizhi":fw_dizhi,"dianzhulianxi":fw_dianzhulianxi,"fuwutupian":fuwutp})
     except Exception as e:
         result=JsonResponse({"status": 0, "msg": "访问失败","cuowu":str(e)})
     return result
