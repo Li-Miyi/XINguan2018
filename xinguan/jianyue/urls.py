@@ -107,6 +107,7 @@ urlpatterns = [
     path(r"xiugaimima2/", view.lifashi_yonghu.xiugaimima2, name="xiugaimima"),
     # 取消预约订单
     path("yuyue/dingdan/cancel",view.lifashi_yonghu.cancel_yuyue_dingdan, name="CancelYuyue"),
+    path("quxiao/dingdan/show/<int:shenfeng>", view.lifashi_yonghu.lifashi_show_quxiao_dingdan, name="CancelYuyue"),
     # 用户修改预约订单时间
     path("yuyue/dingdan/xiugai", view.lifashi_yonghu.xiugai_yuyue_dingdan, name="XiugaiYuyue"),
     # 用户会员
