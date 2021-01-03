@@ -198,7 +198,7 @@ def liebiao(request):
         elif paixufangshi=='价格最高':
             lifashi_datas=jiagejiangxu(lifashi_datas)
         elif paixufangshi=='好评优先':
-            lifashi_datas==pingfenjiangxu(lifashi_datas)
+            lifashi_datas=pingfenjiangxu(lifashi_datas)
         else:
             pass
         lifashi_return=[]
@@ -225,7 +225,7 @@ def liebiao(request):
         elif paixufangshi=='价格最高':
             lifadian_datas=jiagejiangxu(lifadian_datas)
         elif paixufangshi=='好评优先':
-            lifadian_datas==pingfenjiangxu(lifadian_datas)
+            lifadian_datas=pingfenjiangxu(lifadian_datas)
         else:
             pass
         lifadian_return=[]
