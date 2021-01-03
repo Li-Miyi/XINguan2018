@@ -1045,7 +1045,7 @@ def fabuzixun(request):
     return JsonResponse({"staus":"发布成功", "zixun_id": zixun_id})
 
 
-#统计数据
+#统计用户的数据
 @csrf_exempt
 def tongji_yuedu(request):
     yonghu_id = request.POST.get("id")
@@ -1369,6 +1369,7 @@ def lifashi_tongji_yuedu(request):
         data[i['month']-1] = i["price"]
     return JsonResponse({'status':1,"data":data})
 
+# 统计理发师的数据
 @csrf_exempt
 def lifashi_tongji_leixing(request):
     lifashi_id = request.POST.get("id")
