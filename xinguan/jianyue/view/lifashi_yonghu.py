@@ -226,7 +226,7 @@ def liebiao(request):
         elif paixufangshi=='价格最高':
             lifashi_datas=jiagejiangxu(lifashi_datas)
         elif paixufangshi=='好评优先':
-            lifashi_datas==pingfenjiangxu(lifashi_datas)
+            lifashi_datas=pingfenjiangxu(lifashi_datas)
         else:
             pass
         lifashi_return=[]
@@ -253,7 +253,7 @@ def liebiao(request):
         elif paixufangshi=='价格最高':
             lifadian_datas=jiagejiangxu(lifadian_datas)
         elif paixufangshi=='好评优先':
-            lifadian_datas==pingfenjiangxu(lifadian_datas)
+            lifadian_datas=pingfenjiangxu(lifadian_datas)
         else:
             pass
         lifadian_return=[]
@@ -405,17 +405,19 @@ def fuwuliebiaoxiangqing(request):
             pingfen = round(pingfen_sum / pingfen_num, 2)
         fw_pingfen=pingfen #评分
         fw_xingming=fuwuxiangqing.lifashi.xingming #理发师姓名
+        lifashi_id=fuwuxiangqing.lifashi.id #理发师id
         fw_xingbie=fuwuxiangqing.lifashi.get_xingbie_display()#理发师性别
         fw_lianxidianhua=fuwuxiangqing.lifashi.lianxidianhua#理发师电话
         lifashitupian=tupian.objects.filter(tupianlaiyuan_id=fuwuxiangqing.lifashi.id)[0]
         fw_lifashi_image=str(lifashitupian.src)
         fw_dianming=fuwuxiangqing.lifashi.lifadian.dianming#理发店名字
+        lifadian_id=fuwuxiangqing.lifashi.lifadian.id #理发店id
         fw_dizhi=fuwuxiangqing.lifashi.lifadian.dizhi_set.all()[0].name#理发店地址
         fw_dianzhulianxi=fuwuxiangqing.lifashi.lifadian.dianzhulianxi#店主联系方式
         lifadiantupian=tupian.objects.filter(tupianlaiyuan_id=fuwuxiangqing.lifashi.lifadian.id)[0]
         fw_lifadian_image=str(lifadiantupian.src)
         # 图片
-        fuwutupian = tupian.objects.filter(tupianleixing=6, tupianlaiyuan_id=fuwu.id)
+        fuwutupian = tupian.objects.filter(tupianleixing=6, tupianlaiyuan_id=fuwu_id)
         if len(fuwutupian) == 0:
             fuwutp = "https://img-u-1.51miz.com/preview/muban/00/00/44/88/M-448856-2A607753.jpg-1.jpg"
         else:
@@ -426,6 +428,7 @@ def fuwuliebiaoxiangqing(request):
                 fuwutp = 'http://127.0.0.1:8000/media/' + fuwutupian.src.name
         # 图片
         result=JsonResponse({"leixing":fw_leixing,"jiage":fw_jiage,"mingcheng":fw_mingcheng,"pingfen":fw_pingfen,
+                            "lifadian_id":lifadian_id,"lifashi_id":lifashi_id,
                              "xingming":fw_xingming,"xingbie":fw_xingbie,"lianxidianhua":fw_lianxidianhua,
                              "lifashi_image":fw_lifashi_image,"lifadian_image":fw_lifadian_image,"dianming":fw_dianming,
                              "dizhi":fw_dizhi,"dianzhulianxi":fw_dianzhulianxi,"fuwutupian":fuwutp,"fuwuid":fuwu_id})
