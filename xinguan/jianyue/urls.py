@@ -114,6 +114,8 @@ urlpatterns = [
     path("huiyuan/panduan", view.lifashi_yonghu.yonghu_is_huiyuan, name="YonghuIsHuiyuan"),
     path("huiyuan/lifashi/confirm", view.lifashi_yonghu.lifashi_confirm_huiyuan, name="LifashiConfirmHuiyuan"),
     path("yonghu/huiyuan/show", view.lifashi_yonghu.yonghu_show_huiyuan, name="YonghuShowHuiyuan"),
-    path("lifashi/huiyuan/show", view.lifashi_yonghu.lifashi_show_huiyuan, name="lifashiShowHuiyuan")
+    path("lifashi/huiyuan/show", view.lifashi_yonghu.lifashi_show_huiyuan, name="lifashiShowHuiyuan"),
+    # 搜索功能
+    path(r"search/", view.lifashi_yonghu.search, name="search"),
 
 ]

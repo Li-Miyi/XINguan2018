@@ -355,7 +355,7 @@ def fuwuliebiao(request):  # 服务列表页
                     pingfen_sum = pingfen_sum + pj.pingfen
                     pingfen_num = pingfen_num + 1
             if pingfen_num == 0 and pingfen_sum == 0:
-                pingfen = 'null'
+                pingfen = '暂无'
             else:
                 pingfen = round(pingfen_sum / pingfen_num, 2)
                 #图片
@@ -416,16 +416,19 @@ def fuwuliebiaoxiangqing(request):
             pingfen = round(pingfen_sum / pingfen_num, 2)
         fw_pingfen=pingfen #评分
         fw_xingming=fuwuxiangqing.lifashi.xingming #理发师姓名
+        fw_lifashi_id=fuwuxiangqing.lifashi.id #理发师id
         fw_xingbie=fuwuxiangqing.lifashi.get_xingbie_display()#理发师性别
         fw_lianxidianhua=fuwuxiangqing.lifashi.lianxidianhua#理发师电话
         lifashitupian=tupian.objects.filter(tupianlaiyuan_id=fuwuxiangqing.lifashi.id)[0]
         fw_lifashi_image=str(lifashitupian.src)
         fw_dianming=fuwuxiangqing.lifashi.lifadian.dianming#理发店名字
+        fw_lifadian_id=fuwuxiangqing.lifashi.lifadian.id#理发店id
         fw_dizhi=fuwuxiangqing.lifashi.lifadian.dizhi_set.all()[0].name#理发店地址
         fw_dianzhulianxi=fuwuxiangqing.lifashi.lifadian.dianzhulianxi#店主联系方式
         lifadiantupian=tupian.objects.filter(tupianlaiyuan_id=fuwuxiangqing.lifashi.lifadian.id)[0]
         fw_lifadian_image=str(lifadiantupian.src)
         result=JsonResponse({"leixing":fw_leixing,"jiage":fw_jiage,"mingcheng":fw_mingcheng,"pingfen":fw_pingfen,
+                             "lifashi_id":fw_lifashi_id,"lifadian_id":fw_lifadian_id,
                              "xingming":fw_xingming,"xingbie":fw_xingbie,"lianxidianhua":fw_lianxidianhua,
                              "lifashi_image":fw_lifashi_image,"lifadian_image":fw_lifadian_image,"dianming":fw_dianming,
                              "dizhi":fw_dizhi,"dianzhulianxi":fw_dianzhulianxi,"fuwutupian":fuwutp})
@@ -1605,3 +1608,85 @@ def lifashi_show_huiyuan(request):
             ,"zhuangtai":item.zhuangtai       }
         huiyuan_list.append(huiyuan_detail)
     return JsonResponse({"huiyuan":huiyuan_list,"pagenum":int(page)+1,"total":huiyuan_len})
+
+#搜索
+@csrf_exempt
+def search(request):
+    if request.method == "POST":
+        datagetter = request.POST
+    else:
+        datagetter = request.GET
+    leixing=datagetter.get('leixing')
+    query=datagetter.get('query')
+    data=[]
+    if(leixing=='理发店'):
+        lifadians=lifadian.objects.filter(dianming__contains=query)
+        if(len(lifadians)==0):
+            return JsonResponse({"status":"0"})
+        else:
+            for lifadian_each in lifadians:
+                lifadianinfo = {}
+                lifadian_id=lifadian_each.id
+                lifadian_mingcheng=lifadian_each.dianming
+                lifadianinfo['id']=lifadian_id
+                lifadianinfo['name']=lifadian_mingcheng
+                #图片
+                try:
+                    lifadiantupian = tupian.objects.filter(tupianleixing=0, tupianlaiyuan_id=lifadian_id)[0].src.name
+                    if "http" in lifadiantupian:
+                        lifadianinfo["tupian"] = lifadiantupian
+                    else:
+                        lifadianinfo["tupian"] = "http://127.0.0.1:8000/media/" + lifadiantupian
+                except:
+                    lifadianinfo["tupian"] = "https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=1023914563,1561594966&fm=26&gp=0.jpg"
+                #
+                data.append(lifadianinfo)
+            return JsonResponse({"status":"1","data":data})
+    if(leixing=='理发师'):
+        lifashis=lifashi.objects.filter(xingming__contains=query)
+        if(len(lifashis)==0):
+            return JsonResponse({"status":"0"})
+        else:
+            for lifashi_each in lifashis:
+                lifashiinfo={}
+                lifashi_id=lifashi_each.id
+                lifashi_mingcheng=lifashi_each.xingming
+                lifashiinfo['id']=lifashi_id
+                lifashiinfo['name']=lifashi_mingcheng
+                #头像
+                try:
+                    lifashitouxiang = tupian.objects.get(tupianleixing=5, tupianlaiyuan_id=lifashi_id).src.name
+                    if "http" in lifashitouxiang:
+                        lifashiinfo["tupian"] = lifashitouxiang
+                    else:
+                        lifashiinfo["tupian"] = "http://127.0.0.1:8000/media/" + lifashitouxiang
+                except:
+                    lifashiinfo["tupian"] = "https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=1746949651,2632447771&fm=26&gp=0.jpg"
+                #头像
+                data.append(lifashiinfo)
+            return JsonResponse({"status":"1","data":data})
+    if(leixing=='服务'):
+        fuwus=fuwu.objects.filter(fuwumingcheng__contains=query)
+        if(len(fuwus)==0):
+            return JsonResponse({"status":"0"})
+        else:
+            for fuwu_each in fuwus:
+                fuwuinfo={}
+                fuwu_id=fuwu_each.id
+                fuwu_mingcheng=fuwu_each.fuwumingcheng
+                fuwuinfo['id']=fuwu_id
+                fuwuinfo['name']=fuwu_mingcheng
+                #图片
+                fuwutupian = tupian.objects.filter(tupianleixing=6, tupianlaiyuan_id=fuwu_id)
+                if len(fuwutupian) == 0:
+                    fuwutp = "https://img-u-1.51miz.com/preview/muban/00/00/44/88/M-448856-2A607753.jpg-1.jpg"
+                else:
+                    if ('http' in fuwutupian.src.name):
+                        fuwutp = fuwutupian.src.name
+                    else:
+                        fuwutp = 'http://127.0.0.1:8000/media/' + fuwutupian.src.name
+                fuwuinfo['tupian']=fuwutp
+                #图片
+                data.append(fuwuinfo)
+            return JsonResponse({"status":"1","data":data})
+
