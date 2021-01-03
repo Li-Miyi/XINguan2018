@@ -5,7 +5,7 @@ from django.db.models.functions import ExtractMonth
 from django.http import JsonResponse,HttpResponse
 from django.utils import timezone
 from ..models import quxiaodingdan, yonghu, lifashi, lifadian,huiyuan, fuwu, EmailVerifyRecord,jiesuandingdan, pingjia, dingdan, jishiqitadizhi, faxing, tupian, \
-    yuyuedingdan, shoucang, dizhi, zixun,mibao,xiaoxi,lifashi_xiaoxi
+    yuyuedingdan, shoucang, dizhi, zixun,mibao
 from django.db.utils import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.csrf import csrf_exempt
@@ -294,37 +294,25 @@ def lifashi_detail(request):
     try:
         i_lifashi = lifashi.objects.get(id=lifashi_id)
     except lifashi.DoesNotExist:
-        return JsonResponse({"status": 0, "msg": "id输入错误"})
-    for i_lifashi in lifashi.objects.filter(id=lifashi_id):
-        # 头像
-        try:
-            lifashitouxiang = tupian.objects.get(tupianleixing=5, tupianlaiyuan_id=i_lifashi.id).src.name
-            if "http" in lifashitouxiang:
-                i_lifashitouxiang = lifashitouxiang
-            else:
-                i_lifashitouxiang = "http://127.0.0.1:8000/media/" + lifashitouxiang
-        except:
-            i_lifashitouxiang = "https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=1746949651,2632447771&fm=26&gp=0.jpg"
-
+        return JsonResponse({"status": 0,"msg":"id输入错误"})
     for i_fuwu in fuwu.objects.filter(lifashi=i_lifashi):
         try:
-            search_dict = {"tupianleixing": "6", "tupianlaiyuan_id": i_lifashi.id}
+            search_dict = {"tupianleixing": "6", "tupianlaiyuan_id":i_lifadian.id}
             i_tupian = tupian.objects.filter(**search_dict).first()
             src = str(i_tupian.src)
         except:
             src = "http://img.08087.cc/uploads/20190819/10/1566182856-otPJlNpiKT.jpeg"
-        lifa_fuwu_detail = {"fuwu_id": i_fuwu.id, "type": fuwuleixing[i_fuwu.leixing],
-                            "fuwu_name": i_fuwu.fuwumingcheng,
-                            "price": i_fuwu.jiage, "tupian": src, "fuwu_shijian": i_fuwu.shijian}
+        lifa_fuwu_detail = {"fuwu_id": i_fuwu.id, "type": fuwuleixing[i_fuwu.leixing], "fuwu_name": i_fuwu.fuwumingcheng,
+                                "price": i_fuwu.jiage,"tupian":src}
         lifa_fuwu.append(lifa_fuwu_detail)
     for i_lifadian in lifadian.objects.filter(lifashi=i_lifashi):
         try:
-            search_dict = {"tupianleixing": "0", "tupianlaiyuan_id": i_lifadian.id}
+            search_dict = {"tupianleixing": "0", "tupianlaiyuan_id":i_lifadian.id}
             i_tupian = tupian.objects.filter(**search_dict).first()
             src = str(i_tupian.src)
         except:
             src = "../../image/0.jpg"
-        lifadian_detail = {"lifadian_id": i_lifadian.id, "lifadian_name": i_lifadian.dianming, "tupian": src}
+        lifadian_detail = {"lifadian_id": i_lifadian.id, "lifadian_name": i_lifadian.dianming, "tupian":src}
         lifashi_lifadian.append(lifadian_detail)
         print(lifadian_detail)
     for i_faxing in faxing.objects.filter(lifashi=i_lifashi):
@@ -334,17 +322,15 @@ def lifashi_detail(request):
             src = str(i_tupian.src)
         except:
             src = "../../image/0.jpg"
-        faxing_detail = {"faxing_id": i_faxing.id, "faxingname": i_faxing.faxingming,
-                         "leixing": faxingleixing[i_faxing.leixing], "tupian": src}
+        faxing_detail = {"faxing_id":i_faxing.id, "faxingname": i_faxing.faxingming, "leixing": faxingleixing[i_faxing.leixing],"tupian": src}
         lifashi_faxing.append(faxing_detail)
     for i_dingdan in dingdan.objects.filter(lifashi_id=lifashi_id):
         for i_pingjia in pingjia.objects.filter(dingdan_id=i_dingdan.id):
             lifashi_pingjia_detail = {'id': i_pingjia.id, "pingfen": i_pingjia.pingfen, "pingjia": i_pingjia.pingjia}
             lifashi_pingjia.append(lifashi_pingjia_detail)
     return JsonResponse(
-        {"id": i_lifashi.id, "lifashitouxiang": i_lifashitouxiang, "name": i_lifashi.xingming,
-         "yonghuming": i_lifashi.yonghuming, 'phone': i_lifashi.lianxidianhua, "fuwu": lifa_fuwu,
-         "lifadian": lifashi_lifadian, "faxing": lifashi_faxing, "pingjia": lifashi_pingjia})
+        {"id": i_lifashi.id, "name": i_lifashi.xingming, "yonghuming": i_lifashi.yonghuming,'phone': i_lifashi.lianxidianhua, "fuwu": lifa_fuwu,
+         "lifadian": lifashi_lifadian, "faxing":lifashi_faxing,"pingjia": lifashi_pingjia})
 
 # 返回不同的服务类型——用户端
 def fuwuliebiao(request):  # 服务列表页
@@ -363,23 +349,29 @@ def fuwuliebiao(request):  # 服务列表页
             dingdan_list = fuwu_info.dingdan_set.all()  # 反向查询所有的相关订单
             pingfen_sum = 0  # 设定最初总分0
             pingfen_num = 0  # 设定评分数量0
+            #图片
+            fuwutupian = tupian.objects.filter(tupianleixing=6, tupianlaiyuan_id=fuwu_info.id)
+            if len(fuwutupian) == 0:
+                fuwutp = "https://img-u-1.51miz.com/preview/muban/00/00/44/88/M-448856-2A607753.jpg-1.jpg"
+            else:
+                fuwutupian=fuwutupian[0]
+                if ('http' in fuwutupian.src.name):
+                    fuwutp = fuwutupian.src.name
+                else:
+                    fuwutp = 'http://127.0.0.1:8000/media/' + fuwutupian.src.name
+            #图片
             for dd in dingdan_list:
                 pingjia_list = dd.pingjia_set.all()  # 反向查询每一个订单的相关评价
                 for pj in pingjia_list:
                     pingfen_sum = pingfen_sum + pj.pingfen
                     pingfen_num = pingfen_num + 1
             if pingfen_num == 0 and pingfen_sum == 0:
-                pingfen = 'null'
+                pingfen = '暂无'
             else:
                 pingfen = round(pingfen_sum / pingfen_num, 2)
-            # 查询服务图片
-            try:
-                fuwu_tupian_src = tupian.objects.get(tupianlaiyuan_id=fuwu_info.id,tupianleixing=6).src.name
-            except:
-                fuwu_tupian_src = "https://s3.ax1x.com/2020/12/11/rAJgYV.png"
             fuwuliebiao.append(
                 {"fuwu_id": fuwu_info.id ,"lifadian_name": lifadian_name, "jiage": jiage, "fuwumingcheng": fuwumingcheng, "leixing": leixing,
-                 "pingfen": pingfen,"fuwu_img":fuwu_tupian_src})
+                 "pingfen": pingfen,"fuwu_tupian":fuwutp})
         except Exception as e:
             return JsonResponse({"status": 0, "msg": "访问错误"})
     if len(fuwuliebiao) == 0:
@@ -422,10 +414,21 @@ def fuwuliebiaoxiangqing(request):
         fw_dianzhulianxi=fuwuxiangqing.lifashi.lifadian.dianzhulianxi#店主联系方式
         lifadiantupian=tupian.objects.filter(tupianlaiyuan_id=fuwuxiangqing.lifashi.lifadian.id)[0]
         fw_lifadian_image=str(lifadiantupian.src)
+        # 图片
+        fuwutupian = tupian.objects.filter(tupianleixing=6, tupianlaiyuan_id=fuwu.id)
+        if len(fuwutupian) == 0:
+            fuwutp = "https://img-u-1.51miz.com/preview/muban/00/00/44/88/M-448856-2A607753.jpg-1.jpg"
+        else:
+            fuwutupian = fuwutupian[0]
+            if ('http' in fuwutupian.src.name):
+                fuwutp = fuwutupian.src.name
+            else:
+                fuwutp = 'http://127.0.0.1:8000/media/' + fuwutupian.src.name
+        # 图片
         result=JsonResponse({"leixing":fw_leixing,"jiage":fw_jiage,"mingcheng":fw_mingcheng,"pingfen":fw_pingfen,
                              "xingming":fw_xingming,"xingbie":fw_xingbie,"lianxidianhua":fw_lianxidianhua,
                              "lifashi_image":fw_lifashi_image,"lifadian_image":fw_lifadian_image,"dianming":fw_dianming,
-                             "dizhi":fw_dizhi,"dianzhulianxi":fw_dianzhulianxi})
+                             "dizhi":fw_dizhi,"dianzhulianxi":fw_dianzhulianxi,"fuwutupian":fuwutp,"fuwuid":fuwu_id})
     except Exception as e:
         result=JsonResponse({"status": 0, "msg": "访问失败","cuowu":str(e)})
     return result
@@ -1566,6 +1569,7 @@ def yonghu_show_huiyuan(request):
     Huiyuan = huiyuan.objects.filter(yonghu=yonghu_id,zhuangtai="1").order_by('-id')[int(start):int(start+pagesize)]
     for item in Huiyuan:
         i_lifashi = item.lifashi
+        print(i_lifashi.id)
         try:
             i_lifashi_tupian = tupian.objects.get(tupianlaiyuan_id=i_lifashi.id, tupianleixing=5)
             lifashi_tupian_src = i_lifashi_tupian.src.name
@@ -1711,6 +1715,7 @@ def get_xiaoxi_list(request,shenfeng):
     else:
         datagetter = request.GET
     yonghu_id = datagetter.get('yonghu_id')
+    print(yonghu_id)
     if(shenfeng==0):
         xiaoxi_list = xiaoxi.objects.filter(from_id=yonghu_id)
     else:
@@ -1813,6 +1818,7 @@ def search(request):
                 if len(fuwutupian) == 0:
                     fuwutp = "https://img-u-1.51miz.com/preview/muban/00/00/44/88/M-448856-2A607753.jpg-1.jpg"
                 else:
+                    fuwutupian=fuwutupian[0]
                     if ('http' in fuwutupian.src.name):
                         fuwutp = fuwutupian.src.name
                     else:
