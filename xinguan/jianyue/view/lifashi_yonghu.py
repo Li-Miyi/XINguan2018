@@ -4,8 +4,9 @@ from django.db.models import Sum
 from django.db.models.functions import ExtractMonth
 from django.http import JsonResponse,HttpResponse
 from django.utils import timezone
-from ..models import quxiaodingdan, yonghu, lifashi, lifadian,huiyuan, fuwu, EmailVerifyRecord,jiesuandingdan, pingjia, dingdan, jishiqitadizhi, faxing, tupian, \
-    yuyuedingdan, shoucang, dizhi, zixun,mibao
+from ..models import quxiaodingdan, yonghu, lifashi, lifadian, huiyuan, fuwu, EmailVerifyRecord, jiesuandingdan,\
+    pingjia, dingdan, jishiqitadizhi, faxing, tupian,\
+    yuyuedingdan, shoucang, dizhi, zixun, mibao, xiaoxi, lifashi_xiaoxi
 from django.db.utils import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.csrf import csrf_exempt
@@ -721,14 +722,12 @@ def yonghu_shoucang_delete(request, shoucangleixing):
     shoucang_id = datagetter.get('shoucang_id')
     try:
         i_yonghu = yonghu.objects.get(id=datagetter.get('yonghu_id'))
-    except Exception as e:
-        print(e)
-    try:
-        i_shoucang = shoucang.objects.get(yonghu=i_yonghu,shoucangleixing=shoucangleixing,beishoucang_id=shoucang_id)
+        i_shoucang = shoucang.objects.get(yonghu=i_yonghu, shoucangleixing=shoucangleixing, beishoucang_id=shoucang_id)
         i_shoucang.delete()
         return JsonResponse({"status": "1", "msg": "删除成功"})
-    except ObjectDoesNotExist:
+    except Exception as e:
         return JsonResponse({"status": "0", "msg": "删除失败"})
+
 
 
 # 用户展示收藏 0-理发店 1-理发师 2-服务——用户端
@@ -1641,6 +1640,7 @@ def add_xiaoxi(request,shenfeng):
 #获取聊天信息 0-用户 1-理发师
 @csrf_exempt
 def show_xiaoxi(request,shenfeng):
+    global new_list
     if request.method == "POST":
         datagetter = request.POST
     else:
