@@ -298,7 +298,7 @@ def lifashi_detail(request):
         return JsonResponse({"status": 0,"msg":"id输入错误"})
     for i_fuwu in fuwu.objects.filter(lifashi=i_lifashi):
         try:
-            search_dict = {"tupianleixing": "6", "tupianlaiyuan_id":i_lifadian.id}
+            search_dict = {"tupianleixing": "6", "tupianlaiyuan_id":i_fuwu.id}
             i_tupian = tupian.objects.filter(**search_dict).first()
             src = str(i_tupian.src)
         except:
@@ -471,6 +471,7 @@ def faxingList(request):
 
 # 发型详情页面-用户端
 def faxingDetail(request):
+    global lifashi_image_src
     if request.method == "POST":
         datagetter = request.POST
     else:
@@ -1430,7 +1431,7 @@ def lifashi_count_yuyue(request):
     for i in range(12):
         end = start+ timezone.timedelta(hours=2)
         num = number_timefield(the_dingdan, start, end)
-        if i==5 or i==6 or i==7 or i==8 or i==9 or i==10:
+        if i in {5,6,7,8,9,10}:
             data.append({"begin": start, "end": end, "number": num})
         start = end
     return JsonResponse({"msg":"成功","data":data})
