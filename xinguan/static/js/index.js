@@ -57,7 +57,7 @@ function denglucheck(event) {
       });
 
     if (data_res.status == 0 || data_res.status == 1){
-                alert(data_res['msg']);
+        alert(data_res['msg']);
             }
             else {
                 is_right = true

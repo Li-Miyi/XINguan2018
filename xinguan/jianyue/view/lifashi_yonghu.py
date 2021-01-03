@@ -349,30 +349,35 @@ def fuwuliebiao(request):  # 服务列表页
             dingdan_list = fuwu_info.dingdan_set.all()  # 反向查询所有的相关订单
             pingfen_sum = 0  # 设定最初总分0
             pingfen_num = 0  # 设定评分数量0
-            search_dict = {"tupianleixing": "6", "tupianlaiyuan_id":fuwu_info.id}
-            i_tupian = tupian.objects.filter(**search_dict).first()
-            src = str(i_tupian.src)
+            #图片
+            fuwutupian = tupian.objects.filter(tupianleixing=6, tupianlaiyuan_id=fuwu_info.id)
+            if len(fuwutupian) == 0:
+                fuwutp = "https://img-u-1.51miz.com/preview/muban/00/00/44/88/M-448856-2A607753.jpg-1.jpg"
+            else:
+                fuwutupian=fuwutupian[0]
+                if ('http' in fuwutupian.src.name):
+                    fuwutp = fuwutupian.src.name
+                else:
+                    fuwutp = 'http://127.0.0.1:8000/media/' + fuwutupian.src.name
+            #图片
             for dd in dingdan_list:
                 pingjia_list = dd.pingjia_set.all()  # 反向查询每一个订单的相关评价
                 for pj in pingjia_list:
                     pingfen_sum = pingfen_sum + pj.pingfen
                     pingfen_num = pingfen_num + 1
             if pingfen_num == 0 and pingfen_sum == 0:
-                pingfen = 'null'
+                pingfen = '暂无'
             else:
                 pingfen = round(pingfen_sum / pingfen_num, 2)
             fuwuliebiao.append(
                 {"fuwu_id": fuwu_info.id ,"lifadian_name": lifadian_name, "jiage": jiage, "fuwumingcheng": fuwumingcheng, "leixing": leixing,
-                "pingfen": pingfen,"tupian":src})
+                 "pingfen": pingfen,"fuwu_tupian":fuwutp})
         except Exception as e:
             return JsonResponse({"status": 0, "msg": "访问错误"})
     if len(fuwuliebiao) == 0:
         return JsonResponse({"status": 5, "msg": "请指定服务类型"})
     else:
         return JsonResponse(fuwuliebiao, safe=False)
-
-
-
 
 #根据服务列表获得服务列表详情
 def fuwuliebiaoxiangqing(request):
@@ -693,6 +698,7 @@ def lifashi_show_quxiao_dingdan(request,shenfeng):
         except:
             tupian_src = "https://s3.ax1x.com/2020/12/11/rAJgYV.png"
         i_fuwu = fuwu.objects.get(id=i_fuwu_id)
+        i_lifashi_id = i_fuwu.lifashi_id
         dingdan_detail = {"fuwu_id":i_fuwu.id,"fuwu_name":i_fuwu.fuwumingcheng,
         "quxiaoshijian":i_quxiao.quxiaoshijian,"quxiao_yuanyin":i_quxiao.quxiaoyuanyin,"fuwu_img":tupian_src}
         dingdanList.append(dingdan_detail)
@@ -1584,7 +1590,6 @@ def yonghu_show_huiyuan(request):
         datagetter = request.GET
     yonghu_id = datagetter.get("yonghu_id")
     page = datagetter.get('page')
-    i_yonghu = yonghu.objects.get(id=yonghu_id)
     pagesize = datagetter.get('pagesize')
     start = page*6
     huiyuan_list = []
@@ -1674,6 +1679,7 @@ def add_xiaoxi(request,shenfeng):
 #获取聊天信息 0-用户 1-理发师
 @csrf_exempt
 def show_xiaoxi(request,shenfeng):
+    global new_list
     if request.method == "POST":
         datagetter = request.POST
     else:
@@ -1741,6 +1747,7 @@ def get_xiaoxi_list(request,shenfeng):
     else:
         datagetter = request.GET
     yonghu_id = datagetter.get('yonghu_id')
+    print(yonghu_id)
     if(shenfeng==0):
         xiaoxi_list = xiaoxi.objects.filter(from_id=yonghu_id)
     else:
