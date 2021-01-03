@@ -366,7 +366,7 @@ def fuwuliebiao(request):  # 服务列表页
                     pingfen_sum = pingfen_sum + pj.pingfen
                     pingfen_num = pingfen_num + 1
             if pingfen_num == 0 and pingfen_sum == 0:
-                pingfen = 'null'
+                pingfen = '暂无'
             else:
                 pingfen = round(pingfen_sum / pingfen_num, 2)
             fuwuliebiao.append(
@@ -414,10 +414,21 @@ def fuwuliebiaoxiangqing(request):
         fw_dianzhulianxi=fuwuxiangqing.lifashi.lifadian.dianzhulianxi#店主联系方式
         lifadiantupian=tupian.objects.filter(tupianlaiyuan_id=fuwuxiangqing.lifashi.lifadian.id)[0]
         fw_lifadian_image=str(lifadiantupian.src)
+        # 图片
+        fuwutupian = tupian.objects.filter(tupianleixing=6, tupianlaiyuan_id=fuwu.id)
+        if len(fuwutupian) == 0:
+            fuwutp = "https://img-u-1.51miz.com/preview/muban/00/00/44/88/M-448856-2A607753.jpg-1.jpg"
+        else:
+            fuwutupian = fuwutupian[0]
+            if ('http' in fuwutupian.src.name):
+                fuwutp = fuwutupian.src.name
+            else:
+                fuwutp = 'http://127.0.0.1:8000/media/' + fuwutupian.src.name
+        # 图片
         result=JsonResponse({"leixing":fw_leixing,"jiage":fw_jiage,"mingcheng":fw_mingcheng,"pingfen":fw_pingfen,
                              "xingming":fw_xingming,"xingbie":fw_xingbie,"lianxidianhua":fw_lianxidianhua,
                              "lifashi_image":fw_lifashi_image,"lifadian_image":fw_lifadian_image,"dianming":fw_dianming,
-                             "dizhi":fw_dizhi,"dianzhulianxi":fw_dianzhulianxi})
+                             "dizhi":fw_dizhi,"dianzhulianxi":fw_dianzhulianxi,"fuwutupian":fuwutp,"fuwuid":fuwu_id})
     except Exception as e:
         result=JsonResponse({"status": 0, "msg": "访问失败","cuowu":str(e)})
     return result
@@ -678,6 +689,8 @@ def yonghu_shoucang_add(request, shoucangleixing):
     else:
         datagetter = request.GET
     shoucang_id = datagetter.get('shoucang_id')
+    print(datagetter.get('yonghu_id'))
+    print(shoucang_id)
     i_yonghu = yonghu.objects.get(id=datagetter.get('yonghu_id'))
     shoucang.objects.create(beishoucang_id=shoucang_id, yonghu=i_yonghu, shoucangleixing=shoucangleixing)
     return JsonResponse({"status": '1', "msg": "收藏成功"})
@@ -706,7 +719,10 @@ def yonghu_shoucang_delete(request, shoucangleixing):
     else:
         datagetter = request.GET
     shoucang_id = datagetter.get('shoucang_id')
-    i_yonghu = yonghu.objects.get(id=datagetter.get('yonghu_id'))
+    try:
+        i_yonghu = yonghu.objects.get(id=datagetter.get('yonghu_id'))
+    except Exception as e:
+        print(e)
     try:
         i_shoucang = shoucang.objects.get(yonghu=i_yonghu,shoucangleixing=shoucangleixing,beishoucang_id=shoucang_id)
         i_shoucang.delete()
