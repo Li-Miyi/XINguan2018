@@ -49,7 +49,7 @@ class yonghu(models.Model):  # 用户
 
 def upload_to(instance,filename):
     tupianlianyuan_id = instance.tupianlaiyuan_id
-    tupianleixing = ["lifadian","lifashi","faxing","yonghu","zixun","touxiang"][int(instance.tupianleixing)]
+    tupianleixing = ["lifadian","lifashi","faxing","yonghu","zixun","touxiang","fuwu"][int(instance.tupianleixing)]
     return '/'.join([tupianleixing,str(tupianlianyuan_id),filename])
 
 

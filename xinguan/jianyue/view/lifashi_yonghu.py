@@ -166,7 +166,7 @@ def liebiao(request):
         i_lifadian_total_jiage = 0
         i_lifadian_count = 0
         for i_lifashi in lifashi.objects.filter(lifadian=i_lifadian):
-            lifashi_data = {'id': i_lifashi.id, 'name': i_lifashi.xingming, 'lifadian' :i_lifadian.dianming}
+            lifashi_data = {'id': i_lifashi.id, 'name': i_lifashi.yonghuming, 'lifadian' :i_lifadian.dianming}
             #头像
             try:
                 lifashitouxiang=tupian.objects.get(tupianleixing=5,tupianlaiyuan_id=i_lifashi.id).src.name
