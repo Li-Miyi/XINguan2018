@@ -49,14 +49,14 @@ class yonghu(models.Model):  # 用户
 
 def upload_to(instance,filename):
     tupianlianyuan_id = instance.tupianlaiyuan_id
-    tupianleixing = ["lifadian","lifashi","faxing","yonghu","zixun","touxiang"][int(instance.tupianleixing)]
+    tupianleixing = ["lifadian","lifashi","faxing","yonghu","zixun","touxiang","fuwu"][int(instance.tupianleixing)]
     return '/'.join([tupianleixing,str(tupianlianyuan_id),filename])
 
 
 class tupian(models.Model):
     tupianlaiyuan_id = models.CharField(max_length=700)
     src = models.ImageField(upload_to=upload_to)
-    tupianleixing = models.CharField(max_length=1, choices=(('0', '理发店'), ('1', '理发师'),('2','发型'),('3','用户'),('4','资讯'),('5','头像')))
+    tupianleixing = models.CharField(max_length=1, choices=(('0', '理发店'), ('1', '理发师'),('2','发型'),('3','用户'),('4','资讯'),('5','头像'),('6','服务')))
 
 """服务与理发师理发店对应"""
 
@@ -143,3 +143,27 @@ class mibao(models.Model):
     mibaolaiyuan_id=models.CharField(max_length=1000)
     shenfen=models.CharField(default='null', max_length=300)
 
+class mibao(models.Model):
+    mibaowenti=models.CharField(max_length=1000)
+    mibaodaan=models.CharField(max_length=1000)
+    mibaolaiyuan_id=models.CharField(max_length=1000)
+    shenfen=models.CharField(default='null', max_length=300)
+
+class huiyuan(models.Model):
+    lifashi=models.ForeignKey(lifashi, on_delete=models.CASCADE)
+    yonghu=models.ForeignKey(yonghu,on_delete=models.CASCADE)
+    zhuangtai=models.CharField(max_length=1, choices=(('1', '已接受'), ('0','未接受')))
+
+#用户发送消息表
+class xiaoxi(models.Model):
+    from_id =  models.ForeignKey(yonghu,on_delete=models.CASCADE)
+    to_id =  models.ForeignKey(lifashi,on_delete=models.CASCADE)
+    content = models.CharField(max_length=256)
+    pubtime = models.DateTimeField(auto_now_add=True)
+
+
+class lifashi_xiaoxi(models.Model):
+    from_id =  models.ForeignKey(lifashi,on_delete=models.CASCADE)
+    to_id =  models.ForeignKey(yonghu,on_delete=models.CASCADE)
+    content = models.CharField(max_length=256)
+    pubtime = models.DateTimeField(auto_now_add=True)

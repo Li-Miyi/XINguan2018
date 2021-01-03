@@ -32,7 +32,10 @@ def tupian_show(request,tupianlaiyuan_id,tupianleixing):
         the_tupians = tp.objects.filter(tupianlaiyuan_id=tupianlaiyuan_id, tupianleixing=tupianleixing)
         data =[]
         for tupian in the_tupians:
-            info = {"tupianlaiyuan_id":tupian.tupianlaiyuan_id,"src":tupian.src.name}
+            if "http" in tupian.src.name:
+                info = {"tupianlaiyuan_id":tupian.tupianlaiyuan_id,"src":tupian.src.name}
+            else:
+                info = {"tupianlaiyuan_id":tupian.tupianlaiyuan_id,"src":'http://127.0.0.1:8000/media/'+tupian.src.name,'lujing': tupian.src.name}
             data.append(info)
         if len(data)==0:
             return JsonResponse({"status": 0})
@@ -55,7 +58,7 @@ def tupian_delete(request,tupianlujing):
 @csrf_exempt
 def touxiang_update(request,tupianleixing,tupianlaiyuan_id,tupianlujing):
     if request.method == "POST":
-        try:
+        # try:
             #删除原图片
             tp.objects.get(tupianleixing=tupianleixing,tupianlaiyuan_id=tupianlaiyuan_id).delete()
             file_full_path = os.path.join(MEDIA_ROOT, tupianlujing)
@@ -67,5 +70,5 @@ def touxiang_update(request,tupianleixing,tupianlaiyuan_id,tupianlujing):
             the_tupian = tp.objects.create(tupianlaiyuan_id=tupianlaiyuan_id, src=src, tupianleixing=tupianleixing)
             new_tupian = tp.objects.get(tupianlaiyuan_id=tupianlaiyuan_id,tupianleixing=tupianleixing)
             return JsonResponse({"status": "1", "msg": "更换头像成功"})
-        except:
-            return JsonResponse({"status": 0,"msg": str(Exception)})
+        # except:
+        #     return JsonResponse({"status": 0,"msg": str(Exception)})

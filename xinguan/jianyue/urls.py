@@ -41,6 +41,7 @@ urlpatterns = [
     path(r'shoucang/add/<int:shoucangleixing>', view.lifashi_yonghu.yonghu_shoucang_add, name='YonghuAddShoucang'),
     path(r'shoucang/delete/<int:shoucangleixing>', view.lifashi_yonghu.yonghu_shoucang_delete, name='YonghuDeleteShoucang'),
     path(r'shoucang/show/<int:shoucangleixing>', view.lifashi_yonghu.yonghu_shoucang_show,name='YonghuShowShoucang'),
+    path(r'shoucang/panduan/<int:shoucangleixing>', view.lifashi_yonghu.yonghu_is_shoucang,name='YonghuIsShoucang'),
     #用户社区资讯
     path(r'zixun/add', view.lifashi_yonghu.fabuzixun, name="YonghuAddZixun"),
     path(r'zixun/show', view.lifashi_yonghu.getZixun, name="YonghuGetZixun"),
@@ -105,5 +106,22 @@ urlpatterns = [
     # 修改密码
     path(r"xiugaimima2/", view.lifashi_yonghu.xiugaimima2, name="xiugaimima"),
     # 取消预约订单
-    path("yuyue/dingdan/cancel",view.lifashi_yonghu.cancel_yuyue_dingdan, name="CancelYuyue")
+    path("yuyue/dingdan/cancel",view.lifashi_yonghu.cancel_yuyue_dingdan, name="CancelYuyue"),
+    # 用户修改预约订单时间
+    path("yuyue/dingdan/xiugai", view.lifashi_yonghu.xiugai_yuyue_dingdan, name="XiugaiYuyue"),
+    # 用户会员
+    path("huiyuan/add", view.lifashi_yonghu.yonghu_huiyuan, name="YonghuAddHuiyuan"),
+    path("huiyuan/panduan", view.lifashi_yonghu.yonghu_is_huiyuan, name="YonghuIsHuiyuan"),
+    path("huiyuan/lifashi/confirm", view.lifashi_yonghu.lifashi_confirm_huiyuan, name="LifashiConfirmHuiyuan"),
+    path("yonghu/huiyuan/show", view.lifashi_yonghu.yonghu_show_huiyuan, name="YonghuShowHuiyuan"),
+    path("lifashi/huiyuan/show", view.lifashi_yonghu.lifashi_show_huiyuan, name="lifashiShowHuiyuan"),
+    # 消息
+    path("xiaoxi/add/<int:shenfeng>", view.lifashi_yonghu.add_xiaoxi, name="Addxiaoxi"),
+    path("xiaoxi/show/<int:shenfeng>", view.lifashi_yonghu.show_xiaoxi, name="ShowXiaoxi"),
+    # 获取消息列表
+    path("xiaoxi/list/show/<int:shenfeng>", view.lifashi_yonghu.get_xiaoxi_list, name="ShowXiaoxiList"),
+    path("lifashi/huiyuan/show", view.lifashi_yonghu.lifashi_show_huiyuan, name="lifashiShowHuiyuan"),
+    # 搜索功能
+    path(r"search/", view.lifashi_yonghu.search, name="search"),
+
 ]
