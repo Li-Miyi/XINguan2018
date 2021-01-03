@@ -115,6 +115,12 @@ urlpatterns = [
     path("huiyuan/lifashi/confirm", view.lifashi_yonghu.lifashi_confirm_huiyuan, name="LifashiConfirmHuiyuan"),
     path("yonghu/huiyuan/show", view.lifashi_yonghu.yonghu_show_huiyuan, name="YonghuShowHuiyuan"),
     path("lifashi/huiyuan/show", view.lifashi_yonghu.lifashi_show_huiyuan, name="lifashiShowHuiyuan"),
+    # 消息
+    path("xiaoxi/add/<int:shenfeng>", view.lifashi_yonghu.add_xiaoxi, name="Addxiaoxi"),
+    path("xiaoxi/show/<int:shenfeng>", view.lifashi_yonghu.show_xiaoxi, name="ShowXiaoxi"),
+    # 获取消息列表
+    path("xiaoxi/list/show/<int:shenfeng>", view.lifashi_yonghu.get_xiaoxi_list, name="ShowXiaoxiList"),
+    path("lifashi/huiyuan/show", view.lifashi_yonghu.lifashi_show_huiyuan, name="lifashiShowHuiyuan"),
     # 搜索功能
     path(r"search/", view.lifashi_yonghu.search, name="search"),
 
