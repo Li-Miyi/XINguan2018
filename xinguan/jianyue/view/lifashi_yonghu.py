@@ -5,7 +5,7 @@ from django.db.models.functions import ExtractMonth
 from django.http import JsonResponse,HttpResponse
 from django.utils import timezone
 from ..models import quxiaodingdan, yonghu, lifashi, lifadian,huiyuan, fuwu, EmailVerifyRecord,jiesuandingdan, pingjia, dingdan, jishiqitadizhi, faxing, tupian, \
-    yuyuedingdan, shoucang, dizhi, zixun,mibao
+    yuyuedingdan, shoucang, dizhi, zixun,mibao,xiaoxi,lifashi_xiaoxi
 from django.db.utils import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.csrf import csrf_exempt
@@ -283,8 +283,8 @@ def lifashi_detail(request):
     else:
         datagetter = request.GET
     print(datagetter.get('lifashi_id'))
-    fuwuleixing = {"1":"洗吹","2":"烫发","3":"染发","4":"剪发","5":"护理"}
-    faxingleixing = {"1":"短发","2":"烫发","3":"长发","4":"染发"}
+    fuwuleixing = {"1": "洗吹", "2": "烫发", "3": "染发", "4": "剪发", "5": "护理"}
+    faxingleixing = {"1": "短发", "2": "烫发", "3": "长发", "4": "染发"}
     the_lifashi = lifashi.objects.get(id=datagetter.get('lifashi_id'))
     lifashi_id = the_lifashi.id
     lifa_fuwu = []
@@ -294,25 +294,37 @@ def lifashi_detail(request):
     try:
         i_lifashi = lifashi.objects.get(id=lifashi_id)
     except lifashi.DoesNotExist:
-        return JsonResponse({"status": 0,"msg":"id输入错误"})
+        return JsonResponse({"status": 0, "msg": "id输入错误"})
+    for i_lifashi in lifashi.objects.filter(id=lifashi_id):
+        # 头像
+        try:
+            lifashitouxiang = tupian.objects.get(tupianleixing=5, tupianlaiyuan_id=i_lifashi.id).src.name
+            if "http" in lifashitouxiang:
+                i_lifashitouxiang = lifashitouxiang
+            else:
+                i_lifashitouxiang = "http://127.0.0.1:8000/media/" + lifashitouxiang
+        except:
+            i_lifashitouxiang = "https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=1746949651,2632447771&fm=26&gp=0.jpg"
+
     for i_fuwu in fuwu.objects.filter(lifashi=i_lifashi):
         try:
-            search_dict = {"tupianleixing": "6", "tupianlaiyuan_id":i_lifadian.id}
+            search_dict = {"tupianleixing": "6", "tupianlaiyuan_id": i_lifashi.id}
             i_tupian = tupian.objects.filter(**search_dict).first()
             src = str(i_tupian.src)
         except:
             src = "http://img.08087.cc/uploads/20190819/10/1566182856-otPJlNpiKT.jpeg"
-        lifa_fuwu_detail = {"fuwu_id": i_fuwu.id, "type": fuwuleixing[i_fuwu.leixing], "fuwu_name": i_fuwu.fuwumingcheng,
-                                "price": i_fuwu.jiage,"tupian":src}
+        lifa_fuwu_detail = {"fuwu_id": i_fuwu.id, "type": fuwuleixing[i_fuwu.leixing],
+                            "fuwu_name": i_fuwu.fuwumingcheng,
+                            "price": i_fuwu.jiage, "tupian": src, "fuwu_shijian": i_fuwu.shijian}
         lifa_fuwu.append(lifa_fuwu_detail)
     for i_lifadian in lifadian.objects.filter(lifashi=i_lifashi):
         try:
-            search_dict = {"tupianleixing": "0", "tupianlaiyuan_id":i_lifadian.id}
+            search_dict = {"tupianleixing": "0", "tupianlaiyuan_id": i_lifadian.id}
             i_tupian = tupian.objects.filter(**search_dict).first()
             src = str(i_tupian.src)
         except:
             src = "../../image/0.jpg"
-        lifadian_detail = {"lifadian_id": i_lifadian.id, "lifadian_name": i_lifadian.dianming, "tupian":src}
+        lifadian_detail = {"lifadian_id": i_lifadian.id, "lifadian_name": i_lifadian.dianming, "tupian": src}
         lifashi_lifadian.append(lifadian_detail)
         print(lifadian_detail)
     for i_faxing in faxing.objects.filter(lifashi=i_lifashi):
@@ -322,15 +334,17 @@ def lifashi_detail(request):
             src = str(i_tupian.src)
         except:
             src = "../../image/0.jpg"
-        faxing_detail = {"faxing_id":i_faxing.id, "faxingname": i_faxing.faxingming, "leixing": faxingleixing[i_faxing.leixing],"tupian": src}
+        faxing_detail = {"faxing_id": i_faxing.id, "faxingname": i_faxing.faxingming,
+                         "leixing": faxingleixing[i_faxing.leixing], "tupian": src}
         lifashi_faxing.append(faxing_detail)
     for i_dingdan in dingdan.objects.filter(lifashi_id=lifashi_id):
         for i_pingjia in pingjia.objects.filter(dingdan_id=i_dingdan.id):
             lifashi_pingjia_detail = {'id': i_pingjia.id, "pingfen": i_pingjia.pingfen, "pingjia": i_pingjia.pingjia}
             lifashi_pingjia.append(lifashi_pingjia_detail)
     return JsonResponse(
-        {"id": i_lifashi.id, "name": i_lifashi.xingming, "yonghuming": i_lifashi.yonghuming,'phone': i_lifashi.lianxidianhua, "fuwu": lifa_fuwu,
-         "lifadian": lifashi_lifadian, "faxing":lifashi_faxing,"pingjia": lifashi_pingjia})
+        {"id": i_lifashi.id, "lifashitouxiang": i_lifashitouxiang, "name": i_lifashi.xingming,
+         "yonghuming": i_lifashi.yonghuming, 'phone': i_lifashi.lianxidianhua, "fuwu": lifa_fuwu,
+         "lifadian": lifashi_lifadian, "faxing": lifashi_faxing, "pingjia": lifashi_pingjia})
 
 # 返回不同的服务类型——用户端
 def fuwuliebiao(request):  # 服务列表页
@@ -874,10 +888,10 @@ def yuyue_show(request):
         gujishijian ="00:00"
     i_fuwu = fuwu.objects.get(id=i_dingdan.fuwuxiang_id)
     i_lifadian = lifadian.objects.get(id=i_dingdan.lifadian_id)
-    return JsonResponse({"yonghuming":i_yonghu.yonghuming, "phone": i_yonghu.lianxidianhua, "touxiang": str(src), "xiaohao":gujishijian ,
+    return JsonResponse({"yonghu_id":i_yonghu.id,"yonghuming":i_yonghu.yonghuming, "phone": i_yonghu.lianxidianhua, "touxiang": str(src), "xiaohao":gujishijian ,
                          "shifoujieshou": i_yuyue.yijieshou,"yuyuekaishi": i_yuyue.yuyuekaishi,
                          "lifashi":{"lifashi_id":i_lifashi.id, "lifashi_name": i_lifashi.xingming, "lifashi_phone": i_lifashi.lianxidianhua, "touxiang":str(the_src) },
-                         "fuwu": i_fuwu.fuwumingcheng, "lifadian": i_lifadian.dianming, "fuwu_price": i_fuwu.jiage})
+                         "fuwu": i_fuwu.fuwumingcheng, "lifadian": i_lifadian.dianming, "fuwu_price": i_fuwu.jiage,"fuwu_shichang": i_fuwu.shijian})
 
 @csrf_exempt
 # 理发师——预约订单提交估计时间
@@ -1672,7 +1686,6 @@ def get_xiaoxi_list(request,shenfeng):
     else:
         datagetter = request.GET
     yonghu_id = datagetter.get('yonghu_id')
-    print(yonghu_id)
     if(shenfeng==0):
         xiaoxi_list = xiaoxi.objects.filter(from_id=yonghu_id)
     else:
@@ -1685,16 +1698,21 @@ def get_xiaoxi_list(request,shenfeng):
     detail_list = []
     for i_id in to_list_id:
         if(shenfeng==0):
+            # 获取理发师的信息
+            i_to = lifashi.objects.get(id=i_id)
+            i_xiaoxi = lifashi_xiaoxi.objects.filter(from_id=i_id,to_id=yonghu_id).order_by('-id')[:1][0]
             try:
-                to_img_src =  tupian.objects.get(tupianlaiyuan_id=i_id,tupianleixing=1)
+                to_img_src =  str(tupian.objects.get(tupianlaiyuan_id=i_id,tupianleixing=1).src)
             except:
                 to_img_src = "../../image/默认头像.png"
         else:
+            i_to = yonghu.objects.get(id=i_id)
+            i_xiaoxi = xiaoxi.objects.filter(from_id=i_id,to_id=yonghu_id).order_by('-id')[:1][0]
             try:
-                to_img_src =  tupian.objects.get(tupianlaiyuan_id=i_id,tupianleixing=3)
+                to_img_src =  str(tupian.objects.get(tupianlaiyuan_id=i_id,tupianleixing=3).src)
             except:
                 to_img_src = "../../image/默认头像.png"
-        to_detail = {"to_id":i_id,"to_img":to_img_src}
+        to_detail = {"to_id":i_id,"to_img":to_img_src,"to_name":i_to.yonghuming,"xiaoxi_content":i_xiaoxi.content,"xiaoxi_time":i_xiaoxi.pubtime}
         detail_list.append(to_detail)
     return JsonResponse({"status":1,"list":detail_list})
 
