@@ -372,9 +372,14 @@ def fuwuliebiao(request):  # 服务列表页
                 pingfen = 'null'
             else:
                 pingfen = round(pingfen_sum / pingfen_num, 2)
+            # 查询服务图片
+            try:
+                fuwu_tupian_src = tupian.objects.get(tupianlaiyuan_id=fuwu_info.id,tupianleixing=6).src.name
+            except:
+                fuwu_tupian_src = "https://s3.ax1x.com/2020/12/11/rAJgYV.png"
             fuwuliebiao.append(
                 {"fuwu_id": fuwu_info.id ,"lifadian_name": lifadian_name, "jiage": jiage, "fuwumingcheng": fuwumingcheng, "leixing": leixing,
-                 "pingfen": pingfen})
+                 "pingfen": pingfen,"fuwu_img":fuwu_tupian_src})
         except Exception as e:
             return JsonResponse({"status": 0, "msg": "访问错误"})
     if len(fuwuliebiao) == 0:
@@ -728,20 +733,31 @@ def yonghu_shoucang_show(request, shoucangleixing):
     shoucang_list = []
     for i_shoucang in shoucang.objects.filter(yonghu=i_yonghu):
         if  shoucangleixing== 0 and int(i_shoucang.shoucangleixing) == shoucangleixing :
+            try:
+                tupian_src = tupian.objects.get(tupianlaiyuan_id=i_shoucang.beishoucang_id,tupianleixing=0).src.name
+            except:
+                tupian_src = "https://s3.ax1x.com/2020/12/11/rAJgYV.png"
             the_lifadian = lifadian.objects.get(id=i_shoucang.beishoucang_id)
             shoucang_detail = {"lifadian_id": i_shoucang.beishoucang_id, "c_id": i_shoucang.shoucangleixing,
-                                   "lifadian_name": the_lifadian.dianming, "phone": the_lifadian.dianzhulianxi}
+                                   "lifadian_name": the_lifadian.dianming, "phone": the_lifadian.dianzhulianxi,"tupian_src":tupian_src}
             shoucang_list.append(shoucang_detail)
         elif shoucangleixing== 1 and int(i_shoucang.shoucangleixing) == shoucangleixing:
+            try:
+                tupian_src = tupian.objects.get(tupianlaiyuan_id=i_shoucang.beishoucang_id,tupianleixing='5').src.name
+            except:
+                tupian_src = "https://s3.ax1x.com/2020/12/11/rAJgYV.png"
             the_lifashi = lifashi.objects.get(id=i_shoucang.beishoucang_id)
             shoucang_detail = {"lifashi_id": i_shoucang.beishoucang_id, "c_id": i_shoucang.shoucangleixing,
-                                   "lifashi_name": the_lifashi.yonghuming, "phone": the_lifashi.lianxidianhua}
+                                   "lifashi_name": the_lifashi.yonghuming, "phone": the_lifashi.lianxidianhua,"tupian_src":tupian_src}
             shoucang_list.append(shoucang_detail)
         elif shoucangleixing== 2 and int(i_shoucang.shoucangleixing) == shoucangleixing:
-            print(i_shoucang.beishoucang_id)
+            try:
+                tupian_src = tupian.objects.get(tupianlaiyuan_id=i_shoucang.beishoucang_id,tupianleixing='6').src.name
+            except:
+                tupian_src = "https://s3.ax1x.com/2020/12/11/rAJgYV.png"
             the_fuwu = fuwu.objects.get(id=i_shoucang.beishoucang_id)
             shoucang_detail = {"fuwu_id": i_shoucang.beishoucang_id, "c_id": i_shoucang.shoucangleixing,
-                                   "fuwu_name": the_fuwu.fuwumingcheng, "price": the_fuwu.jiage}
+                                   "fuwu_name": the_fuwu.fuwumingcheng, "price": the_fuwu.jiage,"tupian_src":tupian_src}
             shoucang_list.append(shoucang_detail)
     return JsonResponse(shoucang_list, safe=False)
 
@@ -1539,6 +1555,7 @@ def yonghu_show_huiyuan(request):
         datagetter = request.GET
     yonghu_id = datagetter.get("yonghu_id")
     page = datagetter.get('page')
+    i_yonghu = yonghu.objects.get(id=yonghu_id)
     pagesize = datagetter.get('pagesize')
     start = page*6
     huiyuan_list = []
@@ -1549,14 +1566,13 @@ def yonghu_show_huiyuan(request):
     Huiyuan = huiyuan.objects.filter(yonghu=yonghu_id,zhuangtai="1").order_by('-id')[int(start):int(start+pagesize)]
     for item in Huiyuan:
         i_lifashi = item.lifashi
-        print(i_lifashi.id)
         try:
-            i_lifashi_tupian = tupian.objects.get(tupianlaiyuan_id=i_lifashi.id, tupianleixing=1)
+            i_lifashi_tupian = tupian.objects.get(tupianlaiyuan_id=i_lifashi.id, tupianleixing=5)
             lifashi_tupian_src = i_lifashi_tupian.src.name
         except:
-            lifashi_tupian_src = "../../image/lifashi1.png"
+            lifashi_tupian_src = "../../image/默认头像.png"
         try:
-            xiaofei_count = jiesuandingdan.objects.get(yonghu=yonghu_id,lifashi=i_lifashi).count()
+            xiaofei_count = jiesuandingdan.objects.filter(yonghu=i_yonghu,lifashi=i_lifashi).count()
         except:
             xiaofei_count = 0
         huiyuan_detail = {
@@ -1647,24 +1663,33 @@ def show_xiaoxi(request,shenfeng):
             xiaoxi_detail = {"pubtime":i_xiaoxi.pubtime,"content":i_xiaoxi.content,"self":True}
             xiaoxi_new_list1.append(xiaoxi_detail)
         #获取理发师 发送的消息
+        # 获取理发师的头像
+        try:
+            to_img_src = str(tupian.objects.get(tupianlaiyuan_id=to_id, tupianleixing=5).src)
+        except:
+            to_img_src = "../../image/默认头像.png"
         the_from = lifashi.objects.get(id=to_id)
         the_to = yonghu.objects.get(id=from_id)
         xiaoxi_list = lifashi_xiaoxi.objects.filter(from_id=the_from,to_id=the_to)[other_count:]
         other_count = lifashi_xiaoxi.objects.filter(from_id=the_from,to_id=the_to)[other_count:].count() + other_count
         xiaoxi_new_list2 = []
         for i_xiaoxi in xiaoxi_list:
-            xiaoxi_detail = {"pubtime":i_xiaoxi.pubtime,"content":i_xiaoxi.content,"self":False}
+            xiaoxi_detail = {"pubtime":i_xiaoxi.pubtime,"content":i_xiaoxi.content,"self":False,"to_img":to_img_src}
             xiaoxi_new_list2.append(xiaoxi_detail)
         new_list = xiaoxi_new_list1+xiaoxi_new_list2
     if(shenfeng==1):
             # 获取用户发送的消息
+        try:
+            to_img_src = str(tupian.objects.get(tupianlaiyuan_id=to_id, tupianleixing=5).src)
+        except:
+            to_img_src = "../../image/默认头像.png"
         the_from = yonghu.objects.get(id=to_id)
         the_to = lifashi.objects.get(id=from_id)
         xiaoxi_list = xiaoxi.objects.filter(from_id=the_from,to_id=the_to)[other_count:]
         other_count = xiaoxi.objects.filter(from_id=the_from,to_id=the_to)[other_count:].count() + other_count
         xiaoxi_new_list1 = []
         for i_xiaoxi in xiaoxi_list:
-            xiaoxi_detail = {"pubtime":i_xiaoxi.pubtime,"content":i_xiaoxi.content,"self":False}
+            xiaoxi_detail = {"pubtime":i_xiaoxi.pubtime,"content":i_xiaoxi.content,"self":False,"to_img":to_img_src}
             xiaoxi_new_list1.append(xiaoxi_detail)
         #获取理发师 发送的消息
         the_from = lifashi.objects.get(id=from_id)
@@ -1702,7 +1727,7 @@ def get_xiaoxi_list(request,shenfeng):
             i_to = lifashi.objects.get(id=i_id)
             i_xiaoxi = lifashi_xiaoxi.objects.filter(from_id=i_id,to_id=yonghu_id).order_by('-id')[:1][0]
             try:
-                to_img_src =  str(tupian.objects.get(tupianlaiyuan_id=i_id,tupianleixing=1).src)
+                to_img_src =  str(tupian.objects.get(tupianlaiyuan_id=i_id,tupianleixing=5).src)
             except:
                 to_img_src = "../../image/默认头像.png"
         else:
