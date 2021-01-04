@@ -495,9 +495,9 @@ def faxingDetail(request):
             else:
                 lifashi_image.src = "http://121.196.213.151/media/" + str(lifashi_image.src)
             lifashi_image_src = str(lifashi_image.src)
-    lifashi_detail = {"f_id": i_lifashi.id, "f_name": i_lifashi.yonghuming,
-                      "phone": i_lifashi.lianxidianhua, "f_image" : lifashi_image_src}
-    lifashiList.append(lifashi_detail)
+            lifashi_detail = {"f_id": i_lifashi.id, "f_name": i_lifashi.yonghuming,
+                              "phone": i_lifashi.lianxidianhua, "f_image" : lifashi_image_src}
+            lifashiList.append(lifashi_detail)
     i_lifadian = lifadian.objects.get(id=i_lifashi.lifadian_id)
     i_dizhi = dizhi.objects.get(lifadian_id=i_lifadian.id)
     for lifadian_image in tupian.objects.filter(tupianlaiyuan_id=i_lifadian.id):
@@ -766,10 +766,7 @@ def yonghu_shoucang_delete(request, shoucangleixing):
     shoucang_id = datagetter.get('shoucang_id')
     try:
         i_yonghu = yonghu.objects.get(id=datagetter.get('yonghu_id'))
-    except Exception as e:
-        print(e)
-    try:
-        i_shoucang = shoucang.objects.get(yonghu=i_yonghu,shoucangleixing=shoucangleixing,beishoucang_id=shoucang_id)
+        i_shoucang = shoucang.objects.get(yonghu=i_yonghu, shoucangleixing=shoucangleixing, beishoucang_id=shoucang_id)
         i_shoucang.delete()
         return JsonResponse({"status": "1", "msg": "删除成功"})
     except ObjectDoesNotExist:
@@ -859,6 +856,7 @@ def getYonghuDingdan(request, zhuangtai_id):
                         return JsonResponse({"status": 0, "msg": "您还没有已完成的订单"})
         if zhuangtai_id == 2:
                 for i_yuyue in yuyuedingdan.objects.filter(dingdan_ptr_id=i_dingdan.id):
+                    i_fuwu = fuwu.objects.get(id=i_dingdan.fuwuxiang_id)
                     try:
                         img_src = tupian.objects.get(tupianlianyuan_id=i_fuwu.id, tupianleixing=6).src.name
                         if "http" in img_src:
@@ -867,7 +865,7 @@ def getYonghuDingdan(request, zhuangtai_id):
                             img_src = "http://121.196.213.151/media/" + img_src
                     except:
                         img_src = "https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=2127411405,3968387369&fm=26&gp=0.jpg"
-                    i_fuwu = fuwu.objects.get(id=i_dingdan.fuwuxiang_id)
+
                     dingdan_detail = {"yuyue_id": i_dingdan.id, "yuyue_start": i_yuyue.yuyuekaishi,"zhuangtai": zhuangtai[zhuangtai_id],
                                       "yuyue_xiaohao": i_yuyue.yuyuexiaohao, "fuwu_name": i_fuwu.fuwumingcheng,"price": i_fuwu.jiage,"fuwu_img":img_src}
                     dingdanList.append(dingdan_detail)
