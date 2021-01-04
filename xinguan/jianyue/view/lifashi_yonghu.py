@@ -160,7 +160,7 @@ def liebiao(request):
             if "http" in lifadiantupian:
                 lifadian_data["lifadiantupian"]=lifadiantupian
             else:
-                lifadian_data["lifadiantupian"]="http://127.0.0.1:8000/media/"+lifadiantupian
+                lifadian_data["lifadiantupian"]="http://121.196.213.151/media/"+lifadiantupian
         except:
             lifadian_data["lifadiantupian"]="https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=1023914563,1561594966&fm=26&gp=0.jpg"
         i_lifadian_total_pingfen = 0
@@ -174,7 +174,7 @@ def liebiao(request):
                 if "http" in lifashitouxiang:
                     lifashi_data["lifashitouxiang"]=lifashitouxiang
                 else:
-                    lifashi_data["lifashitouxiang"]="http://127.0.0.1:8000/media/"+lifashitouxiang
+                    lifashi_data["lifashitouxiang"]="http://121.196.213.151/media/"+lifashitouxiang
             except:
                 lifashi_data["lifashitouxiang"]="https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=1746949651,2632447771&fm=26&gp=0.jpg"
             i_lifashi_total_pingfen = 0
@@ -300,7 +300,7 @@ def lifashi_detail(request):
     if "http" in lifashitouxiang:
         i_lifashitouxiang = lifashitouxiang
     else:
-        i_lifashitouxiang = "http://127.0.0.1:8000/media/" + lifashitouxiang
+        i_lifashitouxiang = "http://121.196.213.151/media/" + lifashitouxiang
     for i_fuwu in fuwu.objects.filter(lifashi=i_lifashi):
         try:
             search_dict = {"tupianleixing": "6", "tupianlaiyuan_id":i_fuwu.id}
@@ -364,7 +364,7 @@ def fuwuliebiao(request):  # 服务列表页
                 if ('http' in fuwutupian.src.name):
                     fuwutp = fuwutupian.src.name
                 else:
-                    fuwutp = 'http://127.0.0.1:8000/media/' + fuwutupian.src.name
+                    fuwutp = 'http://121.196.213.151/media/' + fuwutupian.src.name
             #图片
             for dd in dingdan_list:
                 pingjia_list = dd.pingjia_set.all()  # 反向查询每一个订单的相关评价
@@ -431,7 +431,7 @@ def fuwuliebiaoxiangqing(request):
             if ('http' in fuwutupian.src.name):
                 fuwutp = fuwutupian.src.name
             else:
-                fuwutp = 'http://127.0.0.1:8000/media/' + fuwutupian.src.name
+                fuwutp = 'http://121.196.213.151/media/' + fuwutupian.src.name
         # 图片
         result=JsonResponse({"leixing":fw_leixing,"jiage":fw_jiage,"mingcheng":fw_mingcheng,"pingfen":fw_pingfen,
                             "lifadian_id":lifadian_id,"lifashi_id":lifashi_id,
@@ -461,10 +461,10 @@ def faxingList(request):
         imageList = []
         for i_image in tupian.objects.filter(tupianlaiyuan_id=i_faxing.id):
             if (i_image.tupianleixing == "2"):
-                if "https://" in str(i_image.src):
+                if "http" in str(i_image.src):
                     i_image.src = str(i_image.src)
                 else:
-                    i_image.src = "http://127.0.0.1:8000/media/" + str(i_image.src)
+                    i_image.src = "http://121.196.213.151/media/" + str(i_image.src)
                 imgae_detail = {"image_id": i_image.id, "image_src": str(i_image.src)}
                 imageList.append(imgae_detail)
         faxing_detail = {"id": i_faxing.id, "c_id": i_faxing.leixing,
@@ -490,10 +490,10 @@ def faxingDetail(request):
     i_lifashi = lifashi.objects.get(id=i_faxing.lifashi_id)
     for lifashi_image in tupian.objects.filter(tupianlaiyuan_id=i_lifashi.id):
         if (lifashi_image.tupianleixing == "5"):
-            if "https://" in str(lifashi_image.src):
+            if "http" in str(lifashi_image.src):
                 lifashi_image.src = str(lifashi_image.src)
             else:
-                lifashi_image.src = "http://127.0.0.1:8000/media/" + str(lifashi_image.src)
+                lifashi_image.src = "http://121.196.213.151/media/" + str(lifashi_image.src)
             lifashi_image_src = str(lifashi_image.src)
     lifashi_detail = {"f_id": i_lifashi.id, "f_name": i_lifashi.yonghuming,
                       "phone": i_lifashi.lianxidianhua, "f_image" : lifashi_image_src}
@@ -502,10 +502,10 @@ def faxingDetail(request):
     i_dizhi = dizhi.objects.get(lifadian_id=i_lifadian.id)
     for lifadian_image in tupian.objects.filter(tupianlaiyuan_id=i_lifadian.id):
         if (lifadian_image.tupianleixing == "0"):
-            if "https://" in str(lifadian_image.src):
+            if "http" in str(lifadian_image.src):
                 lifadian_image.src = str(lifadian_image.src)
             else:
-                lifadian_image.src = "http://127.0.0.1:8000/media/" + str(lifadian_image.src)
+                lifadian_image.src = "http://121.196.213.151/media/" + str(lifadian_image.src)
             lifadian_image_src = str(lifadian_image.src)
             lifadianimageList.append(lifadian_image_src)
     lifadian_detail = {"s_id": i_lifadian.id, "s_name": i_lifadian.dianming,
@@ -513,10 +513,10 @@ def faxingDetail(request):
     lifadianList.append(lifadian_detail)
     for i_image in tupian.objects.filter(tupianlaiyuan_id=faxing_id):
         if (i_image.tupianleixing == "2"):
-            if "https://" in str(i_image.src):
+            if "http" in str(i_image.src):
                 i_image.src = str(i_image.src)
             else:
-                i_image.src = "http://127.0.0.1:8000/media/" + str(i_image.src)
+                i_image.src = "http://121.196.213.151/media/" + str(i_image.src)
             i_image_src = str(i_image.src)
             imageList.append(i_image_src)
     faxing_detail = {"id": faxing_id, "c_id": i_faxing.leixing, "f_name": i_faxing.faxingming,
@@ -544,15 +544,6 @@ def yonghuDetail(request):
         return JsonResponse(yonghu_detail)
     except:
         return JsonResponse({"status": 0,"msg": "用户信息调取失败"})
-    # for i_image in tupian.objects.filter(tupianlaiyuan_id=yonghu_id):
-    #     print(i_image.tupianleixing)
-    #     try:
-    #         if (i_image.tupianleixing == "3"):
-    #             yonghu_detail = {"id": i_yonghu.id, "yonghuming": i_yonghu.yonghuming, "xingming": i_yonghu.xingming,
-    #                              "sex": sex[i_yonghu.xingbie], "touxiang": str(i_image.src)}
-    #     except:
-    #         yonghu_detail = {"id": i_yonghu.id, "yonghuming": i_yonghu.yonghuming, "xingming": i_yonghu.xingming,
-    #                          "sex": sex[i_yonghu.xingbie], "touxiang": "../../pages/image/默认头像.png"}
 
 
 # 理发师注册页面获取理发店名-理发师端
@@ -600,6 +591,10 @@ def lifashi_get_dingdan(request):
                             is_huiyuan = False
                         try:
                             fuwu_img = tupian.objects.get(tupianlaiyuan_id=i_fuwu.id,tupianleixing=6).src.name
+                            if "http" in fuwu_img:
+                                fuwu_img = fuwu_img
+                            else:
+                                fuwu_img = "http://121.196.213.151/media/" + fuwu_img
                         except:
                             fuwu_img = "https://s3.ax1x.com/2020/12/11/rAJgYV.png"
                         dingdan_detail = {"dingdan_id": i_jiesuan.id, "fuwu_name": i_fuwu.fuwumingcheng,"price": i_fuwu.jiage,
@@ -621,12 +616,16 @@ def lifashi_get_dingdan(request):
                 is_huiyuan = False
             try:
                 fuwu_img = tupian.objects.get(tupianlaiyuan_id=i_fuwu.id, tupianleixing=6).src.name
+                if "http" in fuwu_img:
+                    fuwu_img = fuwu_img
+                else:
+                    fuwu_img = "http://121.196.213.151/media/" + fuwu_img
             except:
                 fuwu_img = "https://s3.ax1x.com/2020/12/11/rAJgYV.png"
             i_yonghu = yonghu.objects.get(id=i_yuyue.yonghu_id)
             dingdan_detail = {"yuyue_id": i_yuyue.id, "is_jieshou":i_yuyue.yijieshou,"shijian": i_yuyue.yuyuekaishi,
                                       "yuyue_xiaohao": i_yuyue.yuyuexiaohao, "fuwu_name": i_fuwu.fuwumingcheng,"price": i_fuwu.jiage,
-                                      }
+                                      "fuwu_img":fuwu_img,"is_huiyuan":is_huiyuan}
             dingdanList.append(dingdan_detail)
     return JsonResponse({'Dingdan':dingdanList,'pagenum': int(page)+1,'total': dingdan_len})
 
@@ -713,6 +712,10 @@ def lifashi_show_quxiao_dingdan(request,shenfeng):
         i_fuwu_id = i_quxiao.fuwuxiang_id
         try:
             tupian_src = tupian.objects.get(tupianlaiyuan_id=i_fuwu_id, tupianleixing='6').src.name
+            if "http" in tupian_src:
+                tupian_src = tupian_src
+            else:
+                tupian_src = "http://121.196.213.151/media/" + tupian_src
         except:
             tupian_src = "https://s3.ax1x.com/2020/12/11/rAJgYV.png"
         i_fuwu = fuwu.objects.get(id=i_fuwu_id)
@@ -785,6 +788,10 @@ def yonghu_shoucang_show(request, shoucangleixing):
         if  shoucangleixing== 0 and int(i_shoucang.shoucangleixing) == shoucangleixing :
             try:
                 tupian_src = tupian.objects.get(tupianlaiyuan_id=i_shoucang.beishoucang_id,tupianleixing=0).src.name
+                if "http" in tupian_src:
+                    tupian_src = tupian_src
+                else:
+                    tupian_src = "http://121.196.213.151/media/" + tupian_src
             except:
                 tupian_src = "https://s3.ax1x.com/2020/12/11/rAJgYV.png"
             the_lifadian = lifadian.objects.get(id=i_shoucang.beishoucang_id)
@@ -794,6 +801,10 @@ def yonghu_shoucang_show(request, shoucangleixing):
         elif shoucangleixing== 1 and int(i_shoucang.shoucangleixing) == shoucangleixing:
             try:
                 tupian_src = tupian.objects.get(tupianlaiyuan_id=i_shoucang.beishoucang_id,tupianleixing='5').src.name
+                if "http" in tupian_src:
+                    tupian_src = tupian_src
+                else:
+                    tupian_src = "http://121.196.213.151/media/" + tupian_src
             except:
                 tupian_src = "https://s3.ax1x.com/2020/12/11/rAJgYV.png"
             the_lifashi = lifashi.objects.get(id=i_shoucang.beishoucang_id)
@@ -803,6 +814,10 @@ def yonghu_shoucang_show(request, shoucangleixing):
         elif shoucangleixing== 2 and int(i_shoucang.shoucangleixing) == shoucangleixing:
             try:
                 tupian_src = tupian.objects.get(tupianlaiyuan_id=i_shoucang.beishoucang_id,tupianleixing='6').src.name
+                if "http" in tupian_src:
+                    tupian_src = tupian_src
+                else:
+                    tupian_src = "http://121.196.213.151/media/" + tupian_src
             except:
                 tupian_src = "https://s3.ax1x.com/2020/12/11/rAJgYV.png"
             the_fuwu = fuwu.objects.get(id=i_shoucang.beishoucang_id)
@@ -822,7 +837,6 @@ def getYonghuDingdan(request, zhuangtai_id):
     zhuangtai = ["未支付", "已支付", "预约"]
     yonghu_id = the_yonghu.id
     dingdanList = []
-    print(yonghu_id)
     for i_dingdan in dingdan.objects.filter(yonghu_id=yonghu_id):
         if zhuangtai_id == 1 or zhuangtai_id == 0:
             for i_jiesuan in jiesuandingdan.objects.filter(dingdan_ptr_id=i_dingdan.id):
@@ -832,8 +846,12 @@ def getYonghuDingdan(request, zhuangtai_id):
                         jiesuanshijian = str(i_jiesuan.jieshushijian).replace("T"," ")
                         try:
                             img_src = tupian.objects.get(tupianlianyuan_id=i_fuwu.id,tupianleixing=6).src.name
+                            if "http" in img_src:
+                                img_src = img_src
+                            else:
+                                img_src = "http://121.196.213.151/media/" + img_src
                         except:
-                            img_src = "https://s3.ax1x.com/2020/12/11/rAJgYV.png"
+                            img_src = "https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=2127411405,3968387369&fm=26&gp=0.jpg"
                         dingdan_detail = {"dingdan_id": i_dingdan.id, "fuwu_name": i_fuwu.fuwumingcheng, "zhuangtai": zhuangtai[zhuangtai_id],
                                           "price": i_fuwu.jiage, "jiesuanshijian": jiesuanshijian,"fuwu_img":img_src}
                         dingdanList.append(dingdan_detail)
@@ -843,8 +861,12 @@ def getYonghuDingdan(request, zhuangtai_id):
                 for i_yuyue in yuyuedingdan.objects.filter(dingdan_ptr_id=i_dingdan.id):
                     try:
                         img_src = tupian.objects.get(tupianlianyuan_id=i_fuwu.id, tupianleixing=6).src.name
+                        if "http" in img_src:
+                            img_src = img_src
+                        else:
+                            img_src = "http://121.196.213.151/media/" + img_src
                     except:
-                        img_src = "https://s3.ax1x.com/2020/12/11/rAJgYV.png"
+                        img_src = "https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=2127411405,3968387369&fm=26&gp=0.jpg"
                     i_fuwu = fuwu.objects.get(id=i_dingdan.fuwuxiang_id)
                     dingdan_detail = {"yuyue_id": i_dingdan.id, "yuyue_start": i_yuyue.yuyuekaishi,"zhuangtai": zhuangtai[zhuangtai_id],
                                       "yuyue_xiaohao": i_yuyue.yuyuexiaohao, "fuwu_name": i_fuwu.fuwumingcheng,"price": i_fuwu.jiage,"fuwu_img":img_src}
@@ -945,13 +967,21 @@ def yuyue_show(request):
     i_yonghu = yonghu.objects.get(id=i_dingdan.yonghu_id)
     i_lifashi = lifashi.objects.get(id=i_dingdan.lifashi_id)
     try:
-        i_tupian = tupian.objects.get(tupianleixing="3", tupianlaiyuan_id=i_yonghu.id)
-        src = i_tupian.src
+        i_tupian = tupian.objects.get(tupianleixing="5", tupianlaiyuan_id=i_yonghu.id)
+        src = i_tupian.src.name
+        if "http" in src:
+            src = src
+        else:
+            src = "http://121.196.213.151/media/" + src
     except:
         src = "../../image/默认头像.png"
     try:
         the_tupian = tupian.objects.get(tupianleixing="1", tupianlaiyuan_id=i_lifashi.id)
-        the_src = the_tupian.src
+        the_src = the_tupian.src.name
+        if "http" in the_src:
+            the_src = the_src
+        else:
+            the_src = "http://121.196.213.151/media/" + the_src
     except:
         the_src = "../../image/默认头像.png"
     if i_yuyue.yuyuexiaohao != None:
@@ -987,12 +1017,20 @@ def OKdingdan(request):
     shifouzhifu = ['false', 'true']
     try:
         i_tupian = tupian.objects.get(tupianleixing="3", tupianlaiyuan_id=i_yonghu.id)
-        src = i_tupian.src
+        src = i_tupian.src.name
+        if "http" in src:
+            src = src
+        else:
+            src = "http://121.196.213.151/media/" + src
     except:
         src = "../../image/0.png"
     try:
         i_lifashi_tupian = tupian.objects.get(tupianleixing="1", tupianlaiyuan_id=i_lifashi.id)
-        lifashi_src = i_lifashi_tupian.src
+        lifashi_src = i_lifashi_tupian.src.name
+        if "http" in lifashi_src:
+            lifashi_src = lifashi_src
+        else:
+            lifashi_src = "http://121.196.213.151/media/" + lifashi_src
     except:
         lifashi_src = "../../image/默认头像.png"
     i_fuwu = fuwu.objects.get(id=i_dingdan.fuwuxiang_id)
@@ -1028,7 +1066,11 @@ def getLifadian(request):
     for i_lifashi in lifashi.objects.filter(lifadian_id=lifadian_id):
         try:
             lifashi_tupian = tupian.objects.get(tupianleixing="1", tupianlaiyuan_id=i_lifashi.id)
-            src = lifashi_tupian.src
+            src = lifashi_tupian.src.name
+            if "http" in src:
+                src = src
+            else:
+                src = "http://121.196.213.151/media/" + src
         except:
             src="../../image/默认头像.png"
         the_detail = {"lifashi_id": i_lifashi.id, "name": i_lifashi.yonghuming, "phone": i_lifashi.lianxidianhua,"lifashi_img": str(src)}
@@ -1039,7 +1081,12 @@ def getLifadian(request):
             fuwuList.append(the_fuwu)
     try:
         for i_tupian in tupian.objects.filter(tupianleixing="0", tupianlaiyuan_id=i_lifadian.id):
-            the_tupian = {"tupian_id": i_tupian.id, "src": str(i_tupian.src)}
+            src = i_tupian.src.name
+            if "http" in src:
+                src = src
+            else:
+                src = "http://121.196.213.151/media/" + src
+            the_tupian = {"tupian_id": i_tupian.id, "src": src}
             lifadian_tupianList.append(the_tupian)
     except:
         lifadian_tupianList = []
@@ -1128,9 +1175,17 @@ def getZixun(request):
     for item in Zixun:
         i_yonghu = item.yonghu
         the_zixun_tupian = tupian.objects.get(tupianlaiyuan_id=item.id, tupianleixing=4)
-        zixun_tupian_src = "http://127.0.0.1:8000/media/"+the_zixun_tupian.src.name
-        the_touxiang_tupian = tupian.objects.get(tupianlaiyuan_id=i_yonghu.id, tupianleixing=3)
+        zixun_tupian_src = the_zixun_tupian.src.name
+        if('http' in zixun_tupian_src):
+            zixun_tupian_src = zixun_tupian_src
+        else:
+            zixun_tupian_src = "http://121.196.213.151/media/"+zixun_tupian_src
+        the_touxiang_tupian = tupian.objects.get(tupianlaiyuan_id=i_yonghu.id, tupianleixing=5)
         touxiang_tupian_src = the_touxiang_tupian.src.name
+        if('http' in touxiang_tupian_src):
+            touxiang_tupian_src = touxiang_tupian_src
+        else:
+            touxiang_tupian_src = "http://121.196.213.151/media/"+touxiang_tupian_src
         zixun_detail = {"id":item.id, "yonghuming":i_yonghu.yonghuming, "yonghu_id": i_yonghu.id, "yonghu_touxiang":touxiang_tupian_src,
                         "neirong": item.neirong, "dianzanshu": item.dianzanshu, 'fabushijian':item.fabushijian,
                         'zixun_tupian_src':zixun_tupian_src}
@@ -1293,10 +1348,10 @@ def getFaxing(request, faxing_c_id):
     for i_faxing in faxing1:
         imageList = []
         for i_image in tupian.objects.filter(tupianlaiyuan_id=i_faxing.id,tupianleixing="2"):
-            if "https://" in str(i_image.src):
+            if "http" in str(i_image.src):
                 i_image.src = str(i_image.src)
             else:
-                i_image.src = "http://127.0.0.1:8000/media/"+str(i_image.src)
+                i_image.src = "http://121.196.213.151/media/"+str(i_image.src)
             imgae_detail = {"image_id": i_image.id, "image_src": str(i_image.src)}
             imageList.append(imgae_detail)
         faxing_detail = {"id": i_faxing.id, "c_id": i_faxing.leixing,
@@ -1447,7 +1502,11 @@ def getFuwu(request):
         try:
             search_dict = {"tupianleixing": "6", "tupianlaiyuan_id":i_fuwu.id}
             i_tupian = tupian.objects.filter(**search_dict).first()
-            src = str(i_tupian.src)
+            src = i_tupian.src.name
+            if("http" in src):
+                src = src
+            else:
+                src = "http://121.196.213.151/media/" + src
         except:
             src = "http://img.08087.cc/uploads/20190819/10/1566182856-otPJlNpiKT.jpeg"
         lifa_fuwu_detail = {"fuwu_id": i_fuwu.id, "type": fuwuleixing[i_fuwu.leixing],
@@ -1625,6 +1684,10 @@ def yonghu_show_huiyuan(request):
         try:
             i_lifashi_tupian = tupian.objects.get(tupianlaiyuan_id=i_lifashi.id, tupianleixing=5)
             lifashi_tupian_src = i_lifashi_tupian.src.name
+            if("http" in lifashi_tupian_src):
+                lifashi_tupian_src = lifashi_tupian_src
+            else:
+                lifashi_tupian_src = "http://121.196.213.151/media/" + lifashi_tupian_src
         except:
             lifashi_tupian_src = "../../image/默认头像.png"
         try:
@@ -1659,6 +1722,10 @@ def lifashi_show_huiyuan(request):
         try:
             i_yonghu_tupian = tupian.objects.get(tupianlaiyuan_id=i_yonghu.id, tupianleixing=3)
             yonghu_tupian_src = i_yonghu_tupian.src.name
+            if("http" in yonghu_tupian_src):
+                yonghu_tupian_src = yonghu_tupian_src
+            else:
+                yonghu_tupian_src = "http://121.196.213.151/media/" + yonghu_tupian_src
         except:
             yonghu_tupian_src = "../../image/lifashi1.png"
         try:
@@ -1723,6 +1790,10 @@ def show_xiaoxi(request,shenfeng):
         # 获取理发师的头像
         try:
             to_img_src = str(tupian.objects.get(tupianlaiyuan_id=to_id, tupianleixing=5).src)
+            if("http" in to_img_src):
+                to_img_src = to_img_src
+            else:
+                to_img_src = "http://121.196.213.151/media/" + to_img_src
         except:
             to_img_src = "../../image/默认头像.png"
         the_from = lifashi.objects.get(id=to_id)
@@ -1738,6 +1809,10 @@ def show_xiaoxi(request,shenfeng):
             # 获取用户发送的消息
         try:
             to_img_src = str(tupian.objects.get(tupianlaiyuan_id=to_id, tupianleixing=5).src)
+            if("http" in to_img_src):
+                to_img_src = to_img_src
+            else:
+                to_img_src = "http://121.196.213.151/media/" + to_img_src
         except:
             to_img_src = "../../image/默认头像.png"
         the_from = yonghu.objects.get(id=to_id)
@@ -1786,6 +1861,10 @@ def get_xiaoxi_list(request,shenfeng):
             i_xiaoxi = lifashi_xiaoxi.objects.filter(from_id=i_id,to_id=yonghu_id).order_by('-id')[:1][0]
             try:
                 to_img_src =  str(tupian.objects.get(tupianlaiyuan_id=i_id,tupianleixing=5).src)
+                if ("http" in to_img_src):
+                    to_img_src = to_img_src
+                else:
+                    to_img_src = "http://121.196.213.151/media/" + to_img_src
             except:
                 to_img_src = "../../image/默认头像.png"
         else:
@@ -1793,6 +1872,10 @@ def get_xiaoxi_list(request,shenfeng):
             i_xiaoxi = xiaoxi.objects.filter(from_id=i_id,to_id=yonghu_id).order_by('-id')[:1][0]
             try:
                 to_img_src =  str(tupian.objects.get(tupianlaiyuan_id=i_id,tupianleixing=3).src)
+                if ("http" in to_img_src):
+                    to_img_src = to_img_src
+                else:
+                    to_img_src = "http://121.196.213.151/media/" + to_img_src
             except:
                 to_img_src = "../../image/默认头像.png"
         to_detail = {"to_id":i_id,"to_img":to_img_src,"to_name":i_to.yonghuming,"xiaoxi_content":i_xiaoxi.content,"xiaoxi_time":i_xiaoxi.pubtime}
@@ -1826,7 +1909,7 @@ def search(request):
                     if "http" in lifadiantupian:
                         lifadianinfo["tupian"] = lifadiantupian
                     else:
-                        lifadianinfo["tupian"] = "http://127.0.0.1:8000/media/" + lifadiantupian
+                        lifadianinfo["tupian"] = "http://121.196.213.151/media/" + lifadiantupian
                 except:
                     lifadianinfo["tupian"] = "https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=1023914563,1561594966&fm=26&gp=0.jpg"
                 #
@@ -1849,7 +1932,7 @@ def search(request):
                     if "http" in lifashitouxiang:
                         lifashiinfo["tupian"] = lifashitouxiang
                     else:
-                        lifashiinfo["tupian"] = "http://127.0.0.1:8000/media/" + lifashitouxiang
+                        lifashiinfo["tupian"] = "http://121.196.213.151/media/" + lifashitouxiang
                 except:
                     lifashiinfo["tupian"] = "https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=1746949651,2632447771&fm=26&gp=0.jpg"
                 #头像
@@ -1875,7 +1958,7 @@ def search(request):
                     if ('http' in fuwutupian.src.name):
                         fuwutp = fuwutupian.src.name
                     else:
-                        fuwutp = 'http://127.0.0.1:8000/media/' + fuwutupian.src.name
+                        fuwutp = 'http://121.196.213.151/media/' + fuwutupian.src.name
                 fuwuinfo['tupian']=fuwutp
                 #图片
                 data.append(fuwuinfo)
