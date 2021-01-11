@@ -770,10 +770,7 @@ def yonghu_shoucang_delete(request, shoucangleixing):
     shoucang_id = datagetter.get('shoucang_id')
     try:
         i_yonghu = yonghu.objects.get(id=datagetter.get('yonghu_id'))
-    except Exception as e:
-        print(e)
-    try:
-        i_shoucang = shoucang.objects.get(yonghu=i_yonghu,shoucangleixing=shoucangleixing,beishoucang_id=shoucang_id)
+        i_shoucang = shoucang.objects.get(yonghu=i_yonghu, shoucangleixing=shoucangleixing, beishoucang_id=shoucang_id)
         i_shoucang.delete()
         return JsonResponse({"status": "1", "msg": "删除成功"})
     except ObjectDoesNotExist:
@@ -862,7 +859,7 @@ def getYonghuDingdan(request, zhuangtai_id):
                     except:
                         return JsonResponse({"status": 0, "msg": "您还没有已完成的订单"})
         if zhuangtai_id == 2:
-                for i_yuyue in yuyuedingdan.objects.filter(dingdan_ptr_id=i_dingdan.id).order_by('-id'):
+                for i_yuyue in yuyuedingdan.objects.filter(dingdan_ptr_id=i_dingdan.id):
                     try:
                         img_src = tupian.objects.get(tupianlianyuan_id=i_fuwu.id, tupianleixing=6).src.name
                         if "http" in img_src:
@@ -979,15 +976,6 @@ def yuyue_show(request):
             the_src = "http://121.196.213.151/media/" + the_src
     except:
         the_src = "../../image/默认头像.png"
-    # try:
-    #     the_tupian = tupian.objects.get(tupianleixing="1", tupianlaiyuan_id=i_lifashi.id)
-    #     the_src = the_tupian.src.name
-    #     if "http" in the_src:
-    #         the_src = the_src
-    #     else:
-    #         the_src = "http://121.196.213.151/media/" + the_src
-    # except:
-    #     the_src = "../../image/默认头像.png"
     if i_yuyue.yuyuexiaohao != None:
         gujishijian = i_yuyue.yuyuexiaohao
     else:
@@ -1534,6 +1522,7 @@ def number_timefield(the_dingdan,begin,deadline):
             before.append(i)
         elif i_deadline>=deadline and i.yuyuekaishi <= begin:#计算包括这段时间的
             the_in.append(i)
+
     # print([after,before,the_in])
     num =  len(list(set(list(after))  | set(before)| set(the_in)))
     return num
@@ -1541,7 +1530,6 @@ def number_timefield(the_dingdan,begin,deadline):
 def lifashi_count_yuyue(request):
     lifashi_id = request.GET.get("lifashi_id")
     select_time = request.GET.get("select_time")
-    print(select_time)
     the_time = datetime.datetime.strptime(select_time, "%Y-%M-%d")
     # now = timezone.now().today()
     data=[]

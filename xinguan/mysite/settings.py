@@ -29,7 +29,7 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 SECRET_KEY = 's)$w04((9scmf10vz2@-qy-nwjs@&@v+87*5sx%h4b2e!%$zs$'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["*",]
 
